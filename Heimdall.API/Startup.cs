@@ -72,6 +72,8 @@ namespace Heimdall.API
             _container.RegisterMediator();
             _container.RegisterMediatorHandlers(GetAssemblies());
 
+            _container.Register<LibCore.Web.Services.IPinger, LibCore.Web.Services.Pinger>();
+
             _container.Verify();
         }
 

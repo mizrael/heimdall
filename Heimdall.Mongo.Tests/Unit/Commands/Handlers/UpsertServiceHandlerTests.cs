@@ -1,17 +1,15 @@
-﻿using Heimdall.Mongo.Infrastructure;
+﻿using Heimdall.Core.Commands;
 using Heimdall.Mongo.Commands.Handlers;
+using Heimdall.Mongo.Infrastructure;
+using Heimdall.Mongo.Tests.Utils;
+using LibCore.CQRS.Validation;
 using LibCore.Mongo;
 using Moq;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
-using FluentAssertions;
-using LibCore.CQRS.Validation;
-using Heimdall.Core.Commands;
 
 namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
 {
@@ -39,9 +37,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
         {
             var command = new UpsertService("lorem", "ipsum");
 
-            var mockRepo = new Mock<IRepository<Infrastructure.Entities.Service>>();
-            mockRepo.Setup(r => r.FindOneAsync(It.IsAny<Expression<Func<Infrastructure.Entities.Service, bool>>>()))
-                    .ReturnsAsync((Infrastructure.Entities.Service)null);
+            var mockRepo = RepositoryUtils.MockRepository<Infrastructure.Entities.Service>();
 
             var mockDbContext = new Mock<IDbContext>();
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
@@ -50,7 +46,6 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
 
             var sut = new UpsertServiceHandler(mockDbContext.Object, validator);
             await sut.Handle(command);
-
 
             mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Infrastructure.Entities.Service, bool>>>(),
                 It.Is<Infrastructure.Entities.Service>(r =>
@@ -71,9 +66,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
                 Endpoints = null
             };
 
-            var mockRepo = new Mock<IRepository<Infrastructure.Entities.Service>>();
-            mockRepo.Setup(r => r.FindOneAsync(It.IsAny<Expression<Func<Infrastructure.Entities.Service, bool>>>()))
-                    .ReturnsAsync(service);
+            var mockRepo = RepositoryUtils.MockRepository(service);
 
             var mockDbContext = new Mock<IDbContext>();
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
@@ -109,9 +102,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
                 }
             };
 
-            var mockRepo = new Mock<IRepository<Infrastructure.Entities.Service>>();
-            mockRepo.Setup(r => r.FindOneAsync(It.IsAny<Expression<Func<Infrastructure.Entities.Service, bool>>>()))
-                    .ReturnsAsync(service);
+            var mockRepo = RepositoryUtils.MockRepository(service);
 
             var mockDbContext = new Mock<IDbContext>();
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Heimdall.Mongo.Commands.Handlers
 {
-    class RefreshServicesStatusHandler : BaseCommandHandler<RefreshServicesStatus>
+    public class RefreshServicesStatusHandler : BaseCommandHandler<RefreshServicesStatus>
     {
         private IDbContext _db;
         private IPinger _pinger;
