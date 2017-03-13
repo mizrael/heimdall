@@ -17,6 +17,9 @@ namespace Heimdall.Mongo.Queries.Handlers
 
         public async Task<Core.Queries.Models.Service> Handle(Core.Queries.FindService query)
         {
+            if (null == query)
+                throw new ArgumentNullException(nameof(query));
+
             var service = await _db.Services.FindOneAsync(s => s.Name == query.ServiceName);
             if (null == service || null == service.Endpoints || !service.Endpoints.Any())
                 return null;

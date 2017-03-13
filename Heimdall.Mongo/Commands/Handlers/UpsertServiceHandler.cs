@@ -24,10 +24,10 @@ namespace Heimdall.Mongo.Commands.Handlers
             service = service ?? new Infrastructure.Entities.Service()
             {
                 Id = Guid.NewGuid(),
-                Name = command.Name,
-                Endpoints = Enumerable.Empty<Infrastructure.Entities.ServiceEndpoint>()
+                Name = command.Name
             };
-            service.Endpoints.Append(new Infrastructure.Entities.ServiceEndpoint()
+            service.Endpoints = service.Endpoints ?? Enumerable.Empty<Infrastructure.Entities.ServiceEndpoint>();
+            service.Endpoints = service.Endpoints.Append(new Infrastructure.Entities.ServiceEndpoint()
             {
                 Active = true,
                 Url = command.Endpoint

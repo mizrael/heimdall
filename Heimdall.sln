@@ -17,6 +17,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibCore.Web", "..\LibCore\L
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Heimdall.Core", "Heimdall.Core\Heimdall.Core.csproj", "{BD498D3F-90FE-4EF8-8A54-E9CFC188A1AA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{17530BFF-0568-410E-8505-D8A91FCFE011}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Heimdall.Mongo.Tests", "Heimdall.Mongo.Tests\Heimdall.Mongo.Tests.csproj", "{3E73FE15-475D-4EC2-A700-E7EF999C20E2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +51,10 @@ Global
 		{BD498D3F-90FE-4EF8-8A54-E9CFC188A1AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD498D3F-90FE-4EF8-8A54-E9CFC188A1AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD498D3F-90FE-4EF8-8A54-E9CFC188A1AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E73FE15-475D-4EC2-A700-E7EF999C20E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E73FE15-475D-4EC2-A700-E7EF999C20E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E73FE15-475D-4EC2-A700-E7EF999C20E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E73FE15-475D-4EC2-A700-E7EF999C20E2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -55,5 +63,6 @@ Global
 		{09973C31-8CD6-4116-8C09-F69261932DDC} = {30D15175-B518-48BA-AB9C-F7ACF7CDE8DC}
 		{7CEED0C6-8320-4B85-B52C-2B3163A5320F} = {30D15175-B518-48BA-AB9C-F7ACF7CDE8DC}
 		{636D160A-941D-4B11-872D-18EA5863FB36} = {30D15175-B518-48BA-AB9C-F7ACF7CDE8DC}
+		{3E73FE15-475D-4EC2-A700-E7EF999C20E2} = {17530BFF-0568-410E-8505-D8A91FCFE011}
 	EndGlobalSection
 EndGlobal
