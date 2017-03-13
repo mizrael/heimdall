@@ -12,10 +12,10 @@
   {
     "outputFileName": "wwwroot/js/bundle.min.js",
     "inputFiles": [
-      "wwwroot/lib/bootstrap/dist/js/bootstrap.js",
       "wwwroot/lib/jquery/dist/jquery.js",
       "wwwroot/lib/react/react.js",
       "wwwroot/lib/react/react-dom.js",
+      "wwwroot/lib/bootstrap/dist/js/bootstrap.js",
       "wwwroot/js/app.js"
     ],
     // Optionally specify minification options
