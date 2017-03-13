@@ -21,7 +21,7 @@ namespace Heimdall.API.Controllers
 
         /// <summary>
         /// finds the service by name and returns its details along with the list of available endpoints.
-        /// If no endpoints are active, null is returned.
+        /// If no endpoint is active, returns null.
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -34,7 +34,7 @@ namespace Heimdall.API.Controllers
         }
 
         /// <summary>
-        /// inserts or updates the service
+        /// inserts or updates a service
         /// </summary>
         /// <param name="service"></param>
         /// <returns></returns>
@@ -48,6 +48,10 @@ namespace Heimdall.API.Controllers
             return CreatedAtAction("Get", new { name = service.Name }, null);
         }
 
+        /// <summary>
+        /// refreshes all the registered services
+        /// </summary>
+        /// <returns></returns>
         [HttpPut]
         public async Task<IActionResult> Put()
         {
