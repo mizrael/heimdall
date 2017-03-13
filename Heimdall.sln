@@ -1,0 +1,59 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.4
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Heimdall.API", "Heimdall.API\Heimdall.API.csproj", "{63464824-3ACF-47E1-8E1C-30251D769827}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{30D15175-B518-48BA-AB9C-F7ACF7CDE8DC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibCore.Mongo", "..\LibCore\LibCore.Mongo\LibCore.Mongo.csproj", "{09973C31-8CD6-4116-8C09-F69261932DDC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibCore.CQRS", "..\LibCore\LibCore.CQRS\LibCore.CQRS.csproj", "{7CEED0C6-8320-4B85-B52C-2B3163A5320F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Heimdall.Mongo", "Heimdall.Mongo\Heimdall.Mongo.csproj", "{9921ED8E-AF7E-4CB6-A0E0-1128ACE8F901}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibCore.Web", "..\LibCore\LibCore.Web\LibCore.Web.csproj", "{636D160A-941D-4B11-872D-18EA5863FB36}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Heimdall.Core", "Heimdall.Core\Heimdall.Core.csproj", "{BD498D3F-90FE-4EF8-8A54-E9CFC188A1AA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{63464824-3ACF-47E1-8E1C-30251D769827}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63464824-3ACF-47E1-8E1C-30251D769827}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63464824-3ACF-47E1-8E1C-30251D769827}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63464824-3ACF-47E1-8E1C-30251D769827}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09973C31-8CD6-4116-8C09-F69261932DDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09973C31-8CD6-4116-8C09-F69261932DDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09973C31-8CD6-4116-8C09-F69261932DDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09973C31-8CD6-4116-8C09-F69261932DDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CEED0C6-8320-4B85-B52C-2B3163A5320F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CEED0C6-8320-4B85-B52C-2B3163A5320F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CEED0C6-8320-4B85-B52C-2B3163A5320F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CEED0C6-8320-4B85-B52C-2B3163A5320F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9921ED8E-AF7E-4CB6-A0E0-1128ACE8F901}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9921ED8E-AF7E-4CB6-A0E0-1128ACE8F901}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9921ED8E-AF7E-4CB6-A0E0-1128ACE8F901}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9921ED8E-AF7E-4CB6-A0E0-1128ACE8F901}.Release|Any CPU.Build.0 = Release|Any CPU
+		{636D160A-941D-4B11-872D-18EA5863FB36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{636D160A-941D-4B11-872D-18EA5863FB36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{636D160A-941D-4B11-872D-18EA5863FB36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{636D160A-941D-4B11-872D-18EA5863FB36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD498D3F-90FE-4EF8-8A54-E9CFC188A1AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD498D3F-90FE-4EF8-8A54-E9CFC188A1AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD498D3F-90FE-4EF8-8A54-E9CFC188A1AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD498D3F-90FE-4EF8-8A54-E9CFC188A1AA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{09973C31-8CD6-4116-8C09-F69261932DDC} = {30D15175-B518-48BA-AB9C-F7ACF7CDE8DC}
+		{7CEED0C6-8320-4B85-B52C-2B3163A5320F} = {30D15175-B518-48BA-AB9C-F7ACF7CDE8DC}
+		{636D160A-941D-4B11-872D-18EA5863FB36} = {30D15175-B518-48BA-AB9C-F7ACF7CDE8DC}
+	EndGlobalSection
+EndGlobal
