@@ -11,6 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\LibCore\LibCore.CQRS\LibCore.CQRS.csproj" />
     <ProjectReference Include="..\..\LibCore\LibCore.Mongo\LibCore.Mongo.csproj" />
+    <ProjectReference Include="..\..\LibCore\LibCore.Web\LibCore.Web.csproj" />
     <ProjectReference Include="..\Heimdall.Core\Heimdall.Core.csproj" />
   </ItemGroup>
 

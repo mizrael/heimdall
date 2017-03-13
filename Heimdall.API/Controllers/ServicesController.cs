@@ -47,5 +47,13 @@ namespace Heimdall.API.Controllers
             await _mediator.Publish(command);
             return CreatedAtAction("Get", new { name = service.Name }, null);
         }
+
+        [HttpPut]
+        public async Task<IActionResult> Put()
+        {
+            var command = new Core.Commands.RefreshServicesStatus(10);
+            await _mediator.Publish(command);
+            return this.Ok();
+        }
     }
 }

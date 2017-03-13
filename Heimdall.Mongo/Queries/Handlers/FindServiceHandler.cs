@@ -20,8 +20,11 @@ namespace Heimdall.Mongo.Queries.Handlers
             if (null == query)
                 throw new ArgumentNullException(nameof(query));
 
-            var service = await _db.Services.FindOneAsync(s => s.Name == query.ServiceName);
-            if (null == service || null == service.Endpoints || !service.Endpoints.Any())
+            var service = await _db.Services.FindOneAsync(s => s.Active && 
+                s.Name == query.ServiceName &&
+                null != s.Endpoints &&
+                s.Endpoints.Any());
+            if (null == service)
                 return null;
 
             var availableEndpoints = service.Endpoints.Where(es => es.Active).ToArray();

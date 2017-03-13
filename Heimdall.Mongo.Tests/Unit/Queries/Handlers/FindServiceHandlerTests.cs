@@ -42,15 +42,37 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
         [Fact]
         public async Task should_return_null_when_service_not_existing()
         {
-            var mockRepo = new Mock<IRepository<Infrastructure.Entities.Service>>();
-            mockRepo.Setup(r => r.FindOneAsync(It.IsAny<Expression<Func<Infrastructure.Entities.Service, bool>>>()))
-                    .ReturnsAsync((Infrastructure.Entities.Service)null);
+            var mockRepo = MockRepository();
 
             var mockDbContext = new Mock<IDbContext>();
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
             var query = new FindService("lorem");
             
+            var sut = new FindServiceHandler(mockDbContext.Object);
+            var result = await sut.Handle(query);
+            result.Should().BeNull();
+        }
+
+        [Fact]
+        public async Task should_return_null_when_service_is_inactive()
+        {
+            var service = new Infrastructure.Entities.Service()
+            {
+                Name = "lorem",
+                Active = false,
+                Endpoints = new[]
+                {
+                    new Infrastructure.Entities.ServiceEndpoint(){Active = true, Url ="localhost"}
+                }
+            };
+            var mockRepo = MockRepository(service);
+
+            var mockDbContext = new Mock<IDbContext>();
+            mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
+
+            var query = new FindService("lorem");
+
             var sut = new FindServiceHandler(mockDbContext.Object);
             var result = await sut.Handle(query);
             result.Should().BeNull();
@@ -64,9 +86,7 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
                 Name = "lorem",
                 Endpoints = null
             };
-            var mockRepo = new Mock<IRepository<Infrastructure.Entities.Service>>();
-            mockRepo.Setup(r => r.FindOneAsync(It.IsAny<Expression<Func<Infrastructure.Entities.Service, bool>>>()))
-                    .ReturnsAsync(service);
+            var mockRepo = MockRepository(service);
 
             var mockDbContext = new Mock<IDbContext>();
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
@@ -86,9 +106,7 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
                 Name = "lorem",
                 Endpoints = Enumerable.Empty<Infrastructure.Entities.ServiceEndpoint>()
             };
-            var mockRepo = new Mock<IRepository<Infrastructure.Entities.Service>>();
-            mockRepo.Setup(r => r.FindOneAsync(It.IsAny<Expression<Func<Infrastructure.Entities.Service, bool>>>()))
-                    .ReturnsAsync(service);
+            var mockRepo = MockRepository(service);
 
             var mockDbContext = new Mock<IDbContext>();
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
@@ -115,9 +133,7 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
                     }
                 }
             };
-            var mockRepo = new Mock<IRepository<Infrastructure.Entities.Service>>();
-            mockRepo.Setup(r => r.FindOneAsync(It.IsAny<Expression<Func<Infrastructure.Entities.Service, bool>>>()))
-                    .ReturnsAsync(service);
+            var mockRepo = MockRepository(service);
 
             var mockDbContext = new Mock<IDbContext>();
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
@@ -135,6 +151,7 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
             var service = new Infrastructure.Entities.Service()
             {
                 Name = "lorem",
+                Active = true,
                 Endpoints = new[]
                 {
                     new Infrastructure.Entities.ServiceEndpoint()
@@ -149,9 +166,7 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
                     }
                 }
             };
-            var mockRepo = new Mock<IRepository<Infrastructure.Entities.Service>>();
-            mockRepo.Setup(r => r.FindOneAsync(It.IsAny<Expression<Func<Infrastructure.Entities.Service, bool>>>()))
-                    .ReturnsAsync(service);
+            var mockRepo = MockRepository(service);
 
             var mockDbContext = new Mock<IDbContext>();
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
@@ -163,6 +178,29 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
             result.Should().NotBeNull();
             result.Endpoints.Should().NotBeNullOrEmpty();
             result.Endpoints.ElementAt(0).Url.ShouldBeEquivalentTo("localhost2");
+        }
+
+        private static IMock<IRepository<Infrastructure.Entities.Service>> MockRepository(Infrastructure.Entities.Service service = null)
+        {   
+            var mockRepo = new Mock<IRepository<Infrastructure.Entities.Service>>();
+            var fluent = mockRepo.Setup(r => r.FindOneAsync(It.IsAny<Expression<Func<Infrastructure.Entities.Service, bool>>>()));
+
+            if (null != service)
+            {
+                var services = new[] { service };
+
+                fluent.ReturnsAsync((Expression<Func<Infrastructure.Entities.Service, bool>> filter) =>
+                    {
+                        var s = services.FirstOrDefault(filter.Compile());
+                        return s;
+                    });
+            }
+            else
+            {
+                fluent.ReturnsAsync((Infrastructure.Entities.Service)null);
+            }
+
+            return mockRepo;
         }
     }
 }
