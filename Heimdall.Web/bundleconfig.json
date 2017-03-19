@@ -8,22 +8,23 @@
       "wwwroot/lib/bootstrap/dist/css/bootstrap.css",
       "wwwroot/css/site.css"
     ]
-  },
-  {
-    "outputFileName": "wwwroot/js/bundle.min.js",
-    "inputFiles": [
-      "wwwroot/lib/jquery/dist/jquery.js",
-      "wwwroot/lib/react/react.js",
-      "wwwroot/lib/react/react-dom.js",
-      "wwwroot/lib/bootstrap/dist/js/bootstrap.js",
-      "wwwroot/js/app.js"
-    ],
-    // Optionally specify minification options
-    "minify": {
-      "enabled": true,
-      "renameLocals": true
-    },
-    // Optionally generate .map file
-    "sourceMap": false
   }
+  //{
+  //  "outputFileName": "wwwroot/js/bundle.min.js",
+  //  "inputFiles": [
+  //    "wwwroot/lib/jquery/dist/jquery.js",
+  //    "wwwroot/lib/react/react.js",
+  //    "wwwroot/lib/react/react-dom.js",
+  //    //"wwwroot/lib/bootstrap/dist/js/bootstrap.js",
+  //    //"app/bin/**/*.js"
+  //    "app/bin/app.js"
+  //  ],
+  //  // Optionally specify minification options
+  //  "minify": {
+  //    "enabled": true,
+  //    "renameLocals": true
+  //  },
+  //  // Optionally generate .map file
+  //  "sourceMap": false
+  //}
 ]

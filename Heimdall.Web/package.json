@@ -1,0 +1,20 @@
+{
+  "name": "heimdall.web",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./wwwroot/js/bundle.js",
+  "dependencies": {
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2"
+  },
+  "devDependencies": {
+    "ts-loader": "^2.0.2",
+    "typescript": "^2.2.1",
+    "webpack": "^2.2.1"
+  },
+  "scripts": {
+    "webpack": "webpack -w --config webpack.config.js"
+  },
+  "author": "",
+  "license": "ISC"
+}

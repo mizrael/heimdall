@@ -1,12 +1,10 @@
 {
   "globalDependencies": {
     "bootstrap": "registry:dt/bootstrap#3.3.5+20160726204056",
-    "jquery": "registry:dt/jquery#1.10.0+20170310222111",
-
-    "react": "registry:dt/react#15.0.0+20170311000913",
-    "react-dom": "registry:dt/react-dom#0.14.0+20170207010524"
+    "jquery": "registry:dt/jquery#1.10.0+20170310222111"
   },
   "dependencies": {
-    
+    "react": "registry:npm/react#15.0.1+20170104200836",
+    "react-dom": "registry:npm/react-dom#15.0.1+20160826174104"
   }
 }
