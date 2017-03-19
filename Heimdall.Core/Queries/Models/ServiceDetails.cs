@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Heimdall.Core.Queries.Models
 {
-    public class Service
+    public class ServiceDetails
     {
         public Guid Id { get; set; }
         public string Name { get; set; }

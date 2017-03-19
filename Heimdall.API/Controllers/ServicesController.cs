@@ -19,6 +19,14 @@ namespace Heimdall.API.Controllers
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
+        [HttpGet, Route("")]
+        public async Task<IActionResult> Get()
+        {
+            var query = new ReadServices();
+            var result = await _mediator.Send(query);
+            return this.OkOrNotFound(result);
+        }
+
         /// <summary>
         /// finds the service by name and returns its details along with the list of available endpoints.
         /// If no endpoint is active, returns null.

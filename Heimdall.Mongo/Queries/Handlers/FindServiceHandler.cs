@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Heimdall.Mongo.Queries.Handlers
 {
-    public class FindServiceHandler : IAsyncRequestHandler<Core.Queries.FindService, Core.Queries.Models.Service>
+    public class FindServiceHandler : IAsyncRequestHandler<Core.Queries.FindService, Core.Queries.Models.ServiceDetails>
     {
         private IDbContext _db;
 
@@ -15,7 +15,7 @@ namespace Heimdall.Mongo.Queries.Handlers
             _db = db ?? throw new ArgumentNullException(nameof(db));
         }
 
-        public async Task<Core.Queries.Models.Service> Handle(Core.Queries.FindService query)
+        public async Task<Core.Queries.Models.ServiceDetails> Handle(Core.Queries.FindService query)
         {
             if (null == query)
                 throw new ArgumentNullException(nameof(query));
@@ -32,7 +32,7 @@ namespace Heimdall.Mongo.Queries.Handlers
                 return null;
 
             service.Endpoints = availableEndpoints;
-            return AutoMapper.Mapper.Map<Core.Queries.Models.Service>(service);
+            return AutoMapper.Mapper.Map<Core.Queries.Models.ServiceDetails>(service);
         }
     }
 }

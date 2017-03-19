@@ -4,7 +4,7 @@ using System;
 
 namespace Heimdall.Core.Queries
 {
-    public class FindService : IRequest<Service>
+    public class FindService : IRequest<ServiceDetails>
     {
         public FindService(string serviceName)
         {
