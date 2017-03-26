@@ -50,8 +50,9 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
             mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Infrastructure.Entities.Service, bool>>>(),
                 It.Is<Infrastructure.Entities.Service>(r =>
                     r.Name == command.Name &&
+                    r.Active == false &&
                     null != r.Endpoints && 1 == r.Endpoints.Count() && 
-                    r.Endpoints.Any(es => es.Active == true && es.Url == command.Endpoint)) 
+                    r.Endpoints.Any(es => es.Active == false && es.Url == command.Endpoint)) 
                 ), Times.Once());
         }
 
@@ -63,6 +64,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
             var service = new Infrastructure.Entities.Service()
             {
                 Name = command.Name,
+                Active = false,
                 Endpoints = null
             };
 
@@ -79,8 +81,9 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
             mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Infrastructure.Entities.Service, bool>>>(),
                 It.Is<Infrastructure.Entities.Service>(r =>
                     r.Name == command.Name &&
+                    r.Active == false && 
                     null != r.Endpoints && 1 == r.Endpoints.Count() &&
-                    r.Endpoints.Any(es => es.Active == true && es.Url == command.Endpoint))
+                    r.Endpoints.Any(es => es.Active == false && es.Url == command.Endpoint))
                 ), Times.Once());
         }
 
@@ -92,6 +95,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
             var service = new Infrastructure.Entities.Service()
             {
                 Name = command.Name,
+                Active = false,
                 Endpoints = new[]
                 {
                     new Infrastructure.Entities.ServiceEndpoint()
@@ -115,9 +119,43 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
             mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Infrastructure.Entities.Service, bool>>>(),
                 It.Is<Infrastructure.Entities.Service>(r =>
                     r.Name == command.Name &&
+                    r.Active == false &&
                     null != r.Endpoints && 2 == r.Endpoints.Count() &&
-                    r.Endpoints.Any(es => es.Active == true && es.Url == command.Endpoint))
+                    r.Endpoints.Any(es => es.Active == false && es.Url == command.Endpoint))
                 ), Times.Once());
+        }
+
+        [Fact]
+        public async Task should_do_nothing_when_endpoint_already_exists()
+        {
+            var command = new UpsertService("lorem", "ipsum");
+
+            var service = new Infrastructure.Entities.Service()
+            {
+                Name = command.Name,
+                Active = false,
+                Endpoints = new[]
+                {
+                    new Infrastructure.Entities.ServiceEndpoint()
+                    {
+                        Active = false,
+                        Url = command.Endpoint
+                    }
+                }
+            };
+
+            var mockRepo = RepositoryUtils.MockRepository(service);
+
+            var mockDbContext = new Mock<IDbContext>();
+            mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
+
+            var validator = new NullValidator<UpsertService>();
+
+            var sut = new UpsertServiceHandler(mockDbContext.Object, validator);
+            await sut.Handle(command);
+
+            mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Infrastructure.Entities.Service, bool>>>(),
+                                                   It.IsAny<Infrastructure.Entities.Service>()), Times.Never());
         }
     }
 }
