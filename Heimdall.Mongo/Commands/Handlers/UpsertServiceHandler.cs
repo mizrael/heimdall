@@ -28,9 +28,13 @@ namespace Heimdall.Mongo.Commands.Handlers
                 Active = false
             };
             service.Endpoints = service.Endpoints ?? Enumerable.Empty<Infrastructure.Entities.ServiceEndpoint>();
+
+            if (service.Endpoints.Any(e => e.Url == command.Endpoint))
+                return;
+
             service.Endpoints = service.Endpoints.Append(new Infrastructure.Entities.ServiceEndpoint()
             {
-                Active = true,
+                Active = false,
                 Url = command.Endpoint
             });
             await _db.Services.UpsertOneAsync(s => s.Name == command.Name, service);
