@@ -15,7 +15,7 @@ namespace Heimdall.Mongo.Infrastructure
 
             this.Services = repoFactory.Create<Entities.Service>(new RepositoryOptions(connectionString, "services"));
             var ixb = new IndexKeysDefinitionBuilder<Entities.Service>();
-            this.Services.CreateIndex(ixb.Ascending(u => u.Name));
+            this.Services.CreateIndex(ixb.Ascending(u => u.Name), new CreateIndexOptions() { Unique = true });
         }
 
         public IRepository<Entities.Service> Services { get; private set; }
