@@ -19,10 +19,12 @@ namespace Heimdall.API
 {
     public class Startup
     {
-        private Container _container = new Container();
+        private Container _container = null;
 
         public Startup(IHostingEnvironment env)
         {
+            _container = new Container();
+
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -35,9 +37,16 @@ namespace Heimdall.API
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors((opt) => { opt.AddPolicy("CorsPolicy",
+             builder => builder.AllowAnyOrigin()
+             .AllowAnyMethod()
+             .AllowAnyHeader()
+             .AllowCredentials());
+            });
+
             services.AddMvc()
                  .AddMvcOptions(o => { o.Filters.Add(new LibCore.Web.Filters.ExceptionFilter()); });
-
+            
             services.AddApiVersioning(o =>
             {
                 o.AssumeDefaultVersionWhenUnspecified = true;
@@ -55,9 +64,13 @@ namespace Heimdall.API
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            app.UseMvc().UseSimpleInjectorAspNetRequestScoping(_container);
+            app.UseCors("CorsPolicy")
+               .UseMvc()
+               .UseSimpleInjectorAspNetRequestScoping(_container);
 
             RegisterMapping();
+
+            InitContainer(app);
         }
 
         private void InitContainer(IApplicationBuilder app)
