@@ -56,7 +56,7 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
         }
 
         [Fact]
-        public async Task should_return_null_when_service_is_inactive()
+        public async Task should_return_no_endpoints_when_service_is_inactive()
         {
             var service = new Infrastructure.Entities.Service()
             {
@@ -76,11 +76,13 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
 
             var sut = new FindServiceHandler(mockDbContext.Object);
             var result = await sut.Handle(query);
-            result.Should().BeNull();
+            result.Should().NotBeNull();
+            result.Name.ShouldBeEquivalentTo(service.Name);
+            result.Endpoints.Should().BeNullOrEmpty();
         }
 
         [Fact]
-        public async Task should_return_null_when_service_has_no_endpoints()
+        public async Task should_not_return_null_when_service_has_no_endpoints()
         {
             var service = new Infrastructure.Entities.Service()
             {
@@ -96,11 +98,13 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
 
             var sut = new FindServiceHandler(mockDbContext.Object);
             var result = await sut.Handle(query);
-            result.Should().BeNull();
+            result.Should().NotBeNull();
+            result.Name.ShouldBeEquivalentTo(service.Name);
+            result.Endpoints.Should().BeNullOrEmpty();
         }
 
         [Fact]
-        public async Task should_return_null_when_service_has_empty_endpoints_collection()
+        public async Task should_not_return_null_when_service_has_empty_endpoints_collection()
         {
             var service = new Infrastructure.Entities.Service()
             {
@@ -116,11 +120,13 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
 
             var sut = new FindServiceHandler(mockDbContext.Object);
             var result = await sut.Handle(query);
-            result.Should().BeNull();
+            result.Should().NotBeNull();
+            result.Name.ShouldBeEquivalentTo(service.Name);
+            result.Endpoints.Should().BeNullOrEmpty();
         }
 
         [Fact]
-        public async Task should_return_null_when_service_has_no_active_endpoints()
+        public async Task should_not_return_null_when_service_has_no_active_endpoints()
         {
             var service = new Infrastructure.Entities.Service()
             {
@@ -143,7 +149,9 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
 
             var sut = new FindServiceHandler(mockDbContext.Object);
             var result = await sut.Handle(query);
-            result.Should().BeNull();
+            result.Should().NotBeNull();
+            result.Name.ShouldBeEquivalentTo(service.Name);
+            result.Endpoints.Should().BeNullOrEmpty();
         }
 
         [Fact]
