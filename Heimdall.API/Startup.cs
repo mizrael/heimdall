@@ -114,8 +114,6 @@ namespace Heimdall.API
         {
             AutoMapper.Mapper.Initialize(cfg =>
             {
-                cfg.CreateMap<Mongo.Infrastructure.Entities.ServiceEndpoint, Models.ServiceEndpoints>();
-
                 Mongo.Infrastructure.MapperConfiguration.Register(cfg);
             });
         }
