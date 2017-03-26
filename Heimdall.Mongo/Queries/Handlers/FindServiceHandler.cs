@@ -20,18 +20,15 @@ namespace Heimdall.Mongo.Queries.Handlers
             if (null == query)
                 throw new ArgumentNullException(nameof(query));
 
-            var service = await _db.Services.FindOneAsync(s => s.Active && 
-                s.Name == query.ServiceName &&
-                null != s.Endpoints &&
-                s.Endpoints.Any());
+            var service = await _db.Services.FindOneAsync(s => s.Name == query.ServiceName);
             if (null == service)
                 return null;
 
-            var availableEndpoints = service.Endpoints.Where(es => es.Active).ToArray();
-            if (!availableEndpoints.Any())
-                return null;
+            //var availableEndpoints = service.Endpoints.Where(es => es.Active).ToArray();
+            //if (!availableEndpoints.Any())
+            //    return null;
 
-            service.Endpoints = availableEndpoints;
+            //service.Endpoints = availableEndpoints;
             return AutoMapper.Mapper.Map<Core.Queries.Models.ServiceDetails>(service);
         }
     }
