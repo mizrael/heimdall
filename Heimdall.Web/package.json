@@ -4,8 +4,11 @@
   "description": "",
   "main": "./wwwroot/js/bundle.js",
   "dependencies": {
+    "@types/whatwg-fetch": "0.0.33",
+    "jquery": "^3.2.1",
     "react": "^15.4.2",
-    "react-dom": "^15.4.2"
+    "react-dom": "^15.4.2",
+    "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
     "ts-loader": "^2.0.2",

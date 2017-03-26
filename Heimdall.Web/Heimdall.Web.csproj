@@ -10,34 +10,38 @@
 
   <ItemGroup>
     <Content Include="wwwroot\index.html" />
-    <Content Include="wwwroot\lib\react\.bower.json" />
-    <Content Include="wwwroot\lib\react\bower.json" />
-    <Content Include="wwwroot\lib\react\LICENSE" />
-    <Content Include="wwwroot\lib\react\PATENTS" />
-    <Content Include="wwwroot\lib\react\react-dom-server.js" />
-    <Content Include="wwwroot\lib\react\react-dom-server.min.js" />
-    <Content Include="wwwroot\lib\react\react-dom.js" />
-    <Content Include="wwwroot\lib\react\react-dom.min.js" />
-    <Content Include="wwwroot\lib\react\react-with-addons.js" />
-    <Content Include="wwwroot\lib\react\react-with-addons.min.js" />
-    <Content Include="wwwroot\lib\react\react.js" />
-    <Content Include="wwwroot\lib\react\react.min.js" />
+    <Content Include="wwwroot\js\lib\react\.bower.json" />
+    <Content Include="wwwroot\js\lib\react\bower.json" />
+    <Content Include="wwwroot\js\lib\react\LICENSE" />
+    <Content Include="wwwroot\js\lib\react\PATENTS" />
+    <Content Include="wwwroot\js\lib\react\react-dom-server.js" />
+    <Content Include="wwwroot\js\lib\react\react-dom-server.min.js" />
+    <Content Include="wwwroot\js\lib\react\react-dom.js" />
+    <Content Include="wwwroot\js\lib\react\react-dom.min.js" />
+    <Content Include="wwwroot\js\lib\react\react-with-addons.js" />
+    <Content Include="wwwroot\js\lib\react\react-with-addons.min.js" />
+    <Content Include="wwwroot\js\lib\react\react.js" />
+    <Content Include="wwwroot\js\lib\react\react.min.js" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore" Version="1.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="1.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="1.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="1.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="1.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.Design" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="1.1.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="1.1.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="1.1.0" />
+    <PackageReference Include="SimpleInjector" Version="3.3.2" />
+    <PackageReference Include="SimpleInjector.Integration.AspNetCore.Mvc" Version="3.3.2" />
   </ItemGroup>
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="wwwroot\js\" />
-    <Folder Include="wwwroot\js\" />
-    <Folder Include="wwwroot\js\" />
+    <ProjectReference Include="..\..\LibCore\LibCore.Web\LibCore.Web.csproj" />
   </ItemGroup>
 
 </Project>
