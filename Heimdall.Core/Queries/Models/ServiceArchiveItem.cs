@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Heimdall.Core.Queries.Models
+﻿namespace Heimdall.Core.Queries.Models
 {
     public class ServiceArchiveItem
     {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public bool Active { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public bool Active { get; set; } = false;
+        public int EndpointsCount { get; set; } = 0;
+        public long RoundtripTime { get; set; } = long.MaxValue;
     }
 }
