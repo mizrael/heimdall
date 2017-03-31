@@ -16,11 +16,25 @@ namespace Heimdall.Web.Controllers
             _servicesProxy = apiClient ?? throw new ArgumentNullException(nameof(apiClient));
         }
 
-        [HttpGet, Route("")]
+        [HttpGet]
         public async Task<IActionResult> Get()
         {
             var result = await _servicesProxy.Read();
             return this.OkOrNotFound(result);
+        }
+
+        [HttpGet("{name}", Name = "GetByName")]
+        public async Task<IActionResult> GetByName(string name)
+        {
+            var result = await _servicesProxy.ReadDetails(name);
+            return this.OkOrNotFound(result);
+        }
+
+        [HttpPost, Route("refresh")]
+        public async Task<IActionResult> PostRefresh([FromBody]string name)
+        {
+            await _servicesProxy.Refresh(name);
+            return this.Ok();
         }
     }
 }

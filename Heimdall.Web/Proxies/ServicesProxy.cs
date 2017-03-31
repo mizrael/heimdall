@@ -23,5 +23,26 @@ namespace Heimdall.Web.Proxies
             var result = await _servicesApiClient.GetAsync<IEnumerable<ServiceArchiveItem>>(request);
             return result;
         }
+
+        public async Task<ServiceDetails> ReadDetails(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentNullException(nameof(name));
+
+            var request = new RequestData("/services/" + name);
+            var result = await _servicesApiClient.GetAsync<ServiceDetails>(request);
+            return result;
+        }
+
+        public async Task<ServiceDetails> Refresh(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentNullException(nameof(name));
+            
+            var request = new RequestData("/services/refresh", name);
+            // TODO: check for API errors
+            var result = await _servicesApiClient.PostAsync<ServiceDetails>(request);
+            return result;
+        }
     }
 }

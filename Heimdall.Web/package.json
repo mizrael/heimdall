@@ -4,7 +4,13 @@
   "description": "",
   "main": "./wwwroot/js/bundle.js",
   "dependencies": {
+    "@types/bootstrap": "^3.3.32",
+    "@types/jquery": "^2.0.41",
+    "@types/react": "^15.0.20",
+    "@types/react-dom": "^0.14.23",
+    "@types/typescript": "^2.0.0",
     "@types/whatwg-fetch": "0.0.33",
+    "bootstrap": "^3.3.7",
     "jquery": "^3.2.1",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
@@ -12,8 +18,8 @@
   },
   "devDependencies": {
     "ts-loader": "^2.0.2",
-    "typescript": "^2.2.1",
-    "webpack": "^2.2.1"
+    "typescript": "^2.2.2",
+    "webpack": "^2.3.2"
   },
   "scripts": {
     "webpack": "webpack -w --config webpack.config.js"

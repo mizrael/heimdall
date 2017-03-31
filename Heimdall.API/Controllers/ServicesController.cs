@@ -19,7 +19,7 @@ namespace Heimdall.API.Controllers
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
-        [HttpGet, Route("")]
+        [HttpGet]
         public async Task<IActionResult> Get()
         {
             var query = new ReadServices();
@@ -33,7 +33,8 @@ namespace Heimdall.API.Controllers
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        [HttpGet, Route("{name}")]
+        //[HttpGet, Route("{name}")]
+        [HttpGet("{name}", Name = "GetByName")]
         public async Task<IActionResult> Get(string name)
         {
             var query = new FindService(name);
@@ -57,15 +58,20 @@ namespace Heimdall.API.Controllers
         }
 
         /// <summary>
-        /// refreshes all the registered services
+        /// refreshes a registered service
         /// </summary>
         /// <returns></returns>
-        [HttpPut]
-        public async Task<IActionResult> Put()
+        [HttpPost, Route("refresh")]
+        public async Task<IActionResult> PostRefresh([FromBody]string name)
         {
-            var command = new Core.Commands.RefreshServicesStatus(10);
+            var command = new Core.Commands.RefreshServiceStatus(name, 10);
+
             await _mediator.Publish(command);
-            return this.Ok();
+
+            var query = new FindService(name);
+            var result = await _mediator.Send(query);
+            
+            return this.Ok(result);
         }
     }
 }

@@ -7,5 +7,7 @@ namespace Heimdall.Web.Proxies
     public interface IServicesProxy
     {
         Task<IEnumerable<ServiceArchiveItem>> Read();
+        Task<ServiceDetails> ReadDetails(string name);
+        Task<ServiceDetails> Refresh(string name);
     }
 }
