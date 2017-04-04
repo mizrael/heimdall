@@ -1,13 +1,9 @@
 ﻿using Heimdall.Core.Queries;
 using Heimdall.Mongo.Infrastructure;
 using Heimdall.Mongo.Queries.Handlers;
-using LibCore.Mongo;
 using Moq;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using FluentAssertions;
@@ -43,7 +39,7 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
         [Fact]
         public async Task should_return_null_when_service_not_existing()
         {
-            var mockRepo = RepositoryUtils.MockRepository<Infrastructure.Entities.Service>();
+            var mockRepo = RepositoryUtils.MockRepository<Mongo.Infrastructure.Entities.Service>();
 
             var mockDbContext = new Mock<IDbContext>();
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
@@ -58,13 +54,13 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
         [Fact]
         public async Task should_return_no_endpoints_when_service_is_inactive()
         {
-            var service = new Infrastructure.Entities.Service()
+            var service = new Mongo.Infrastructure.Entities.Service()
             {
                 Name = "lorem",
                 Active = false,
                 Endpoints = new[]
                 {
-                    new Infrastructure.Entities.ServiceEndpoint(){Active = true, Url ="localhost"}
+                    new Mongo.Infrastructure.Entities.ServiceEndpoint(){Active = true, Url ="localhost"}
                 }
             };
             var mockRepo = RepositoryUtils.MockRepository(service);
@@ -84,7 +80,7 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
         [Fact]
         public async Task should_not_return_null_when_service_has_no_endpoints()
         {
-            var service = new Infrastructure.Entities.Service()
+            var service = new Mongo.Infrastructure.Entities.Service()
             {
                 Name = "lorem",
                 Endpoints = null
@@ -106,10 +102,10 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
         [Fact]
         public async Task should_not_return_null_when_service_has_empty_endpoints_collection()
         {
-            var service = new Infrastructure.Entities.Service()
+            var service = new Mongo.Infrastructure.Entities.Service()
             {
                 Name = "lorem",
-                Endpoints = Enumerable.Empty<Infrastructure.Entities.ServiceEndpoint>()
+                Endpoints = Enumerable.Empty<Mongo.Infrastructure.Entities.ServiceEndpoint>()
             };
             var mockRepo = RepositoryUtils.MockRepository(service);
 
@@ -128,12 +124,12 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
         [Fact]
         public async Task should_not_return_null_when_service_has_no_active_endpoints()
         {
-            var service = new Infrastructure.Entities.Service()
+            var service = new Mongo.Infrastructure.Entities.Service()
             {
                 Name = "lorem",
                 Endpoints = new[]
                 {
-                    new Infrastructure.Entities.ServiceEndpoint()
+                    new Mongo.Infrastructure.Entities.ServiceEndpoint()
                     {
                         Active = false,
                         Url = "localhost"
@@ -157,18 +153,18 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
         [Fact]
         public async Task should_return_service_with_active_endpoints_only()
         {
-            var service = new Infrastructure.Entities.Service()
+            var service = new Mongo.Infrastructure.Entities.Service()
             {
                 Name = "lorem",
                 Active = true,
                 Endpoints = new[]
                 {
-                    new Infrastructure.Entities.ServiceEndpoint()
+                    new Mongo.Infrastructure.Entities.ServiceEndpoint()
                     {
                         Active = false,
                         Url = "localhost1"
                     },
-                    new Infrastructure.Entities.ServiceEndpoint()
+                    new Mongo.Infrastructure.Entities.ServiceEndpoint()
                     {
                         Active = true,
                         Url = "localhost2"

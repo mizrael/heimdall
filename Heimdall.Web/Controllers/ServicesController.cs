@@ -33,8 +33,8 @@ namespace Heimdall.Web.Controllers
         [HttpPost, Route("refresh")]
         public async Task<IActionResult> PostRefresh([FromBody]string name)
         {
-            await _servicesProxy.Refresh(name);
-            return this.Ok();
+            var service = await _servicesProxy.Refresh(name);
+            return this.Ok(service);
         }
     }
 }

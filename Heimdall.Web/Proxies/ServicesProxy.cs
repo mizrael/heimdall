@@ -1,6 +1,5 @@
 ﻿using Heimdall.Web.DTO;
 using LibCore.Web.HTTP;
-using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -40,8 +39,15 @@ namespace Heimdall.Web.Proxies
                 throw new ArgumentNullException(nameof(name));
             
             var request = new RequestData("/services/refresh", name);
-            // TODO: check for API errors
-            var result = await _servicesApiClient.PostAsync<ServiceDetails>(request);
+            
+            var response = await _servicesApiClient.PostAsync(request);
+            if (null == response)
+                return null;
+            response.EnsureSuccessStatusCode();
+            var jsonData = await response.Content.ReadAsStringAsync();
+            if (string.IsNullOrWhiteSpace(jsonData))
+                return null;
+            var result = Newtonsoft.Json.JsonConvert.DeserializeObject<ServiceDetails>(jsonData);
             return result;
         }
     }

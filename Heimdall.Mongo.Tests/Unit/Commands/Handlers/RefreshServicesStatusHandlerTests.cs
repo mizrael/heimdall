@@ -45,13 +45,13 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
         [Fact]
         public async Task should_deactivate_service_when_no_endpoints_available()
         {
-            var service = new Infrastructure.Entities.Service()
+            var service = new Mongo.Infrastructure.Entities.Service()
             {
                 Active = true,
                 Name = "lorem",
-                Endpoints = Enumerable.Empty<Infrastructure.Entities.ServiceEndpoint>()
+                Endpoints = Enumerable.Empty<Mongo.Infrastructure.Entities.ServiceEndpoint>()
             };
-            var mockRepo = RepositoryUtils.MockRepository<Infrastructure.Entities.Service>(service);
+            var mockRepo = RepositoryUtils.MockRepository<Mongo.Infrastructure.Entities.Service>(service);
 
             var mockDbContext = new Mock<IDbContext>();
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
@@ -63,27 +63,27 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
             var sut = new RefreshServicesStatusHandler(mockDbContext.Object, mockPinger.Object, validator);
             await sut.Handle(new RefreshServicesStatus(10));
             
-            mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Infrastructure.Entities.Service, bool>>>(),
-                                                  It.Is<Infrastructure.Entities.Service>(r => r.Active == false)), 
+            mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Mongo.Infrastructure.Entities.Service, bool>>>(),
+                                                  It.Is<Mongo.Infrastructure.Entities.Service>(r => r.Active == false)), 
                             Times.Once());
         }
 
         [Fact]
         public async Task should_deactivate_service_when_no_endpoints_responds_to_ping()
         {
-            var service = new Infrastructure.Entities.Service()
+            var service = new Mongo.Infrastructure.Entities.Service()
             {
                 Active = true,
                 Name = "lorem",
                 Endpoints = new[]{
-                    new Infrastructure.Entities.ServiceEndpoint()
+                    new Mongo.Infrastructure.Entities.ServiceEndpoint()
                     {
                         Active = true,
                         Url = "localhost"
                     }
                 }
             };
-            var mockRepo = RepositoryUtils.MockRepository<Infrastructure.Entities.Service>(service);
+            var mockRepo = RepositoryUtils.MockRepository<Mongo.Infrastructure.Entities.Service>(service);
 
             var mockDbContext = new Mock<IDbContext>();
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
@@ -100,32 +100,32 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
 
             mockPinger.Verify(m => m.PingAsync(service.Endpoints.ElementAt(0).Url, command.Timeout), Times.Once());
 
-            mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Infrastructure.Entities.Service, bool>>>(),
-                                                  It.Is<Infrastructure.Entities.Service>(r => r.Active == false && !r.Endpoints.Any(es => es.Active)) ),
+            mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Mongo.Infrastructure.Entities.Service, bool>>>(),
+                                                  It.Is<Mongo.Infrastructure.Entities.Service>(r => r.Active == false && !r.Endpoints.Any(es => es.Active)) ),
                             Times.Once());
         }
 
         [Fact]
         public async Task should_activate_service_when_at_least_one_endpoint_responds_to_ping()
         {
-            var service = new Infrastructure.Entities.Service()
+            var service = new Mongo.Infrastructure.Entities.Service()
             {
                 Active = false,
                 Name = "lorem",
                 Endpoints = new[]{
-                    new Infrastructure.Entities.ServiceEndpoint()
+                    new Mongo.Infrastructure.Entities.ServiceEndpoint()
                     {
                         Active = false,
                         Url = "localhost1"
                     },
-                    new Infrastructure.Entities.ServiceEndpoint()
+                    new Mongo.Infrastructure.Entities.ServiceEndpoint()
                     {
                         Active = false,
                         Url = "localhost2"
                     }
                 }
             };
-            var mockRepo = RepositoryUtils.MockRepository<Infrastructure.Entities.Service>(service);
+            var mockRepo = RepositoryUtils.MockRepository<Mongo.Infrastructure.Entities.Service>(service);
 
             var mockDbContext = new Mock<IDbContext>();
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
@@ -146,20 +146,20 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
             foreach(var endpoint in service.Endpoints)
                 mockPinger.Verify(m => m.PingAsync(endpoint.Url, command.Timeout), Times.Once());
 
-            mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Infrastructure.Entities.Service, bool>>>(),
-                                                  It.Is<Infrastructure.Entities.Service>(r => r.Active == true && 1 == r.Endpoints.Count(es => es.Active && es.Url == "localhost2" ) ) ),
+            mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Mongo.Infrastructure.Entities.Service, bool>>>(),
+                                                  It.Is<Mongo.Infrastructure.Entities.Service>(r => r.Active == true && 1 == r.Endpoints.Count(es => es.Active && es.Url == "localhost2" ) ) ),
                             Times.Once());
         }
 
         [Fact]
         public async Task should_update_endpoint_roundtrip_time()
         {
-            var service = new Infrastructure.Entities.Service()
+            var service = new Mongo.Infrastructure.Entities.Service()
             {
                 Active = false,
                 Name = "lorem",
                 Endpoints = new[]{
-                    new Infrastructure.Entities.ServiceEndpoint()
+                    new Mongo.Infrastructure.Entities.ServiceEndpoint()
                     {
                         Active = false,
                         Url = "localhost",
@@ -167,7 +167,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
                     }
                 }
             };
-            var mockRepo = RepositoryUtils.MockRepository<Infrastructure.Entities.Service>(service);
+            var mockRepo = RepositoryUtils.MockRepository<Mongo.Infrastructure.Entities.Service>(service);
 
             var mockDbContext = new Mock<IDbContext>();
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
@@ -182,8 +182,8 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
             var sut = new RefreshServicesStatusHandler(mockDbContext.Object, mockPinger.Object, validator);
             await sut.Handle(command);
 
-            mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Infrastructure.Entities.Service, bool>>>(),
-                                                  It.Is<Infrastructure.Entities.Service>(r => r.Endpoints.Any(es => es.RoundtripTime == 42))),
+            mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Mongo.Infrastructure.Entities.Service, bool>>>(),
+                                                  It.Is<Mongo.Infrastructure.Entities.Service>(r => r.Endpoints.Any(es => es.RoundtripTime == 42))),
                             Times.Once());
         }
     }

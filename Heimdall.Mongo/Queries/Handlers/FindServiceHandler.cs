@@ -1,7 +1,6 @@
 ﻿using Heimdall.Mongo.Infrastructure;
 using MediatR;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Heimdall.Mongo.Queries.Handlers
@@ -24,11 +23,6 @@ namespace Heimdall.Mongo.Queries.Handlers
             if (null == service)
                 return null;
 
-            //var availableEndpoints = service.Endpoints.Where(es => es.Active).ToArray();
-            //if (!availableEndpoints.Any())
-            //    return null;
-
-            //service.Endpoints = availableEndpoints;
             return AutoMapper.Mapper.Map<Core.Queries.Models.ServiceDetails>(service);
         }
     }

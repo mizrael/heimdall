@@ -13,15 +13,19 @@ namespace Heimdall.Mongo.Infrastructure
                 {
                     mo.ResolveUsing((Entities.Service s) =>
                     {
-                        if (!s.Active || null == s.Endpoints)
-                            return Enumerable.Empty<Core.Queries.Models.ServiceEndpoint>();
-
-                        var availableEndpoints = s.Endpoints.Where(es => es.Active).ToArray();
-                        if (!availableEndpoints.Any())
-                            return Enumerable.Empty<Core.Queries.Models.ServiceEndpoint>();
-
+                        var availableEndpoints = s.GetActiveEndpoints();
                         return availableEndpoints.Select(se => AutoMapper.Mapper.Map<Core.Queries.Models.ServiceEndpoint>(se))
                                                  .ToArray();
+                    });
+                }).ForMember(e => e.BestEndpoint, mo =>
+                {
+                    mo.ResolveUsing((Entities.Service s) =>
+                    {
+                        var availableEndpoints = s.GetActiveEndpoints();
+                        if (null == availableEndpoints || !availableEndpoints.Any())
+                            return null;
+                        var bestEndpoint = availableEndpoints.OrderByDescending(e => e.RoundtripTime).First();
+                        return AutoMapper.Mapper.Map<Core.Queries.Models.ServiceEndpoint>(bestEndpoint);
                     });
                 });
 
@@ -39,5 +43,6 @@ namespace Heimdall.Mongo.Infrastructure
                     });
                 });
         }
+        
     }
 }

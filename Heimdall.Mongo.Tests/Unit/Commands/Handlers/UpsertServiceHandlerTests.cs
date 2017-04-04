@@ -3,7 +3,6 @@ using Heimdall.Mongo.Commands.Handlers;
 using Heimdall.Mongo.Infrastructure;
 using Heimdall.Mongo.Tests.Utils;
 using LibCore.CQRS.Validation;
-using LibCore.Mongo;
 using Moq;
 using System;
 using System.Linq;
@@ -37,7 +36,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
         {
             var command = new UpsertService("lorem", "ipsum");
 
-            var mockRepo = RepositoryUtils.MockRepository<Infrastructure.Entities.Service>();
+            var mockRepo = RepositoryUtils.MockRepository<Mongo.Infrastructure.Entities.Service>();
 
             var mockDbContext = new Mock<IDbContext>();
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
@@ -47,8 +46,8 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
             var sut = new UpsertServiceHandler(mockDbContext.Object, validator);
             await sut.Handle(command);
 
-            mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Infrastructure.Entities.Service, bool>>>(),
-                It.Is<Infrastructure.Entities.Service>(r =>
+            mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Mongo.Infrastructure.Entities.Service, bool>>>(),
+                It.Is<Mongo.Infrastructure.Entities.Service>(r =>
                     r.Name == command.Name &&
                     r.Active == false &&
                     null != r.Endpoints && 1 == r.Endpoints.Count() && 
@@ -61,7 +60,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
         {
             var command = new UpsertService("lorem", "ipsum");
 
-            var service = new Infrastructure.Entities.Service()
+            var service = new Mongo.Infrastructure.Entities.Service()
             {
                 Name = command.Name,
                 Active = false,
@@ -78,8 +77,8 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
             var sut = new UpsertServiceHandler(mockDbContext.Object, validator);
             await sut.Handle(command);
             
-            mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Infrastructure.Entities.Service, bool>>>(),
-                It.Is<Infrastructure.Entities.Service>(r =>
+            mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Mongo.Infrastructure.Entities.Service, bool>>>(),
+                It.Is<Mongo.Infrastructure.Entities.Service>(r =>
                     r.Name == command.Name &&
                     r.Active == false && 
                     null != r.Endpoints && 1 == r.Endpoints.Count() &&
@@ -92,13 +91,13 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
         {
             var command = new UpsertService("lorem", "ipsum");
 
-            var service = new Infrastructure.Entities.Service()
+            var service = new Mongo.Infrastructure.Entities.Service()
             {
                 Name = command.Name,
                 Active = false,
                 Endpoints = new[]
                 {
-                    new Infrastructure.Entities.ServiceEndpoint()
+                    new Mongo.Infrastructure.Entities.ServiceEndpoint()
                     {
                         Active = false,
                         Url = "localhost"
@@ -116,8 +115,8 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
             var sut = new UpsertServiceHandler(mockDbContext.Object, validator);
             await sut.Handle(command);
 
-            mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Infrastructure.Entities.Service, bool>>>(),
-                It.Is<Infrastructure.Entities.Service>(r =>
+            mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Mongo.Infrastructure.Entities.Service, bool>>>(),
+                It.Is<Mongo.Infrastructure.Entities.Service>(r =>
                     r.Name == command.Name &&
                     r.Active == false &&
                     null != r.Endpoints && 2 == r.Endpoints.Count() &&
@@ -130,13 +129,13 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
         {
             var command = new UpsertService("lorem", "ipsum");
 
-            var service = new Infrastructure.Entities.Service()
+            var service = new Mongo.Infrastructure.Entities.Service()
             {
                 Name = command.Name,
                 Active = false,
                 Endpoints = new[]
                 {
-                    new Infrastructure.Entities.ServiceEndpoint()
+                    new Mongo.Infrastructure.Entities.ServiceEndpoint()
                     {
                         Active = false,
                         Url = command.Endpoint
@@ -154,8 +153,8 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
             var sut = new UpsertServiceHandler(mockDbContext.Object, validator);
             await sut.Handle(command);
 
-            mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Infrastructure.Entities.Service, bool>>>(),
-                                                   It.IsAny<Infrastructure.Entities.Service>()), Times.Never());
+            mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Mongo.Infrastructure.Entities.Service, bool>>>(),
+                                                   It.IsAny<Mongo.Infrastructure.Entities.Service>()), Times.Never());
         }
     }
 }

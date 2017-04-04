@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Heimdall.Web.DTO
 {
@@ -14,6 +13,8 @@ namespace Heimdall.Web.DTO
     public class ServiceDetails
     {
         public string Name { get; set; }
+        public bool Active { get; set; } = false;
+        public ServiceEndpoint BestEndpoint { get; set; }
         public IEnumerable<ServiceEndpoint> Endpoints { get; set; }
     }
 
