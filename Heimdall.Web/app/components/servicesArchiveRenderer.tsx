@@ -2,13 +2,14 @@
 import * as $ from "jquery";
 import { Services } from "../services/services";
 import { ServiceArchiveItem } from "../models/service";
+import { ServicesArchiveItemRenderer } from "./servicesArchiveItemRenderer";
 
-export interface ServicesArchiveState {
+export interface ServicesArchiveRendererState {
     services: Array<ServiceArchiveItem>;
     isLoading: boolean;
 }
 
-export class ServicesArchive extends React.Component<{}, ServicesArchiveState> {
+export class ServicesArchiveRenderer extends React.Component<{}, ServicesArchiveRendererState> {
     constructor(props: any) {
         super(props);
 
@@ -16,7 +17,7 @@ export class ServicesArchive extends React.Component<{}, ServicesArchiveState> {
     }
 
     private readServices() {
-        let state:ServicesArchiveState = this.state,
+        let state:ServicesArchiveRendererState = this.state,
             provider = new Services();
 
         state.isLoading = true;
@@ -27,62 +28,15 @@ export class ServicesArchive extends React.Component<{}, ServicesArchiveState> {
             this.onLoadingComplete(state);
         });
     }
-    
-    private viewServiceDetails(e:any, serviceName:string) {
-        e.preventDefault();
-
-        let state: ServicesArchiveState = this.state,
-            provider = new Services();
-
-        state.isLoading = true;
-        this.setState(state);
-
-        provider.read(serviceName).then(service => {
-            this.onLoadingComplete(state);
-
-            if (!service)
-                return;
-        }).catch(() => {
-            this.onLoadingComplete(state);
-        });
-    }
-
-    private refreshService(e: any, serviceName: string) {
-        e.preventDefault();
-
-        let state: ServicesArchiveState = this.state,
-            provider = new Services();
-
-        state.isLoading = true;
-        this.setState(state);
-
-        provider.refresh(serviceName).catch(() => {
-            this.onLoadingComplete(state);
-        }).then(() => {
-            this.onLoadingComplete(state);
-        });
-    }
-
-    private onLoadingComplete(state: ServicesArchiveState) {
+  
+    private onLoadingComplete(state: ServicesArchiveRendererState) {
         state = state || this.state;
         state.isLoading = false;
         this.setState(state);
     }
 
     private renderService(service: ServiceArchiveItem) {
-        let actions = (this.state.isLoading) ? <td>processing....</td> : 
-            <td>
-                <button data-toggle="modal" data-target="#myModal" onClick={e => this.viewServiceDetails(e, service.name)}>View</button>
-                <button onClick={e => this.refreshService(e, service.name)}>Refresh</button>
-            </td>;
-
-        return <tr key={service.name}>
-            <td>{service.name}</td>
-            <td>{service.active ? "yes" : "no"}</td>
-            <td>{service.endpointsCount}</td>
-            <td>{service.roundtripTime}</td>
-            {actions}    
-        </tr>;
+        return <ServicesArchiveItemRenderer model={service} />;
     }
 
     private renderServices() {

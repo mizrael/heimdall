@@ -8,6 +8,7 @@
 export class ServiceDetails {
     name: string;
     endpoints: Array<ServiceEndpoint>;
+    bestEndpoint: ServiceEndpoint;
 }
 
 export class ServiceEndpoint {

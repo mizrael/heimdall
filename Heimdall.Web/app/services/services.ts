@@ -17,9 +17,9 @@ export class Services implements IServices {
         return this.get<ServiceDetails>(url);
     }
 
-    public refresh(name: string): Promise<void> {
+    public refresh(name: string): Promise<ServiceDetails> {
         let url = Services.baseUrl + "refresh/";
-        return this.post<void>(url, name);
+        return this.post<ServiceDetails>(url, name);
     }
 
     private post<T>(url: string, data: any = null): Promise<T> {
