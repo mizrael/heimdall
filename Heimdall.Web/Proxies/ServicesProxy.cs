@@ -1,5 +1,6 @@
 ﻿using Heimdall.Web.DTO;
 using LibCore.Web.HTTP;
+using LibCore.Web.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -42,12 +43,12 @@ namespace Heimdall.Web.Proxies
             
             var response = await _servicesApiClient.PostAsync(request);
             if (null == response)
-                return null;
-            response.EnsureSuccessStatusCode();
-            var jsonData = await response.Content.ReadAsStringAsync();
-            if (string.IsNullOrWhiteSpace(jsonData))
-                return null;
-            var result = Newtonsoft.Json.JsonConvert.DeserializeObject<ServiceDetails>(jsonData);
+                throw new System.Net.Http.HttpRequestException($"unable to perform POST request to '{request.Url}'");
+
+            await response.AssertSuccessfulAsync();
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var result = Newtonsoft.Json.JsonConvert.DeserializeObject<ServiceDetails>(responseContent);
             return result;
         }
     }
