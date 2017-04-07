@@ -82,5 +82,19 @@ namespace Heimdall.API.Controllers
             
             return this.Ok(result);
         }
+
+        /// <summary>
+        /// deletes a registered service
+        /// </summary>
+        /// <returns></returns>
+        [HttpDelete]
+        public async Task<IActionResult> Delete([FromBody]string name)
+        {
+            var command = new Core.Commands.DeleteService(name);
+
+            await _mediator.Publish(command);
+
+            return this.Ok();
+        }
     }
 }
