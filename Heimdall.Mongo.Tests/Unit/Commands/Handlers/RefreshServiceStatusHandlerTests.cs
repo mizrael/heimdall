@@ -4,7 +4,6 @@ using Heimdall.Mongo.Infrastructure;
 using Heimdall.Mongo.Tests.Utils;
 using LibCore.CQRS.Validation;
 using LibCore.Web.Services;
-using MediatR;
 using Moq;
 using System;
 using System.Linq;
