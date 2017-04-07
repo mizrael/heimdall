@@ -11,10 +11,14 @@ namespace Heimdall.Mongo.Infrastructure
             cfg.CreateMap<Entities.Service, Heimdall.Core.Queries.Models.ServiceDetails>()
                 .ForMember(e => e.Endpoints, mo =>
                 {
-                    mo.ResolveUsing((Entities.Service s) =>
+                    mo.ResolveUsing((src, dest, destMember, resContext) =>
                     {
-                        var availableEndpoints = s.GetActiveEndpoints();
-                        return availableEndpoints.Select(se => AutoMapper.Mapper.Map<Core.Queries.Models.ServiceEndpoint>(se))
+                        var forceLoad = false;
+                        if (resContext.Items.ContainsKey("forceLoad"))
+                            forceLoad = (bool)resContext.Items["forceLoad"];
+
+                        var endpoints = forceLoad ? src.Endpoints : src.GetActiveEndpoints();
+                        return endpoints.Select(se => AutoMapper.Mapper.Map<Core.Queries.Models.ServiceEndpoint>(se))
                                                  .ToArray();
                     });
                 }).ForMember(e => e.BestEndpoint, mo =>
