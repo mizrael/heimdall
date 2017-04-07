@@ -23,7 +23,7 @@ namespace Heimdall.Mongo.Queries.Handlers
             if (null == service)
                 return null;
 
-            return AutoMapper.Mapper.Map<Core.Queries.Models.ServiceDetails>(service);
+            return AutoMapper.Mapper.Map<Core.Queries.Models.ServiceDetails>(service, opts => opts.Items["forceLoad"] = query.ForceLoad);
         }
     }
 }
