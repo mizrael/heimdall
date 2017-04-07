@@ -44,7 +44,7 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
             var mockDbContext = new Mock<IDbContext>();
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
-            var query = new FindService("lorem");
+            var query = new FindService("lorem", false);
             
             var sut = new FindServiceHandler(mockDbContext.Object);
             var result = await sut.Handle(query);
@@ -68,7 +68,7 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
             var mockDbContext = new Mock<IDbContext>();
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
-            var query = new FindService("lorem");
+            var query = new FindService("lorem", false);
 
             var sut = new FindServiceHandler(mockDbContext.Object);
             var result = await sut.Handle(query);
@@ -90,7 +90,7 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
             var mockDbContext = new Mock<IDbContext>();
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
-            var query = new FindService("lorem");
+            var query = new FindService("lorem", false);
 
             var sut = new FindServiceHandler(mockDbContext.Object);
             var result = await sut.Handle(query);
@@ -112,7 +112,7 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
             var mockDbContext = new Mock<IDbContext>();
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
-            var query = new FindService("lorem");
+            var query = new FindService("lorem", false);
 
             var sut = new FindServiceHandler(mockDbContext.Object);
             var result = await sut.Handle(query);
@@ -141,7 +141,7 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
             var mockDbContext = new Mock<IDbContext>();
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
-            var query = new FindService("lorem");
+            var query = new FindService("lorem", false);
 
             var sut = new FindServiceHandler(mockDbContext.Object);
             var result = await sut.Handle(query);
@@ -176,7 +176,7 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
             var mockDbContext = new Mock<IDbContext>();
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
-            var query = new FindService("lorem");
+            var query = new FindService("lorem", false);
 
             var sut = new FindServiceHandler(mockDbContext.Object);
             var result = await sut.Handle(query);
@@ -185,6 +185,42 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
             result.Endpoints.ElementAt(0).Url.ShouldBeEquivalentTo("localhost2");
         }
 
-        
+
+        [Fact]
+        public async Task should_return_service_with_all_endpoints_only_when_forceLoad_true()
+        {
+            var service = new Mongo.Infrastructure.Entities.Service()
+            {
+                Name = "lorem",
+                Active = true,
+                Endpoints = new[]
+                {
+                    new Mongo.Infrastructure.Entities.ServiceEndpoint()
+                    {
+                        Active = false,
+                        Url = "localhost1"
+                    },
+                    new Mongo.Infrastructure.Entities.ServiceEndpoint()
+                    {
+                        Active = true,
+                        Url = "localhost2"
+                    }
+                }
+            };
+            var mockRepo = RepositoryUtils.MockRepository(service);
+
+            var mockDbContext = new Mock<IDbContext>();
+            mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
+
+            var query = new FindService("lorem", true);
+
+            var sut = new FindServiceHandler(mockDbContext.Object);
+            var result = await sut.Handle(query);
+            result.Should().NotBeNull();
+            result.Endpoints.Should().NotBeNullOrEmpty();
+            result.Endpoints.Count().ShouldBeEquivalentTo(service.Endpoints.Count());
+        }
+
+
     }
 }
