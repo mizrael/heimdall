@@ -30,13 +30,23 @@ namespace Heimdall.API.Controllers
         /// finds the service by name and returns its details along with the list of available endpoints.
         /// If no endpoint is active, returns null.
         /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
         //[HttpGet, Route("{name}")]
         [HttpGet("{name}", Name = "GetByName")]
-        public async Task<IActionResult> Get(string name)
+        public async Task<IActionResult> GetByName(string name)
         {
-            var query = new FindService(name);
+            var query = new FindService(name, false);
+            var result = await _mediator.Send(query);
+            return this.OkOrNotFound(result);
+        }
+
+        /// <summary>
+        /// finds the service by name and returns its details along with the list of available endpoints.
+        /// It will return all the endpoints regardless their status
+        /// </summary>
+        [HttpGet("{name}/force", Name = "GetByNameFull")]
+        public async Task<IActionResult> GetByNameFull(string name)
+        {
+            var query = new FindService(name, true);
             var result = await _mediator.Send(query);
             return this.OkOrNotFound(result);
         }
@@ -67,7 +77,7 @@ namespace Heimdall.API.Controllers
 
             await _mediator.Publish(command);
 
-            var query = new FindService(name);
+            var query = new FindService(name, false);
             var result = await _mediator.Send(query);
             
             return this.Ok(result);
