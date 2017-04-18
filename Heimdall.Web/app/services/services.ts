@@ -1,5 +1,5 @@
 ﻿import "whatwg-fetch";
-import { ServiceArchiveItem, ServiceDetails } from "../models/service";
+import { ServiceArchiveItem, ServiceDetails, CreateService } from "../models/service";
 
 interface IServices{
 
@@ -17,13 +17,27 @@ export class Services implements IServices {
         return this.get<ServiceDetails>(url);
     }
 
+    public create(model: CreateService): Promise<ServiceDetails> {
+        let url = Services.baseUrl;
+        return this.post<ServiceDetails>(url, model);
+    }
+
     public refresh(name: string): Promise<ServiceDetails> {
         let url = Services.baseUrl + "refresh/";
         return this.post<ServiceDetails>(url, name);
     }
 
+    public deleteService(name: string): Promise<void> {
+        let url = Services.baseUrl;
+        return this.delete<void>(url, name);
+    }
+
     private post<T>(url: string, data: any = null): Promise<T> {
         return this.executeRequest(url, "POST", data);
+    }
+
+    private delete<T>(url: string, data: any = null): Promise<T> {
+        return this.executeRequest(url, "DELETE", data);
     }
 
     private put<T>(url: string, data: any = null): Promise<T> {
@@ -37,11 +51,15 @@ export class Services implements IServices {
     private executeRequest<T>(url: string, method:string, data:any = null): Promise<T> {
         var fetchOptions = this.buildRequest(method, data);
 
-        return fetch(url, fetchOptions).then((response: Response) => {
+        return fetch(url, fetchOptions)
+            .catch(reason => {
+                console.log(reason);
+                return null;
+            })
+            .then((response: Response) => {
             if (!response.ok)
                 return null;
             return response.json().then<T>((data: T) => {
-                console.log(data);
                 return data;
             });
         });

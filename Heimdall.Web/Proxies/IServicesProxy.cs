@@ -6,8 +6,10 @@ namespace Heimdall.Web.Proxies
 {
     public interface IServicesProxy
     {
-        Task<IEnumerable<ServiceArchiveItem>> Read();
-        Task<ServiceDetails> ReadDetails(string name);
-        Task<ServiceDetails> Refresh(string name);
+        Task<IEnumerable<ServiceArchiveItem>> ReadAsync();
+        Task<ServiceDetails> ReadDetailsAsync(string name);
+        Task<ServiceDetails> RefreshAsync(string name);
+        Task CreateAsync(CreateService dto);
+        Task DeleteAsync(string name);
     }
 }

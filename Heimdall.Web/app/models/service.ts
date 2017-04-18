@@ -7,6 +7,7 @@
 
 export class ServiceDetails {
     name: string;
+    active: boolean;
     endpoints: Array<ServiceEndpoint>;
     bestEndpoint: ServiceEndpoint;
 }
@@ -15,4 +16,9 @@ export class ServiceEndpoint {
     url: string;
     active: boolean;
     roundtripTime: number;
+}
+
+export class CreateService {
+    name: string;
+    endpoint: string;
 }

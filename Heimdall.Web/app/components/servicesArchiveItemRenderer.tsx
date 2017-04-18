@@ -1,5 +1,4 @@
 ﻿import * as React from "react";
-import * as $ from "jquery";
 import { Services } from "../services/services";
 import { ServiceArchiveItem } from "../models/service";
 
@@ -10,36 +9,22 @@ export interface ServicesArchiveItemRendererState {
 
 export interface ServicesArchiveItemRendererProps {
     model: ServiceArchiveItem;
+    onSelect: Function;
+    onDeleted: Function;
+    rowIndex: number;
 }
 
 export class ServicesArchiveItemRenderer extends React.Component<ServicesArchiveItemRendererProps, ServicesArchiveItemRendererState> {
     constructor(props: ServicesArchiveItemRendererProps) {
         super(props);
-
+        
         this.state = { model: props.model, isLoading: false };
     }
     
     private viewServiceDetails(e:any) {
         e.preventDefault();
-
-        if (!this.state.model) {
-            return;
-        }
-
-        let state: ServicesArchiveItemRendererState = this.state,
-            provider = new Services();
-
-        state.isLoading = true;
-        this.setState(state);
-
-        provider.read(state.model.name).then(service => {
-            this.onLoadingComplete(state);
-
-            if (!service)
-                return;
-        }).catch(() => {
-            this.onLoadingComplete(state);
-        });
+        
+        this.props.onSelect(this.state.model);
     }
 
     private refreshService(e: any) {
@@ -58,8 +43,43 @@ export class ServicesArchiveItemRenderer extends React.Component<ServicesArchive
         provider.refresh(state.model.name).catch(() => {
             this.onLoadingComplete(state);
         }).then(service => {
+            state.model.roundtripTime = Number.MAX_SAFE_INTEGER;
+            state.model.endpointsCount = 0;
+            state.model.active = false;
+            if (service) {
+                state.model.active = (null != service.bestEndpoint);
+                if (state.model.active) {
+                    state.model.roundtripTime = service.bestEndpoint.roundtripTime;
+                }
+                if (service.endpoints) {
+                    state.model.endpointsCount = service.endpoints.length;
+                }
+            }
             this.onLoadingComplete(state);
         });
+    }
+
+    private deleteService(e: any) {
+        e.preventDefault();
+
+        this.props.onDeleted(this.props.rowIndex);
+
+        //let state: ServicesArchiveItemRendererState = this.state,
+        //    provider = new Services();
+
+        //if (!state.model) {
+        //    return;
+        //}
+
+        //state.isLoading = true;
+        //this.setState(state);
+
+        //provider.deleteService(state.model.name).catch(() => {
+        //    this.onLoadingComplete(state);
+        //}).then(() => {
+        //    this.onLoadingComplete(state);
+        //    this.props.onDeleted();
+        //});
     }
 
     private onLoadingComplete(state: ServicesArchiveItemRendererState) {
@@ -75,15 +95,18 @@ export class ServicesArchiveItemRenderer extends React.Component<ServicesArchive
 
         let actions = (this.state.isLoading) ? <td>processing....</td> :
             <td>
-                <button data-toggle="modal" data-target="#myModal" onClick={e => this.viewServiceDetails(e)}>View</button>
-                <button onClick={e => this.refreshService(e)}>Refresh</button>
+                <ul>
+                    <li><button onClick={e => this.viewServiceDetails(e)}>View</button></li>
+                    <li><button onClick={e => this.refreshService(e)}>Refresh</button></li>
+                    <li><button onClick={e => this.deleteService(e)}>Delete</button></li>
+                </ul>
             </td>;
 
-        return <tr key={this.state.model.name}>
+        return <tr data-row={this.props.rowIndex}>
             <td>{this.state.model.name}</td>
             <td>{this.state.model.active ? "yes" : "no"}</td>
             <td>{this.state.model.endpointsCount}</td>
-            <td>{this.state.model.roundtripTime}</td>
+            <td>{this.state.model.active ? this.state.model.roundtripTime + 's': '-'}</td>
             {actions}
         </tr>;
     }

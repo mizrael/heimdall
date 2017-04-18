@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+
 namespace Heimdall.Web.Proxies
 {
 
@@ -17,39 +18,57 @@ namespace Heimdall.Web.Proxies
             _servicesApiClient = apiClient ?? throw new ArgumentNullException(nameof(apiClient));
         }
 
-        public async Task<IEnumerable<ServiceArchiveItem>> Read()
+        public async Task<IEnumerable<ServiceArchiveItem>> ReadAsync()
         {
             var request = new RequestData("/services/");
             var result = await _servicesApiClient.GetAsync<IEnumerable<ServiceArchiveItem>>(request);
             return result;
         }
 
-        public async Task<ServiceDetails> ReadDetails(string name)
+        public async Task<ServiceDetails> ReadDetailsAsync(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name));
 
-            var request = new RequestData("/services/" + name);
+            var request = new RequestData($"/services/{name}/force");
             var result = await _servicesApiClient.GetAsync<ServiceDetails>(request);
             return result;
         }
 
-        public async Task<ServiceDetails> Refresh(string name)
+        public async Task CreateAsync(CreateService dto)
+        {
+            if (null == dto)
+                throw new ArgumentNullException(nameof(dto));
+
+            var request = new RequestData("/services", dto);
+
+            var result = await _servicesApiClient.PostAsync(request);
+            result.EnsureSuccessStatusCode();
+        }
+
+        public async Task<ServiceDetails> RefreshAsync(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name));
-            
+
             var request = new RequestData("/services/refresh", name);
-            
-            var response = await _servicesApiClient.PostAsync(request);
+
+            var result = await _servicesApiClient.PostAsync<ServiceDetails>(request);
+            return result;
+        }
+
+        public async Task DeleteAsync(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentNullException(nameof(name));
+
+            var request = new RequestData("/services/", name);
+
+            var response = await _servicesApiClient.DeleteAsync(request);
             if (null == response)
-                throw new System.Net.Http.HttpRequestException($"unable to perform POST request to '{request.Url}'");
+                throw new System.Net.Http.HttpRequestException($"unable to perform DELETE request to '{request.Url}'");
 
             await response.AssertSuccessfulAsync();
-
-            var responseContent = await response.Content.ReadAsStringAsync();
-            var result = Newtonsoft.Json.JsonConvert.DeserializeObject<ServiceDetails>(responseContent);
-            return result;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Heimdall.Web.Proxies;
+﻿using Heimdall.Web.DTO;
+using Heimdall.Web.Proxies;
 using LibCore.Web.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -19,22 +20,37 @@ namespace Heimdall.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var result = await _servicesProxy.Read();
+            var result = await _servicesProxy.ReadAsync();
             return this.OkOrNotFound(result);
         }
 
         [HttpGet("{name}", Name = "GetByName")]
         public async Task<IActionResult> GetByName(string name)
         {
-            var result = await _servicesProxy.ReadDetails(name);
+            var result = await _servicesProxy.ReadDetailsAsync(name);
             return this.OkOrNotFound(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody]CreateService service)
+        {
+            await _servicesProxy.CreateAsync(service);
+            return CreatedAtAction("GetByName", new { name = service.Name }, null);
         }
 
         [HttpPost, Route("refresh")]
         public async Task<IActionResult> PostRefresh([FromBody]string name)
         {
-            var service = await _servicesProxy.Refresh(name);
+            var service = await _servicesProxy.RefreshAsync(name);
             return this.Ok(service);
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> Delete([FromBody]string name)
+        {
+            await _servicesProxy.DeleteAsync(name);
+
+            return this.Ok();
         }
     }
 }

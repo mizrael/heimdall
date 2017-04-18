@@ -24,4 +24,10 @@ namespace Heimdall.Web.DTO
         public bool Active { get; set; }
         public long RoundtripTime { get; set; }
     }
+
+    public class CreateService
+    {
+        public string Name { get; set; }
+        public string Endpoint { get; set; }
+    }
 }

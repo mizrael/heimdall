@@ -1,11 +1,15 @@
 ﻿import * as React from "react";
-import * as $ from "jquery";
+import * as ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { Services } from "../services/services";
 import { ServiceArchiveItem } from "../models/service";
 import { ServicesArchiveItemRenderer } from "./servicesArchiveItemRenderer";
+import { ServiceDetailsModal } from "./serviceDetailsModal";
+import { CreateServiceModal } from "./createServiceModal";
 
 export interface ServicesArchiveRendererState {
     services: Array<ServiceArchiveItem>;
+    selectedService: ServiceArchiveItem;
+    openDetails: boolean;
     isLoading: boolean;
 }
 
@@ -13,7 +17,7 @@ export class ServicesArchiveRenderer extends React.Component<{}, ServicesArchive
     constructor(props: any) {
         super(props);
 
-        this.state = { services: [], isLoading: false };
+        this.state = { services: [], isLoading: false, selectedService: null, openDetails: false };
     }
 
     private readServices() {
@@ -35,14 +39,34 @@ export class ServicesArchiveRenderer extends React.Component<{}, ServicesArchive
         this.setState(state);
     }
 
-    private renderService(service: ServiceArchiveItem) {
-        return <ServicesArchiveItemRenderer model={service} />;
+    private renderService(service: ServiceArchiveItem, index: number) {
+        return <ServicesArchiveItemRenderer key={index}
+            rowIndex={index} model={service}
+            onDeleted={(index: number) => this.onServiceDeleted(index)} 
+            onSelect={(u: any) => this.onSelectService(u)} />;
     }
 
-    private renderServices() {
-        return this.state.services.map(s => {
-            return this.renderService(s);
-        });
+    private selectService(serviceItem: ServiceArchiveItem) {
+        let state: ServicesArchiveRendererState = this.state;
+        state.selectedService = serviceItem;
+        state.openDetails = (null != serviceItem);
+        this.setState(state);
+    }
+
+    private onServiceDeleted(index: number) {
+        let state: ServicesArchiveRendererState = this.state,
+            services = state.services.slice();
+        services.splice(index, 1);
+        state.services = services;
+        this.setState(state);
+    }
+
+    private onSelectService(serviceItem: ServiceArchiveItem) {
+        this.selectService(serviceItem);
+    }
+
+    private getSelectedServiceName() {
+        return (null != this.state.selectedService) ? this.state.selectedService.name : '';
     }
 
     public componentDidMount() {
@@ -50,7 +74,12 @@ export class ServicesArchiveRenderer extends React.Component<{}, ServicesArchive
     }
 
     public render() {
+        const items = this.state.services.map((s, i) => {
+            return this.renderService(s, i);
+        });
+
         return <div className="services-wrapper col-xs-12">
+            <CreateServiceModal onClose={() => this.readServices()} />
             <table className="table table-striped table-hover">
                 <thead>
                     <tr>
@@ -61,26 +90,17 @@ export class ServicesArchiveRenderer extends React.Component<{}, ServicesArchive
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody>{this.renderServices()}</tbody>
+                <ReactCSSTransitionGroup
+                    transitionName="example"
+                    transitionEnterTimeout={500}
+                    transitionLeaveTimeout={300}
+                    component="tbody">
+                    {items}
+                </ReactCSSTransitionGroup>
             </table>
 
-            <div className="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel">
-                <div className="modal-dialog" role="document">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <h4 className="modal-title" id="myModalLabel">Modal title</h4>
-                        </div>
-                        <div className="modal-body">
-                            lorem ipsum
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
-                            <button type="button" className="btn btn-primary">Save changes</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <ServiceDetailsModal serviceName={this.getSelectedServiceName()} show={this.state.openDetails} onClose={() => this.selectService(null)} />
+            
         </div>;
     }
-}
+};
