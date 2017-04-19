@@ -17,9 +17,11 @@ export class Services implements IServices {
         return this.get<ServiceDetails>(url);
     }
 
-    public create(model: CreateService): Promise<ServiceDetails> {
+    public create(model: CreateService): Promise<boolean> {
         let url = Services.baseUrl;
-        return this.post<ServiceDetails>(url, model);
+        return this.post(url, model).then(function (result: any) {
+            return (null != result);
+        });
     }
 
     public refresh(name: string): Promise<ServiceDetails> {
@@ -57,11 +59,13 @@ export class Services implements IServices {
                 return null;
             })
             .then((response: Response) => {
-            if (!response.ok)
-                return null;
-            return response.json().then<T>((data: T) => {
-                return data;
-            });
+                if (!response.ok)
+                    return null;
+                if (201 == response.status)
+                    return true;
+                return response.json().then<T>((data: T) => {
+                    return data;
+                });
         });
     }
 

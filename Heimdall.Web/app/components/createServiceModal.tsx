@@ -1,5 +1,5 @@
 ﻿import * as React from "react";
-import * as $ from "jquery";
+import { Loading } from "./loading";
 import { Services } from "../services/services";
 import { ServiceDetails, ServiceEndpoint, CreateService } from "../models/service";
 import { Button, Modal, FormGroup, ControlLabel, FormControl } from "react-bootstrap";
@@ -27,6 +27,13 @@ export class CreateServiceModal extends React.Component<CreateServiceModalProps,
         this.setState(state);
     }
 
+    private close() {
+        let state: CreateServiceModalState = this.state;
+        state.show = false;
+        this.setState(state);
+        this.props.onClose();
+    }
+
     private getValidationState() {
         return this.validate() ? 'success' : 'error';
     }
@@ -47,11 +54,16 @@ export class CreateServiceModal extends React.Component<CreateServiceModalProps,
         if (!this.validate())
             return;
 
-        let state: CreateServiceModalState = this.state,
+        let me = this,
+            state: CreateServiceModalState = this.state,
             services = new Services();
         state.isLoading = true;
 
-        services.create(state.form)
+        services.create(state.form).then(function (success: boolean) {
+            let message = (success) ? 'Service created!' : 'An error has occurred, please try again later';
+            alert(message);
+            me.close();
+        });
 
         this.setState(state);
     }
@@ -63,40 +75,45 @@ export class CreateServiceModal extends React.Component<CreateServiceModalProps,
     }
     
     public render() {
+        let content = null;
+        if (!this.state.isLoading) {
+            content = <form onSubmit={(e) => this.onSave(e)}>
+                <FormGroup validationState={this.getValidationState()}>
+                    <ControlLabel>Service name</ControlLabel>
+                    <FormControl
+                        type="text"
+                        value={this.state.form.name}
+                        placeholder="Service name" required
+                        onChange={(e) => this.handleChange("name", e)}
+                    />
+                </FormGroup>
+                <FormGroup validationState={this.getValidationState()}>
+                    <ControlLabel>Endpoint url</ControlLabel>
+                    <FormControl
+                        type="url"
+                        value={this.state.form.endpoint}
+                        placeholder="Endpoint"
+                        onChange={(e) => this.handleChange("endpoint", e)}
+                    />
+                </FormGroup>
+
+                <Button type="submit">Submit</Button>
+            </form>;
+        } else {
+            content = <Loading></Loading>;
+        }
+
         return <div>
-            <button onClick={() => this.open()}>Open</button>
+            <button onClick={() => this.open()}>New</button>
             <Modal
             aria-labelledby='modal-label'
             show={this.state.show} 
-            onHide={() => this.props.onClose()}>
+            onHide={() => { this.close() } }>
                 <Modal.Header closeButton>
-                    <Modal.Title>Create new Service</Modal.Title>
+                    <Modal.Title>Modal heading</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <div className="modal-content-inner">
-                        <form onSubmit={(e) => this.onSave(e)}>
-                            <FormGroup validationState={this.getValidationState()}>
-                                <ControlLabel>Service name</ControlLabel>
-                                <FormControl
-                                    type="text"
-                                    value={this.state.form.name}
-                                    placeholder="Service name" required
-                                    onChange={(e) => this.handleChange("name", e)}
-                                />
-                            </FormGroup>
-                            <FormGroup validationState={this.getValidationState()}>
-                                <ControlLabel>Endpoint url</ControlLabel>
-                                <FormControl
-                                    type="url"
-                                    value={this.state.form.endpoint}
-                                    placeholder="Endpoint"
-                                    onChange={(e) => this.handleChange("endpoint", e)}
-                                />
-                            </FormGroup>
-
-                            <Button type="submit">Submit</Button>
-                        </form>
-                    </div>
+                    {content}
                 </Modal.Body>
             </Modal>
         </div>;

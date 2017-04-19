@@ -61,25 +61,24 @@ export class ServicesArchiveItemRenderer extends React.Component<ServicesArchive
 
     private deleteService(e: any) {
         e.preventDefault();
+        
+        let state: ServicesArchiveItemRendererState = this.state,
+            provider;
 
-        this.props.onDeleted(this.props.rowIndex);
+        if (!state.model) {
+            return;
+        }
 
-        //let state: ServicesArchiveItemRendererState = this.state,
-        //    provider = new Services();
+        state.isLoading = true;
+        this.setState(state);
 
-        //if (!state.model) {
-        //    return;
-        //}
-
-        //state.isLoading = true;
-        //this.setState(state);
-
-        //provider.deleteService(state.model.name).catch(() => {
-        //    this.onLoadingComplete(state);
-        //}).then(() => {
-        //    this.onLoadingComplete(state);
-        //    this.props.onDeleted();
-        //});
+        provider = new Services();
+        provider.deleteService(state.model.name).catch(() => {
+            this.onLoadingComplete(state);
+        }).then(() => {
+            this.onLoadingComplete(state);
+            this.props.onDeleted(this.props.rowIndex);
+        });
     }
 
     private onLoadingComplete(state: ServicesArchiveItemRendererState) {
@@ -102,7 +101,7 @@ export class ServicesArchiveItemRenderer extends React.Component<ServicesArchive
                 </ul>
             </td>;
 
-        return <tr data-row={this.props.rowIndex}>
+        return <tr>
             <td>{this.state.model.name}</td>
             <td>{this.state.model.active ? "yes" : "no"}</td>
             <td>{this.state.model.endpointsCount}</td>

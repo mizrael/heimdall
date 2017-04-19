@@ -1,5 +1,4 @@
 ﻿import * as React from "react";
-import * as $ from "jquery";
 
 export class Loading extends React.Component<{}, {}> {
     constructor(props: any) {
