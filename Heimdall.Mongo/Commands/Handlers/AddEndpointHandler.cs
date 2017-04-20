@@ -8,29 +8,20 @@ using System.Threading.Tasks;
 
 namespace Heimdall.Mongo.Commands.Handlers
 {
-    public class UpsertServiceHandler : BaseCommandHandler<UpsertService>
+    public class AddEndpointHandler : BaseCommandHandler<AddEndpoint>
     {
         private IDbContext _db;
 
-        public UpsertServiceHandler(IDbContext db, IValidator<UpsertService> validator) : base(validator)
+        public AddEndpointHandler(IDbContext db, IValidator<AddEndpoint> validator) : base(validator)
         {
             _db = db ?? throw new ArgumentNullException(nameof(db));
         }
 
-        protected override async Task RunCommand(UpsertService command)
+        protected override async Task RunCommand(AddEndpoint command)
         {
             var service = await _db.Services.FindOneAsync(s => s.Name == command.Name);
-
-            service = service ?? new Infrastructure.Entities.Service()
-            {
-                Id = Guid.NewGuid(),
-                Name = command.Name,
-                Active = false
-            };
+            
             service.Endpoints = service.Endpoints ?? Enumerable.Empty<Infrastructure.Entities.ServiceEndpoint>();
-
-            if (service.Endpoints.Any(e => e.Url == command.Endpoint))
-                return;
 
             service.Endpoints = service.Endpoints.Append(new Infrastructure.Entities.ServiceEndpoint()
             {

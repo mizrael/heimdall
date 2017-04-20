@@ -15,8 +15,4 @@
     <ProjectReference Include="..\Heimdall.Core\Heimdall.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Commands\Validation\" />
-  </ItemGroup>
-
 </Project>
