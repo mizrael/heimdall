@@ -12,53 +12,45 @@ using Xunit;
 
 namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
 {
-    public class UpsertServiceHandlerTests
+    public class AddEndpointHandlerTests
     {
         [Fact]
         public void should_throw_ArgumentNullException_when_dbContext_null()
         {
-            var mockValidator = new Mock<IValidator<UpsertService>>();
-            Assert.Throws<ArgumentNullException>(() => new UpsertServiceHandler(null, mockValidator.Object));
+            var mockValidator = new Mock<IValidator<AddEndpoint>>();
+            Assert.Throws<ArgumentNullException>(() => new AddEndpointHandler(null, mockValidator.Object));
         }
 
         [Fact]
         public async Task should_fail_when_command_null()
         {
             var mockDbContext = new Mock<IDbContext>();
-            var mockValidator = new Mock<IValidator<UpsertService>>();
+            var mockValidator = new Mock<IValidator<AddEndpoint>>();
 
-            var sut = new UpsertServiceHandler(mockDbContext.Object, mockValidator.Object);
+            var sut = new AddEndpointHandler(mockDbContext.Object, mockValidator.Object);
             await Assert.ThrowsAsync<ArgumentNullException>(() => sut.Handle(null));
         }
 
         [Fact]
-        public async Task should_insert_service_when_not_found()
+        public async Task should_throw_when_service_not_found()
         {
-            var command = new UpsertService("lorem", "ipsum");
+            var command = new AddEndpoint("lorem", "ipsum");
 
             var mockRepo = RepositoryUtils.MockRepository<Mongo.Infrastructure.Entities.Service>();
 
             var mockDbContext = new Mock<IDbContext>();
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
-            var validator = new NullValidator<UpsertService>();
+            var validator = new NullValidator<AddEndpoint>();
 
-            var sut = new UpsertServiceHandler(mockDbContext.Object, validator);
-            await sut.Handle(command);
-
-            mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Mongo.Infrastructure.Entities.Service, bool>>>(),
-                It.Is<Mongo.Infrastructure.Entities.Service>(r =>
-                    r.Name == command.Name &&
-                    r.Active == false &&
-                    null != r.Endpoints && 1 == r.Endpoints.Count() && 
-                    r.Endpoints.Any(es => es.Active == false && es.Url == command.Endpoint)) 
-                ), Times.Once());
+            var sut = new AddEndpointHandler(mockDbContext.Object, validator);
+            await Assert.ThrowsAsync<NullReferenceException>(() => sut.Handle(command) );
         }
 
         [Fact]
         public async Task should_update_service_when_found_with_no_endpoints()
         {
-            var command = new UpsertService("lorem", "ipsum");
+            var command = new AddEndpoint("lorem", "ipsum");
 
             var service = new Mongo.Infrastructure.Entities.Service()
             {
@@ -72,9 +64,9 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
             var mockDbContext = new Mock<IDbContext>();
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
-            var validator = new NullValidator<UpsertService>();
+            var validator = new NullValidator<AddEndpoint>();
 
-            var sut = new UpsertServiceHandler(mockDbContext.Object, validator);
+            var sut = new AddEndpointHandler(mockDbContext.Object, validator);
             await sut.Handle(command);
             
             mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Mongo.Infrastructure.Entities.Service, bool>>>(),
@@ -89,7 +81,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
         [Fact]
         public async Task should_update_service_when_found_with_other_endpoints()
         {
-            var command = new UpsertService("lorem", "ipsum");
+            var command = new AddEndpoint("lorem", "ipsum");
 
             var service = new Mongo.Infrastructure.Entities.Service()
             {
@@ -110,51 +102,18 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
             var mockDbContext = new Mock<IDbContext>();
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
-            var validator = new NullValidator<UpsertService>();
+            var validator = new NullValidator<AddEndpoint>();
 
-            var sut = new UpsertServiceHandler(mockDbContext.Object, validator);
+            var sut = new AddEndpointHandler(mockDbContext.Object, validator);
             await sut.Handle(command);
 
-            mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Mongo.Infrastructure.Entities.Service, bool>>>(),
+            mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Mongo.Infrastructure.Entities.Service, bool>>>(), 
                 It.Is<Mongo.Infrastructure.Entities.Service>(r =>
                     r.Name == command.Name &&
                     r.Active == false &&
                     null != r.Endpoints && 2 == r.Endpoints.Count() &&
                     r.Endpoints.Any(es => es.Active == false && es.Url == command.Endpoint))
                 ), Times.Once());
-        }
-
-        [Fact]
-        public async Task should_do_nothing_when_endpoint_already_exists()
-        {
-            var command = new UpsertService("lorem", "ipsum");
-
-            var service = new Mongo.Infrastructure.Entities.Service()
-            {
-                Name = command.Name,
-                Active = false,
-                Endpoints = new[]
-                {
-                    new Mongo.Infrastructure.Entities.ServiceEndpoint()
-                    {
-                        Active = false,
-                        Url = command.Endpoint
-                    }
-                }
-            };
-
-            var mockRepo = RepositoryUtils.MockRepository(service);
-
-            var mockDbContext = new Mock<IDbContext>();
-            mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
-
-            var validator = new NullValidator<UpsertService>();
-
-            var sut = new UpsertServiceHandler(mockDbContext.Object, validator);
-            await sut.Handle(command);
-
-            mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Mongo.Infrastructure.Entities.Service, bool>>>(),
-                                                   It.IsAny<Mongo.Infrastructure.Entities.Service>()), Times.Never());
         }
     }
 }

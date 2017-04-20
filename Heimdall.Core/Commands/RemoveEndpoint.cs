@@ -3,9 +3,9 @@ using System;
 
 namespace Heimdall.Core.Commands
 {
-    public class UpsertService : INotification
+    public class RemoveEndpoint : INotification
     {
-        public UpsertService(string name, string endpoint)
+        public RemoveEndpoint(string name, string endpoint)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name));

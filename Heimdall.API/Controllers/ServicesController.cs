@@ -52,16 +52,16 @@ namespace Heimdall.API.Controllers
         }
 
         /// <summary>
-        /// inserts or updates a service
+        /// creates service
         /// </summary>
         /// <param name="service"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]Models.UpsertService service)
+        public async Task<IActionResult> Post([FromBody]Models.CreateService service)
         {
             if (null == service)
                 throw new ArgumentNullException(nameof(service));
-            var command = new Core.Commands.UpsertService(service.Name, service.Endpoint);
+            var command = new Core.Commands.CreateService(service.Name, service.Endpoint);
             await _mediator.Publish(command);
             return CreatedAtAction("Get", new { name = service.Name }, null);
         }
