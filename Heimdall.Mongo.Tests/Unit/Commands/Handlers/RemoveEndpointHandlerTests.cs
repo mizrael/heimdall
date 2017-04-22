@@ -54,7 +54,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
 
             var service = new Mongo.Infrastructure.Entities.Service()
             {
-                Name = command.Name,
+                Name = command.ServiceName,
                 Active = false,
                 Endpoints = null
             };
@@ -77,7 +77,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
 
             var service = new Mongo.Infrastructure.Entities.Service()
             {
-                Name = command.Name,
+                Name = command.ServiceName,
                 Active = false,
                 Endpoints = new[]
                 {
@@ -101,7 +101,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
 
             mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Mongo.Infrastructure.Entities.Service, bool>>>(), 
                 It.Is<Mongo.Infrastructure.Entities.Service>(r =>
-                    r.Name == command.Name &&
+                    r.Name == command.ServiceName &&
                     r.Active == false &&
                     null != r.Endpoints && 0 == r.Endpoints.Count() )
                 ), Times.Once());
@@ -114,7 +114,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
 
             var service = new Mongo.Infrastructure.Entities.Service()
             {
-                Name = command.Name,
+                Name = command.ServiceName,
                 Active = false,
                 Endpoints = new[]
                 {
@@ -138,7 +138,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
 
             mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Mongo.Infrastructure.Entities.Service, bool>>>(),
                 It.Is<Mongo.Infrastructure.Entities.Service>(r =>
-                    r.Name == command.Name &&
+                    r.Name == command.ServiceName &&
                     r.Active == false &&
                     null != r.Endpoints && 1 == r.Endpoints.Count() &&
                     r.Endpoints.ElementAt(0).Url == service.Endpoints.ElementAt(0).Url &&
