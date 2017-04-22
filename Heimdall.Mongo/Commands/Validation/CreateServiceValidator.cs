@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Heimdall.Mongo.Commands.Validation
 {
-    public class CreateServiceHandler : Validator<CreateService>
+    public class CreateServiceValidator : Validator<CreateService>
     {
         private IDbContext _db;
 
-        public CreateServiceHandler(IDbContext db) 
+        public CreateServiceValidator(IDbContext db) 
         {
             _db = db ?? throw new ArgumentNullException(nameof(db));
         }
