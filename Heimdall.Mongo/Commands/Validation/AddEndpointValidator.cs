@@ -18,10 +18,10 @@ namespace Heimdall.Mongo.Commands.Validation
 
         protected override async Task RunAsync(AddEndpoint command)
         {
-            var service = await _db.Services.FindOneAsync(s => s.Name == command.Name);
+            var service = await _db.Services.FindOneAsync(s => s.Name == command.ServiceName);
             if(null == service)
             {
-                base.AddError(new ValidationError("service", $"Unable to load service by name: '{command.Name}'"));
+                base.AddError(new ValidationError("service", $"Unable to load service by name: '{command.ServiceName}'"));
                 return;
             }
 
@@ -29,7 +29,7 @@ namespace Heimdall.Mongo.Commands.Validation
                 return;
 
             if (service.Endpoints.Any(e => e.Url == command.Endpoint))
-                base.AddError(new ValidationError("service", $"endpoint '{command.Endpoint}' already existing on '{command.Name}'"));
+                base.AddError(new ValidationError("endpoint", $"endpoint '{command.Endpoint}' already exists on '{command.ServiceName}'"));
         }
     }
 }

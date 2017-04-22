@@ -19,11 +19,11 @@ namespace Heimdall.Mongo.Commands.Handlers
 
         protected override async Task RunCommand(RemoveEndpoint command)
         {
-            var service = await _db.Services.FindOneAsync(s => s.Name == command.Name);
+            var service = await _db.Services.FindOneAsync(s => s.Name == command.ServiceName);
 
             service.Endpoints = service.Endpoints.Where(e => e.Url != command.Endpoint).ToArray();
 
-            await _db.Services.UpsertOneAsync(s => s.Name == command.Name, service);
+            await _db.Services.UpsertOneAsync(s => s.Name == command.ServiceName, service);
         }
     }
 }
