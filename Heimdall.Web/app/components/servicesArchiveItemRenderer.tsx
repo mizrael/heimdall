@@ -1,6 +1,7 @@
 ﻿import * as React from "react";
 import { Services } from "../services/services";
 import { ServiceArchiveItem } from "../models/service";
+import { EditServiceModal } from "./editServiceModal";
 
 export interface ServicesArchiveItemRendererState {
     model: ServiceArchiveItem;
@@ -27,8 +28,8 @@ export class ServicesArchiveItemRenderer extends React.Component<ServicesArchive
         this.props.onSelect(this.state.model);
     }
 
-    private refreshService(e: any) {
-        e.preventDefault();
+    private refreshService(e: React.MouseEvent<HTMLButtonElement>) {
+        if(e) e.preventDefault();
         
         let state: ServicesArchiveItemRendererState = this.state,
             provider = new Services();
@@ -61,6 +62,9 @@ export class ServicesArchiveItemRenderer extends React.Component<ServicesArchive
 
     private deleteService(e: any) {
         e.preventDefault();
+
+        if (!confirm("Are you sure?"))
+            return;
         
         let state: ServicesArchiveItemRendererState = this.state,
             provider;
@@ -96,6 +100,7 @@ export class ServicesArchiveItemRenderer extends React.Component<ServicesArchive
             <td>
                 <ul>
                     <li><button onClick={e => this.viewServiceDetails(e)}>View</button></li>
+                    <li><EditServiceModal serviceName={this.props.model.name} onClose={() => this.refreshService(null)} /></li>
                     <li><button onClick={e => this.refreshService(e)}>Refresh</button></li>
                     <li><button onClick={e => this.deleteService(e)}>Delete</button></li>
                 </ul>

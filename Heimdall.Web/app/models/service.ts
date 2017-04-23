@@ -22,3 +22,13 @@ export class CreateService {
     name: string;
     endpoint: string;
 }
+
+export class AddEndpoint {
+    serviceName: string;
+    endpoint: string;
+}
+
+export class RemoveEndpoint {
+    serviceName: string;
+    endpoint: string;
+}

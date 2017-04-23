@@ -30,4 +30,16 @@ namespace Heimdall.Web.DTO
         public string Name { get; set; }
         public string Endpoint { get; set; }
     }
+
+    public class AddEndpoint
+    {
+        public string ServiceName { get; set; }
+        public string Endpoint { get; set; }
+    }
+
+    public class RemoveEndpoint
+    {
+        public string ServiceName { get; set; }
+        public string Endpoint { get; set; }
+    }
 }

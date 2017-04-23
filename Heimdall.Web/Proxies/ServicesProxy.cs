@@ -46,6 +46,17 @@ namespace Heimdall.Web.Proxies
             result.EnsureSuccessStatusCode();
         }
 
+        public async Task AddEndpoint(AddEndpoint dto)
+        {
+            if (null == dto)
+                throw new ArgumentNullException(nameof(dto));
+
+            var request = new RequestData("/services/endpoint", dto);
+
+            var result = await _servicesApiClient.PostAsync(request);
+            result.EnsureSuccessStatusCode();
+        }
+
         public async Task<ServiceDetails> RefreshAsync(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -63,6 +74,20 @@ namespace Heimdall.Web.Proxies
                 throw new ArgumentNullException(nameof(name));
 
             var request = new RequestData("/services/", name);
+
+            var response = await _servicesApiClient.DeleteAsync(request);
+            if (null == response)
+                throw new System.Net.Http.HttpRequestException($"unable to perform DELETE request to '{request.Url}'");
+
+            await response.AssertSuccessfulAsync();
+        }
+
+        public async Task DeleteEndpoint(RemoveEndpoint dto)
+        {
+            if (null == dto)
+                throw new ArgumentNullException(nameof(dto));
+
+            var request = new RequestData("/services/endpoint/", dto);
 
             var response = await _servicesApiClient.DeleteAsync(request);
             if (null == response)

@@ -1,5 +1,5 @@
 ﻿import "whatwg-fetch";
-import { ServiceArchiveItem, ServiceDetails, CreateService } from "../models/service";
+import { ServiceArchiveItem, ServiceDetails, CreateService, AddEndpoint, RemoveEndpoint } from "../models/service";
 
 interface IServices{
 
@@ -24,6 +24,13 @@ export class Services implements IServices {
         });
     }
 
+    public addEndpoint(model: AddEndpoint): Promise<boolean> {
+        let url = Services.baseUrl + "endpoint/"
+        return this.post(url, model).then(function (result: any) {
+            return (null != result);
+        });
+    }
+
     public refresh(name: string): Promise<ServiceDetails> {
         let url = Services.baseUrl + "refresh/";
         return this.post<ServiceDetails>(url, name);
@@ -32,6 +39,11 @@ export class Services implements IServices {
     public deleteService(name: string): Promise<void> {
         let url = Services.baseUrl;
         return this.delete<void>(url, name);
+    }
+
+    public deleteEndpoint(model: RemoveEndpoint): Promise<void> {
+        let url = Services.baseUrl + "endpoint/"
+        return this.delete<void>(url, model);
     }
 
     private post<T>(url: string, data: any = null): Promise<T> {

@@ -19,13 +19,6 @@ export class ServicesArchiveRenderer extends React.Component<{}, ServicesArchive
         super(props);
 
         this.state = { services: [], isLoading: false, selectedService: null, openDetails: false };
-
-        let me = this;
-        setInterval(function () {
-            if (me.state.isLoading)
-                return;
-            me.readServices();
-        }, 10 * 1000);
     }
 
     private readServices() {

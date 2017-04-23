@@ -34,8 +34,21 @@ namespace Heimdall.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]CreateService service)
         {
+            if (null == service)
+                throw new ArgumentNullException(nameof(service));
             await _servicesProxy.CreateAsync(service);
             return CreatedAtAction("GetByName", new { name = service.Name }, null);
+        }
+
+        [HttpPost, Route("endpoint")]
+        public async Task<IActionResult> PostEndpoint([FromBody]AddEndpoint model)
+        {
+            if (null == model)
+                throw new ArgumentNullException(nameof(model));
+
+            await _servicesProxy.AddEndpoint(model);
+
+            return CreatedAtAction("GetByName", new { name = model.ServiceName }, null);
         }
 
         [HttpPost, Route("refresh")]
@@ -49,6 +62,17 @@ namespace Heimdall.Web.Controllers
         public async Task<IActionResult> Delete([FromBody]string name)
         {
             await _servicesProxy.DeleteAsync(name);
+
+            return this.Ok();
+        }
+
+        [HttpDelete, Route("endpoint")]
+        public async Task<IActionResult> DeleteEndpoint([FromBody]RemoveEndpoint model)
+        {
+            if (null == model)
+                throw new ArgumentNullException(nameof(model));
+
+            await _servicesProxy.DeleteEndpoint(model);
 
             return this.Ok();
         }

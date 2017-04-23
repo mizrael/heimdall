@@ -10,6 +10,8 @@ namespace Heimdall.Web.Proxies
         Task<ServiceDetails> ReadDetailsAsync(string name);
         Task<ServiceDetails> RefreshAsync(string name);
         Task CreateAsync(CreateService dto);
+        Task AddEndpoint(AddEndpoint dto);
         Task DeleteAsync(string name);
+        Task DeleteEndpoint(RemoveEndpoint dto);
     }
 }

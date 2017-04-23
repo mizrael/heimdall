@@ -106,9 +106,12 @@ export class ServiceDetailsModal extends React.Component<ServiceDetailsModalProp
             show={this.props.show}
             onShow={ () => this.onShow() }
             onHide={() => this.props.onClose()}>
-            <div className="modal-content-inner" >
-                {this.renderModel()}
-            </div>
+                <Modal.Header closeButton>
+                    <Modal.Title>Service Details: {this.props.serviceName}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {this.renderModel()}
+                </Modal.Body>
         </Modal>;
     }
 }
