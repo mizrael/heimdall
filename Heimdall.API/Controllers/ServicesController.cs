@@ -63,7 +63,20 @@ namespace Heimdall.API.Controllers
                 throw new ArgumentNullException(nameof(service));
             var command = new Core.Commands.CreateService(service.Name, service.Endpoint);
             await _mediator.Publish(command);
-            return CreatedAtAction("Get", new { name = service.Name }, null);
+            return CreatedAtAction("GetByName", new { name = service.Name }, null);
+        }
+
+        /// <summary>
+        /// adds an endpoint to a service
+        /// </summary>
+        [HttpPost, Route("endpoint")]
+        public async Task<IActionResult> PostEndpoint([FromBody]Models.AddEndpoint model)
+        {
+            if (null == model)
+                throw new ArgumentNullException(nameof(model));
+            var command = new Core.Commands.AddEndpoint(model.ServiceName, model.Endpoint);
+            await _mediator.Publish(command);
+            return CreatedAtAction("GetByName", new { name = model.ServiceName }, null);
         }
 
         /// <summary>
@@ -83,6 +96,8 @@ namespace Heimdall.API.Controllers
             return this.Ok(result);
         }
 
+
+
         /// <summary>
         /// deletes a registered service
         /// </summary>
@@ -94,6 +109,19 @@ namespace Heimdall.API.Controllers
 
             await _mediator.Publish(command);
 
+            return this.Ok();
+        }
+
+        /// <summary>
+        /// remove an endpoint from a service
+        /// </summary>
+        [HttpDelete, Route("endpoint")]
+        public async Task<IActionResult> DeleteEndpoint([FromBody]Models.RemoveEndpoint model)
+        {
+            if (null == model)
+                throw new ArgumentNullException(nameof(model));
+            var command = new Core.Commands.RemoveEndpoint(model.ServiceName, model.Endpoint);
+            await _mediator.Publish(command);
             return this.Ok();
         }
     }
