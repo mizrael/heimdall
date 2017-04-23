@@ -32,7 +32,7 @@ namespace Heimdall.Mongo.Commands.Validation
             }
 
             if (!service.Endpoints.Any(e => e.Url == command.Endpoint))
-                base.AddError(new ValidationError("service", $"endpoint '{command.Endpoint}' doesn't exist on service '{command.ServiceName}'"));
+                base.AddError(new ValidationError("endpoint", $"endpoint '{command.Endpoint}' doesn't exist on service '{command.ServiceName}'"));
 
         }
     }
