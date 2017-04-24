@@ -7,7 +7,10 @@ import { Button, Modal, FormGroup, ControlLabel, FormControl } from "react-boots
 export interface CreateServiceModalState {
     isLoading: boolean;
     show: boolean;
-    form: CreateService
+    form: {
+        name: string,
+        endpoint: string
+    }
 }
 
 export interface CreateServiceModalProps {
@@ -30,6 +33,7 @@ export class CreateServiceModal extends React.Component<CreateServiceModalProps,
     private close() {
         let state: CreateServiceModalState = this.state;
         state.show = false;
+        state.isLoading = false;
         this.setState(state);
         this.props.onClose();
     }
@@ -56,7 +60,9 @@ export class CreateServiceModal extends React.Component<CreateServiceModalProps,
 
         let me = this,
             state: CreateServiceModalState = this.state,
-            services = new Services();
+            services = new Services(),
+            dto = new CreateService(state.form.name, state.form.endpoint);
+
         state.isLoading = true;
 
         services.create(state.form).then(function (success: boolean) {

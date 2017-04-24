@@ -1,9 +1,11 @@
 ﻿import * as React from "react";
+import { Button, Modal, FormGroup, ControlLabel, FormControl } from "react-bootstrap";
 import { Loading } from "./loading";
 import { Services } from "../services/services";
-import { ServiceDetails, ServiceEndpoint, RemoveEndpoint, AddEndpoint } from "../models/service";
-import { Button, Modal, FormGroup, ControlLabel, FormControl } from "react-bootstrap";
-
+import { ServiceDetails, ServiceEndpoint, AddEndpoint } from "../models/service";
+import { AddServiceEndpointModal } from "./addServiceEndpointModal";
+import { EditServiceEndpointRow } from "./editServiceEndpointRow";
+   
 export interface EditServiceModalState {
     isLoading: boolean;
     show: boolean;
@@ -85,10 +87,6 @@ export class EditServiceModal extends React.Component<EditServiceModalProps, Edi
         });
     }
 
-    private addEndpoint() {
-        //TODO
-    }
-    
     public render() {
         let content = null;
         if (!this.state.isLoading) {
@@ -112,11 +110,11 @@ export class EditServiceModal extends React.Component<EditServiceModalProps, Edi
                     <tbody>{this.renderEndpoints()}</tbody>
                 </table>
 
-                <button onClick={() => this.addEndpoint()}>Add Endpoint</button>
+                <AddServiceEndpointModal serviceName={this.props.serviceName} onClose={() => this.loadService() } />
                 
             </form>;
         } else {
-            content = <Loading></Loading>;
+            content = <Loading />;
         }
 
         return <div>
@@ -133,66 +131,5 @@ export class EditServiceModal extends React.Component<EditServiceModalProps, Edi
                 </Modal.Body>
             </Modal>
         </div>;
-    }
-}
-
-export interface EditServiceEndpointRowProps {
-    serviceName: string;
-    endpoint: ServiceEndpoint;
-    onRemoved: Function;
-}
-
-export interface EditServiceEndpointRowState {
-    isLoading: boolean;
-}
-
-export class EditServiceEndpointRow extends React.Component<EditServiceEndpointRowProps, EditServiceEndpointRowState> {
-    constructor(props: EditServiceEndpointRowProps) {
-        super(props);
-
-        this.state = { isLoading: false };
-    }
-
-    private onRemove(e: React.MouseEvent<HTMLButtonElement>) {
-        e.preventDefault();
-
-        if (!confirm("Are you sure?"))
-            return;
-
-        let me = this,
-            state: EditServiceEndpointRowState = this.state,
-            provider = new Services(),
-            dto = new RemoveEndpoint(),
-            onComplete = () => {
-                state.isLoading = false;
-                me.setState(state);
-            }
-
-        state.isLoading = true;
-        this.setState(state);
-
-        dto.endpoint = this.props.endpoint.url;
-        dto.serviceName = this.props.serviceName;
-
-        provider.deleteEndpoint(dto)
-            .catch(() => {
-                onComplete();
-            }).then(() => {
-                this.props.onRemoved();
-                onComplete();
-            });
-    }
-
-    public render() {
-        if (!this.props.endpoint)
-            return null;
-
-        let actions = this.state.isLoading ? <span>processing...</span> :
-            <button onClick={(e) => this.onRemove(e)}>Remove</button>;
-
-        return <tr>
-            <td>{this.props.endpoint.url}</td>
-            <td>{actions}</td>
-        </tr>;
     }
 }

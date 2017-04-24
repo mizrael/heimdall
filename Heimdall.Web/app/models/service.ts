@@ -19,16 +19,31 @@ export class ServiceEndpoint {
 }
 
 export class CreateService {
-    name: string;
-    endpoint: string;
+    constructor(name: string, endpoint: string) {
+        this.name = name;
+        this.endpoint = endpoint;
+    }
+
+    readonly name: string;
+    readonly endpoint: string;
 }
 
 export class AddEndpoint {
-    serviceName: string;
-    endpoint: string;
+    constructor(serviceName: string, endpoint: string) {
+        this.serviceName = serviceName;
+        this.endpoint = endpoint;
+    }
+
+    readonly serviceName: string;
+    readonly endpoint: string;
 }
 
 export class RemoveEndpoint {
-    serviceName: string;
-    endpoint: string;
+    constructor(serviceName: string, endpoint: string) {
+        this.serviceName = serviceName;
+        this.endpoint = endpoint;
+    }
+
+    readonly serviceName: string;
+    readonly endpoint: string;
 }

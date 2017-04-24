@@ -42,8 +42,8 @@ namespace Heimdall.Web.Proxies
 
             var request = new RequestData("/services", dto);
 
-            var result = await _servicesApiClient.PostAsync(request);
-            result.EnsureSuccessStatusCode();
+            var response = await _servicesApiClient.PostAsync(request);
+            await response.AssertSuccessfulAsync();
         }
 
         public async Task AddEndpoint(AddEndpoint dto)
@@ -53,8 +53,8 @@ namespace Heimdall.Web.Proxies
 
             var request = new RequestData("/services/endpoint", dto);
 
-            var result = await _servicesApiClient.PostAsync(request);
-            result.EnsureSuccessStatusCode();
+            var response = await _servicesApiClient.PostAsync(request);
+            await response.AssertSuccessfulAsync();
         }
 
         public async Task<ServiceDetails> RefreshAsync(string name)
