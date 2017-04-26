@@ -1,18 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using LibCore.CQRS.Extensions;
+using LibCore.Web.ErrorHandling;
+using LibCore.Web.ErrorHandling.Builders;
+using LibCore.Web.Extensions;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.AspNetCore.Mvc.ViewComponents;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using SimpleInjector;
-using SimpleInjector.Integration.AspNetCore;
 using SimpleInjector.Integration.AspNetCore.Mvc;
-using LibCore.Web.Extensions;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Versioning;
-using Microsoft.AspNetCore.Mvc.Controllers;
-using Microsoft.AspNetCore.Mvc.ViewComponents;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace Heimdall.API
@@ -44,9 +47,6 @@ namespace Heimdall.API
              .AllowCredentials());
             });
 
-            services.AddMvc()
-                 .AddMvcOptions(o => { o.Filters.Add(new LibCore.Web.Filters.ExceptionFilter()); });
-            
             services.AddApiVersioning(o =>
             {
                 o.AssumeDefaultVersionWhenUnspecified = true;
@@ -54,8 +54,12 @@ namespace Heimdall.API
                 o.ApiVersionReader = new HeaderApiVersionReader("api-version");
             });
 
+            services.AddSingleton<IConfigureOptions<MvcOptions>>(new LibCore.Web.Services.ConfigureMvcOptions(_container));
             services.AddSingleton<IControllerActivator>(new SimpleInjectorControllerActivator(_container));
             services.AddSingleton<IViewComponentActivator>(new SimpleInjectorViewComponentActivator(_container));
+            services.UseSimpleInjectorAspNetRequestScoping(_container);
+
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -64,26 +68,29 @@ namespace Heimdall.API
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            app.UseCors("CorsPolicy")
-               .UseMvc()
-               .UseSimpleInjectorAspNetRequestScoping(_container);
-
             RegisterMapping();
 
             InitContainer(app);
+            
+            app.UseCors("CorsPolicy")
+               .UseMvc();
         }
 
         private void InitContainer(IApplicationBuilder app)
         {
-            _container.Options.DefaultScopedLifestyle = new AspNetRequestLifestyle();
+            var assemblies = GetAssemblies();
+
+            _container.Options.DefaultScopedLifestyle = new SimpleInjector.Lifestyles.AsyncScopedLifestyle();
 
             _container.RegisterMvcControllers(app);
             _container.RegisterMvcViewComponents(app);
 
+            _container.RegisterErrorFilter();
+
             RegisterDb();
 
             _container.RegisterMediator();
-            _container.RegisterMediatorHandlers(GetAssemblies());
+            _container.RegisterHandlers(assemblies);
 
             _container.Register<LibCore.Web.Services.IPinger, LibCore.Web.Services.Pinger>();
 
@@ -107,6 +114,7 @@ namespace Heimdall.API
         private static IEnumerable<Assembly> GetAssemblies()
         {
             yield return typeof(IMediator).GetTypeInfo().Assembly;
+            yield return typeof(ValidationApiErrorInfoBuilder).GetTypeInfo().Assembly;
             yield return typeof(Mongo.Queries.Handlers.FindServiceHandler).GetTypeInfo().Assembly;
         }
 
