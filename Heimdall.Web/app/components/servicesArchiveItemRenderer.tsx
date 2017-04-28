@@ -101,7 +101,7 @@ export class ServicesArchiveItemRenderer extends React.Component<ServicesArchive
                     <li><button className="btn btn-primary" onClick={e => this.viewServiceDetails(e)}>View</button></li>
                     <li><EditServiceModal serviceName={this.props.model.name} onClose={() => this.refreshService(null)} /></li>
                     <li><button className="btn btn-primary" onClick={e => this.refreshService(e)}>Refresh</button></li>
-                    <li><Button bsStyle="danger" onClick={() => this.deleteService()}>Remove</button></li>
+                    <li><Button bsStyle="danger" onClick={() => this.deleteService()}>Remove</Button></li>
                 </ul>
             </td>;
 
