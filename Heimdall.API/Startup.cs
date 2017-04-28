@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.PlatformAbstractions;
 using SimpleInjector;
 using SimpleInjector.Integration.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -40,11 +41,18 @@ namespace Heimdall.API
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors((opt) => { opt.AddPolicy("CorsPolicy",
-             builder => builder.AllowAnyOrigin()
-             .AllowAnyMethod()
-             .AllowAnyHeader()
-             .AllowCredentials());
+            services.AddSingleton<IConfigureOptions<MvcOptions>>(new LibCore.Web.Services.ConfigureMvcOptions(_container));
+            services.AddSingleton<IControllerActivator>(new SimpleInjectorControllerActivator(_container));
+            services.AddSingleton<IViewComponentActivator>(new SimpleInjectorViewComponentActivator(_container));
+            services.UseSimpleInjectorAspNetRequestScoping(_container);
+
+            services.AddCors((opt) =>
+            {
+                opt.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
             });
 
             services.AddApiVersioning(o =>
@@ -54,12 +62,21 @@ namespace Heimdall.API
                 o.ApiVersionReader = new HeaderApiVersionReader("api-version");
             });
 
-            services.AddSingleton<IConfigureOptions<MvcOptions>>(new LibCore.Web.Services.ConfigureMvcOptions(_container));
-            services.AddSingleton<IControllerActivator>(new SimpleInjectorControllerActivator(_container));
-            services.AddSingleton<IViewComponentActivator>(new SimpleInjectorViewComponentActivator(_container));
-            services.UseSimpleInjectorAspNetRequestScoping(_container);
+            services.AddMvcCore();
 
-            services.AddMvc();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1",
+                     new Swashbuckle.AspNetCore.Swagger.Info
+                     {
+                         Title = "Heimdall API - V1",
+                         Version = "v1"
+                     }
+                  );
+
+                var filePath = System.IO.Path.Combine(PlatformServices.Default.Application.ApplicationBasePath, "Heimdall.API.xml");
+                c.IncludeXmlComments(filePath);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -71,9 +88,14 @@ namespace Heimdall.API
             RegisterMapping();
 
             InitContainer(app);
-            
+
             app.UseCors("CorsPolicy")
-               .UseMvc();
+               .UseMvc()
+               .UseSwagger()
+               .UseSwaggerUI(c =>
+               {
+                   c.SwaggerEndpoint("/swagger/v1/swagger.json", "Heimdall API V1");
+               });
         }
 
         private void InitContainer(IApplicationBuilder app)

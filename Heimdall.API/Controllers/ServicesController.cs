@@ -4,6 +4,7 @@ using System;
 using System.Threading.Tasks;
 using LibCore.Web.Extensions;
 using Heimdall.Core.Queries;
+using System.Collections.Generic;
 
 namespace Heimdall.API.Controllers
 {
@@ -18,7 +19,11 @@ namespace Heimdall.API.Controllers
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
+        /// <summary>
+        /// returns the list of all registered services
+        /// </summary>
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Core.Queries.Models.ServiceArchiveItem>), 200)]
         public async Task<IActionResult> Get()
         {
             var query = new ReadServices();
@@ -30,8 +35,8 @@ namespace Heimdall.API.Controllers
         /// finds the service by name and returns its details along with the list of available endpoints.
         /// If no endpoint is active, returns null.
         /// </summary>
-        //[HttpGet, Route("{name}")]
         [HttpGet("{name}", Name = "GetByName")]
+        [ProducesResponseType(typeof(Core.Queries.Models.ServiceDetails), 200)]
         public async Task<IActionResult> GetByName(string name)
         {
             var query = new FindService(name, false);
@@ -44,6 +49,7 @@ namespace Heimdall.API.Controllers
         /// It will return all the endpoints regardless their status
         /// </summary>
         [HttpGet("{name}/force", Name = "GetByNameFull")]
+        [ProducesResponseType(typeof(Core.Queries.Models.ServiceDetails), 200)]
         public async Task<IActionResult> GetByNameFull(string name)
         {
             var query = new FindService(name, true);
@@ -55,8 +61,8 @@ namespace Heimdall.API.Controllers
         /// creates service
         /// </summary>
         /// <param name="service"></param>
-        /// <returns></returns>
         [HttpPost]
+        [ProducesResponseType(typeof(LibCore.Web.ErrorHandling.ApiErrorInfo), 400)]
         public async Task<IActionResult> Post([FromBody]Models.CreateService service)
         {
             if (null == service)
@@ -70,6 +76,7 @@ namespace Heimdall.API.Controllers
         /// adds an endpoint to a service
         /// </summary>
         [HttpPost, Route("endpoint")]
+        [ProducesResponseType(typeof(LibCore.Web.ErrorHandling.ApiErrorInfo), 400)]
         public async Task<IActionResult> PostEndpoint([FromBody]Models.AddEndpoint model)
         {
             if (null == model)
@@ -82,8 +89,8 @@ namespace Heimdall.API.Controllers
         /// <summary>
         /// refreshes a registered service
         /// </summary>
-        /// <returns></returns>
         [HttpPost, Route("refresh")]
+        [ProducesResponseType(typeof(LibCore.Web.ErrorHandling.ApiErrorInfo), 400)]
         public async Task<IActionResult> PostRefresh([FromBody]string name)
         {
             var command = new Core.Commands.RefreshServiceStatus(name, 10);
@@ -96,13 +103,11 @@ namespace Heimdall.API.Controllers
             return this.Ok(result);
         }
 
-
-
         /// <summary>
         /// deletes a registered service
         /// </summary>
-        /// <returns></returns>
         [HttpDelete]
+        [ProducesResponseType(typeof(LibCore.Web.ErrorHandling.ApiErrorInfo), 400)]
         public async Task<IActionResult> Delete([FromBody]string name)
         {
             var command = new Core.Commands.DeleteService(name);
@@ -116,6 +121,7 @@ namespace Heimdall.API.Controllers
         /// remove an endpoint from a service
         /// </summary>
         [HttpDelete, Route("endpoint")]
+        [ProducesResponseType(typeof(LibCore.Web.ErrorHandling.ApiErrorInfo), 400)]
         public async Task<IActionResult> DeleteEndpoint([FromBody]Models.RemoveEndpoint model)
         {
             if (null == model)
