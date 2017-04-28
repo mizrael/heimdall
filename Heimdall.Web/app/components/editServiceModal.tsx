@@ -117,14 +117,14 @@ export class EditServiceModal extends React.Component<EditServiceModalProps, Edi
             content = <Loading />;
         }
 
-        return <div>
-            <button onClick={() => this.open()}>Edit</button>
+        return <div className="btn-modal-wrapper">
+            <button className="btn btn-primary"  onClick={() => this.open()}>Edit</button>
             <Modal
             aria-labelledby='modal-label'
             show={this.state.show} 
             onHide={() => { this.close() } }>
                 <Modal.Header closeButton>
-                    <Modal.Title>Edit Service {this.props.serviceName}</Modal.Title>
+                    <Modal.Title>Edit Service: <span>{this.props.serviceName}</span></Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     {content}

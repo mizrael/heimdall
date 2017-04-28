@@ -7,6 +7,8 @@ import { ServiceDetailsModal } from "./serviceDetailsModal";
 import { CreateServiceModal } from "./createServiceModal";
 import { Loading } from "./loading";
 
+export interface ServicesArchiveRendererProps { }
+
 export interface ServicesArchiveRendererState {
     services: Array<ServiceArchiveItem>;
     selectedService: ServiceArchiveItem;
@@ -14,11 +16,15 @@ export interface ServicesArchiveRendererState {
     isLoading: boolean;
 }
 
-export class ServicesArchiveRenderer extends React.Component<{}, ServicesArchiveRendererState> {
+export class ServicesArchiveRenderer extends React.Component<ServicesArchiveRendererProps, ServicesArchiveRendererState> {
     constructor(props: any) {
         super(props);
 
         this.state = { services: [], isLoading: false, selectedService: null, openDetails: false };
+    }
+    
+    public componentDidMount() {
+        this.readServices();
     }
 
     private readServices() {
@@ -65,14 +71,7 @@ export class ServicesArchiveRenderer extends React.Component<{}, ServicesArchive
         state.isLoading = false;
         this.setState(state);
     }
-
-    private renderService(service: ServiceArchiveItem, index: number) {
-        return <ServicesArchiveItemRenderer key={service.name}
-            rowIndex={index} model={service}
-            onDeleted={(index: number) => this.onServiceDeleted(index)} 
-            onSelect={(u: any) => this.onSelectService(u)} />;
-    }
-
+    
     private selectService(serviceItem: ServiceArchiveItem) {
         let state: ServicesArchiveRendererState = this.state;
         state.selectedService = serviceItem;
@@ -96,52 +95,66 @@ export class ServicesArchiveRenderer extends React.Component<{}, ServicesArchive
         return (null != this.state.selectedService) ? this.state.selectedService.name : '';
     }
 
-    public componentDidMount() {
-        this.readServices();
+    private renderMenu() {
+        return <ul className="nav nav-pills">
+            <li><CreateServiceModal onClose={() => this.readServices()} /></li>
+            <li><button className="btn btn-default" onClick={() => this.readServices()}>Read</button></li>
+            <li><button className="btn btn-default" onClick={() => this.refreshAll()}>Refresh all</button></li>
+        </ul>;
+    }
+
+    private renderServices() {
+        const items = this.state.services.map((s, i) => {
+            return this.renderService(s, i);
+        });
+
+        return <table className="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Active</th>
+                    <th># Active Endpoints</th>
+                    <th>Best Roundtrip Time</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <ReactCSSTransitionGroup
+                transitionName="example"
+                transitionEnterTimeout={500}
+                transitionLeaveTimeout={300}
+                component="tbody">
+                {items}
+            </ReactCSSTransitionGroup>
+        </table>;
+    }
+
+    private renderService(service: ServiceArchiveItem, index: number) {
+        return <ServicesArchiveItemRenderer key={service.name}
+            rowIndex={index} model={service}
+            onDeleted={(index: number) => this.onServiceDeleted(index)}
+            onSelect={(u: any) => this.onSelectService(u)} />;
     }
 
     public render() {
         let content = null;
 
         if (!this.state.isLoading) {
-            const items = this.state.services.map((s, i) => {
-                return this.renderService(s, i);
-            });
-
-            content = <div className="services">
-                <ul>
-                    <li><CreateServiceModal onClose={() => this.readServices()} /></li>
-                    <li><button onClick={() => this.readServices()}>Read</button></li>
-                    <li><button onClick={() => this.refreshAll()}>Refresh all</button></li>
-                </ul>
-
-                <table className="table table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Active</th>
-                            <th># Endpoints</th>
-                            <th>Roundtrip Time</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <ReactCSSTransitionGroup
-                        transitionName="example"
-                        transitionEnterTimeout={500}
-                        transitionLeaveTimeout={300}
-                        component="tbody">
-                        {items}
-                    </ReactCSSTransitionGroup>
-                </table>
-
+            content = <div className="row">
+                <div className="services col-xs-12">
+                    {this.renderServices()}
+                </div>
+                <div className="col-xs-12">
+                    {this.renderMenu()}
+                </div>
                 <ServiceDetailsModal serviceName={this.getSelectedServiceName()} show={this.state.openDetails} onClose={() => this.selectService(null)} />
             </div>;
         } else {
-            content = <Loading />;
+            content = <div className="row"><div className="col-xs-12"><Loading /></div></div>;
         }
 
-        return <div className="services-wrapper col-xs-12">
-           {content}
+        return <div className="services-wrapper container">
+            <div className="row"><div className="col-xs-12"><h3>Services Archive</h3></div></div>
+            {content}
         </div>;
     }
 };

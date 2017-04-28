@@ -60,7 +60,7 @@ export class ServiceDetailsModal extends React.Component<ServiceDetailsModalProp
 
         if (service.bestEndpoint) {
             bestEndpoint = <div>
-                <span>best endpoint: {service.bestEndpoint.url} , roundtrip time: {service.bestEndpoint.roundtripTime}s</span>
+                <span>best endpoint: {service.bestEndpoint.url} , roundtrip time: {service.bestEndpoint.roundtripTime}ms</span>
             </div>;
         }
 
@@ -96,7 +96,7 @@ export class ServiceDetailsModal extends React.Component<ServiceDetailsModalProp
         return <tr key={Math.random()}>
             <td>{endpoint.url}</td>
             <td>{endpoint.active ? 'yes' : 'no'}</td>
-            <td>{endpoint.active ? endpoint.roundtripTime + 's' : '-'}</td>
+            <td>{endpoint.active ? endpoint.roundtripTime + 'ms' : '-'}</td>
         </tr>;
     }
 
@@ -107,7 +107,7 @@ export class ServiceDetailsModal extends React.Component<ServiceDetailsModalProp
             onShow={ () => this.onShow() }
             onHide={() => this.props.onClose()}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Service Details: {this.props.serviceName}</Modal.Title>
+                    <Modal.Title>Service Details: <span>{this.props.serviceName}</span></Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     {this.renderModel()}

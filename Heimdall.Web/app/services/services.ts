@@ -62,8 +62,9 @@ export class Services implements IServices {
         return this.executeRequest(url, "GET");
     }
 
-    private executeRequest<T>(url: string, method:string, data:any = null): Promise<T> {
-        var fetchOptions = this.buildRequest(method, data);
+    private executeRequest<T>(url: string, method: string, data: any = null): Promise<T> {
+        var me = this,
+            fetchOptions = me.buildRequest(method, data);
 
         return fetch(url, fetchOptions)
             .catch(reason => {
@@ -71,13 +72,30 @@ export class Services implements IServices {
                 return null;
             })
             .then((response: Response) => {
-                if (!response.ok)
+                if (!response.ok) {
+                    me.logResponseError(response);
                     return null;
-                if (201 == response.status)
-                    return true;
-                return response.json().then<T>((data: T) => {
-                    return data;
-                });
+                }
+
+                return this.checkIsJson(response) ?
+                    response.json().then<T>((data: T) => {
+                        return data;
+                    }) : {};
+            });
+    }
+
+    private checkIsJson(response: Response) {
+        var contentType = response.headers.get("content-type");
+        return (contentType && contentType.indexOf("application/json") !== -1);
+    }
+
+    private logResponseError(response: Response) {
+        if (!this.checkIsJson(response)) {
+            console.log(response);
+        }
+
+        response.json().then((data: any) => {
+            console.log(data);
         });
     }
 

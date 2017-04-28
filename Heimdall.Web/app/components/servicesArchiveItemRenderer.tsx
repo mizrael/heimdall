@@ -1,4 +1,5 @@
 ﻿import * as React from "react";
+import { Button } from "react-bootstrap";
 import { Services } from "../services/services";
 import { ServiceArchiveItem } from "../models/service";
 import { EditServiceModal } from "./editServiceModal";
@@ -60,9 +61,7 @@ export class ServicesArchiveItemRenderer extends React.Component<ServicesArchive
         });
     }
 
-    private deleteService(e: any) {
-        e.preventDefault();
-
+    private deleteService() {
         if (!confirm("Are you sure?"))
             return;
         
@@ -98,11 +97,11 @@ export class ServicesArchiveItemRenderer extends React.Component<ServicesArchive
 
         let actions = (this.state.isLoading) ? <td>processing....</td> :
             <td>
-                <ul>
-                    <li><button onClick={e => this.viewServiceDetails(e)}>View</button></li>
+                <ul className="nav nav-pills">
+                    <li><button className="btn btn-primary" onClick={e => this.viewServiceDetails(e)}>View</button></li>
                     <li><EditServiceModal serviceName={this.props.model.name} onClose={() => this.refreshService(null)} /></li>
-                    <li><button onClick={e => this.refreshService(e)}>Refresh</button></li>
-                    <li><button onClick={e => this.deleteService(e)}>Delete</button></li>
+                    <li><button className="btn btn-primary" onClick={e => this.refreshService(e)}>Refresh</button></li>
+                    <li><Button bsStyle="danger" onClick={() => this.deleteService()}>Remove</button></li>
                 </ul>
             </td>;
 
@@ -110,7 +109,7 @@ export class ServicesArchiveItemRenderer extends React.Component<ServicesArchive
             <td>{this.state.model.name}</td>
             <td>{this.state.model.active ? "yes" : "no"}</td>
             <td>{this.state.model.endpointsCount}</td>
-            <td>{this.state.model.active ? this.state.model.roundtripTime + 's': '-'}</td>
+            <td>{this.state.model.active ? this.state.model.roundtripTime + 'ms': '-'}</td>
             {actions}
         </tr>;
     }

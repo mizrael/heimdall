@@ -109,14 +109,14 @@ export class CreateServiceModal extends React.Component<CreateServiceModalProps,
             content = <Loading></Loading>;
         }
 
-        return <div>
-            <button onClick={() => this.open()}>New</button>
+        return <div className="btn-modal-wrapper">
+            <button className="btn btn-default" onClick={() => this.open()}>New</button>
             <Modal
             aria-labelledby='modal-label'
             show={this.state.show} 
             onHide={() => { this.close() } }>
                 <Modal.Header closeButton>
-                    <Modal.Title>Modal heading</Modal.Title>
+                    <Modal.Title>Create new Service</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     {content}

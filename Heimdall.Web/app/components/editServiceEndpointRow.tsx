@@ -1,4 +1,5 @@
 ﻿import * as React from "react";
+import { Button } from "react-bootstrap";
 import { Services } from "../services/services";
 import { ServiceEndpoint, RemoveEndpoint } from "../models/service";
 
@@ -19,9 +20,7 @@ export class EditServiceEndpointRow extends React.Component<EditServiceEndpointR
         this.state = { isLoading: false };
     }
 
-    private onRemove(e: React.MouseEvent<HTMLButtonElement>) {
-        e.preventDefault();
-
+    private onRemove() {
         if (!confirm("Are you sure?"))
             return;
 
@@ -51,7 +50,7 @@ export class EditServiceEndpointRow extends React.Component<EditServiceEndpointR
             return null;
 
         let actions = this.state.isLoading ? <span>processing...</span> :
-            <button onClick={(e) => this.onRemove(e)}>Remove</button>;
+            <Button bsStyle="danger" onClick={() => this.onRemove()}>Remove</Button>;
 
         return <tr>
             <td>{this.props.endpoint.url}</td>

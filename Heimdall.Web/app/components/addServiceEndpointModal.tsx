@@ -106,13 +106,13 @@ export class AddServiceEndpointModal extends React.Component<AddServiceEndpointM
 
     public render() {
         return <div>
-            <button onClick={() => this.open()}>Add Endpoint</button>
+            <Button onClick={() => this.open()}>Add Endpoint</Button>
             <Modal
             aria-labelledby='modal-label'
             show={this.state.show} 
             onHide={() => { this.close() } }>
                 <Modal.Header closeButton>
-                    <Modal.Title>Add New Endpoint to Service {this.props.serviceName}</Modal.Title>
+                    <Modal.Title>Add New Endpoint to Service: <span>{this.props.serviceName}</span></Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     {this.renderContent()}
