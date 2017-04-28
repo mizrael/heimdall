@@ -15,21 +15,19 @@ namespace Heimdall.Mongo.Infrastructure
                     {
                         var forceLoad = false;
                         if (resContext.Items.ContainsKey("forceLoad"))
-                            forceLoad = (bool)resContext.Items["forceLoad"];
+                        {
+                            object value = null;
+                            resContext.Items.TryGetValue("forceLoad", out value);
+                            forceLoad = (value is bool && ((bool)value));
+                        }
 
-                        var endpoints = forceLoad ? src.Endpoints : src.GetActiveEndpoints();
-                        return endpoints.Select(se => AutoMapper.Mapper.Map<Core.Queries.Models.ServiceEndpoint>(se))
-                                                 .ToArray();
+                        return ExtractEndpoints(src, forceLoad);
                     });
                 }).ForMember(e => e.BestEndpoint, mo =>
                 {
                     mo.ResolveUsing((Entities.Service s) =>
                     {
-                        var availableEndpoints = s.GetActiveEndpoints();
-                        if (null == availableEndpoints || !availableEndpoints.Any())
-                            return null;
-                        var bestEndpoint = availableEndpoints.OrderByDescending(e => e.RoundtripTime).First();
-                        return AutoMapper.Mapper.Map<Core.Queries.Models.ServiceEndpoint>(bestEndpoint);
+                        return ExtractBestEndpoint(s);
                     });
                 });
 
@@ -37,16 +35,33 @@ namespace Heimdall.Mongo.Infrastructure
                 .ForMember(e => e.EndpointsCount, mo => {
                     mo.ResolveUsing((Entities.Service s) =>
                     {
-                        return (null != s.Endpoints) ? s.Endpoints.Count(se => se.Active) : 0;
+                        var endpoints = ExtractEndpoints(s, false);
+                        return endpoints.Count();
                     });
                 })
                 .ForMember(e => e.RoundtripTime, mo => {
                     mo.ResolveUsing((Entities.Service s) =>
                     {
-                        return (null != s.Endpoints && s.Endpoints.Any(se => se.Active)) ? s.Endpoints.Where(se => se.Active).Min(se => se.RoundtripTime) : long.MaxValue;
+                        var bestEndpoint = ExtractBestEndpoint(s);
+                        return (null != bestEndpoint) ? bestEndpoint.RoundtripTime : long.MaxValue;
                     });
                 });
         }
-        
+
+        private static Core.Queries.Models.ServiceEndpoint ExtractBestEndpoint(Entities.Service s)
+        {
+            var availableEndpoints = s.GetActiveEndpoints();
+            if (null == availableEndpoints || !availableEndpoints.Any())
+                return null;
+            var bestEndpoint = availableEndpoints.OrderBy(e => e.RoundtripTime).First();
+            return AutoMapper.Mapper.Map<Core.Queries.Models.ServiceEndpoint>(bestEndpoint);
+        }
+
+        private static Core.Queries.Models.ServiceEndpoint[] ExtractEndpoints(Entities.Service src, bool forceLoad)
+        {
+            var endpoints = forceLoad ? src.Endpoints : src.GetActiveEndpoints();
+            return endpoints.Select(se => AutoMapper.Mapper.Map<Core.Queries.Models.ServiceEndpoint>(se))
+                                     .ToArray();
+        }
     }
 }
