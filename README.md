@@ -1,5 +1,5 @@
 # heimdall
-Poor man's service discovery tool in C# with ASP.NET Core and MongoDb. A web client is provided, written with React.
+Poor man's service registry tool in C# with ASP.NET Core and MongoDb. A web client is provided, written with React.
 
 Has a dependency https://github.com/mizrael/LibCore .
 
