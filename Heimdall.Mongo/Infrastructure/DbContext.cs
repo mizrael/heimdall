@@ -14,10 +14,15 @@ namespace Heimdall.Mongo.Infrastructure
                 throw new ArgumentNullException(nameof(repoFactory));
 
             this.Services = repoFactory.Create<Entities.Service>(new RepositoryOptions(connectionString, "services"));
-            var ixb = new IndexKeysDefinitionBuilder<Entities.Service>();
-            this.Services.CreateIndex(ixb.Ascending(u => u.Name), new CreateIndexOptions() { Unique = true });
+            var servicesIxb = new IndexKeysDefinitionBuilder<Entities.Service>();
+            this.Services.CreateIndex(servicesIxb.Ascending(u => u.Name), new CreateIndexOptions() { Unique = true });
+
+            this.TraceEvents = repoFactory.Create<Entities.TraceEvent>(new RepositoryOptions(connectionString, "events"));
+            var eventsIxb = new IndexKeysDefinitionBuilder<Entities.TraceEvent>();
+            this.TraceEvents.CreateIndex(eventsIxb.Ascending(u => u.Name), new CreateIndexOptions() { Unique = true });
         }
 
+        public IRepository<Entities.TraceEvent> TraceEvents { get; private set; }
         public IRepository<Entities.Service> Services { get; private set; }
     }
 

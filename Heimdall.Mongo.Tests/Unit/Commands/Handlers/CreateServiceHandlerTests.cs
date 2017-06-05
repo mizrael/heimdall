@@ -49,6 +49,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
             mockRepo.Verify(m => m.InsertOneAsync(It.Is<Mongo.Infrastructure.Entities.Service>(r =>
                     r.Name == command.Name &&
                     r.Active == false &&
+                    r.Id != Guid.Empty &&
                     null != r.Endpoints && 1 == r.Endpoints.Count() && 
                     r.Endpoints.Any(es => es.Active == false && es.Url == command.Endpoint)) 
                 ), Times.Once());

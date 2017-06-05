@@ -4,6 +4,7 @@ using Heimdall.Mongo.Infrastructure;
 using Heimdall.Mongo.Tests.Utils;
 using LibCore.CQRS.Validation;
 using LibCore.Web.Services;
+using MediatR;
 using Moq;
 using System;
 using System.Linq;
@@ -20,7 +21,8 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
         {
             var mockValidator = new Mock<IValidator<RefreshServiceStatus>>();
             var mockPinger = new Mock<IPinger>();
-            Assert.Throws<ArgumentNullException>(() => new RefreshServiceStatusHandler(null, mockPinger.Object, mockValidator.Object));
+            var mockMediator = new Mock<IMediator>();
+            Assert.Throws<ArgumentNullException>(() => new RefreshServiceStatusHandler(null, mockPinger.Object, mockMediator.Object, mockValidator.Object));
         }
 
         [Fact]
@@ -28,7 +30,17 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
         {
             var mockValidator = new Mock<IValidator<RefreshServiceStatus>>();
             var mockDbContext = new Mock<IDbContext>();
-            Assert.Throws<ArgumentNullException>(() => new RefreshServiceStatusHandler(mockDbContext.Object, null, mockValidator.Object));
+            var mockMediator = new Mock<IMediator>();
+            Assert.Throws<ArgumentNullException>(() => new RefreshServiceStatusHandler(mockDbContext.Object, null, mockMediator.Object, mockValidator.Object));
+        }
+
+        [Fact]
+        public void should_throw_ArgumentNullException_when_mediator_null()
+        {
+            var mockValidator = new Mock<IValidator<RefreshServiceStatus>>();
+            var mockDbContext = new Mock<IDbContext>();
+            var mockPinger = new Mock<IPinger>();
+            Assert.Throws<ArgumentNullException>(() => new RefreshServiceStatusHandler(mockDbContext.Object, mockPinger.Object, null, mockValidator.Object));
         }
 
         [Fact]
@@ -37,8 +49,9 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
             var mockDbContext = new Mock<IDbContext>();
             var mockPinger = new Mock<IPinger>();
             var mockValidator = new Mock<IValidator<RefreshServiceStatus>>();
+            var mockMediator = new Mock<IMediator>();
 
-            var sut = new RefreshServiceStatusHandler(mockDbContext.Object, mockPinger.Object, mockValidator.Object);
+            var sut = new RefreshServiceStatusHandler(mockDbContext.Object, mockPinger.Object, mockMediator.Object, mockValidator.Object);
             await Assert.ThrowsAsync<ArgumentNullException>(() => sut.Handle(null));
         }
 
@@ -47,6 +60,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
         {
             var service = new Mongo.Infrastructure.Entities.Service()
             {
+                Id = Guid.NewGuid(),
                 Active = true,
                 Name = "lorem",
                 Endpoints = Enumerable.Empty<Mongo.Infrastructure.Entities.ServiceEndpoint>()
@@ -57,10 +71,10 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
             var mockPinger = new Mock<IPinger>();
-
+            var mockMediator = new Mock<IMediator>();
             var validator = new NullValidator<RefreshServiceStatus>();
 
-            var sut = new RefreshServiceStatusHandler(mockDbContext.Object, mockPinger.Object, validator);
+            var sut = new RefreshServiceStatusHandler(mockDbContext.Object, mockPinger.Object, mockMediator.Object, validator);
             await sut.Handle(new RefreshServiceStatus(service.Name, 10));
 
             mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Mongo.Infrastructure.Entities.Service, bool>>>(),
@@ -73,6 +87,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
         {
             var service = new Mongo.Infrastructure.Entities.Service()
             {
+                Id = Guid.NewGuid(),
                 Active = true,
                 Name = "lorem",
                 Endpoints = new[]{
@@ -92,10 +107,12 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
             mockPinger.Setup(p => p.PingAsync(It.IsAny<string>(), It.IsAny<int>()))
                       .ReturnsAsync(new PingResult(false, 0));
 
+            var mockMediator = new Mock<IMediator>();
+
             var validator = new NullValidator<RefreshServiceStatus>();
 
             var command = new RefreshServiceStatus(service.Name, 10);
-            var sut = new RefreshServiceStatusHandler(mockDbContext.Object, mockPinger.Object, validator);
+            var sut = new RefreshServiceStatusHandler(mockDbContext.Object, mockPinger.Object, mockMediator.Object, validator);
             await sut.Handle(command);
 
             mockPinger.Verify(m => m.PingAsync(service.Endpoints.ElementAt(0).Url, command.Timeout), Times.Once());
@@ -110,6 +127,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
         {
             var service = new Mongo.Infrastructure.Entities.Service()
             {
+                Id = Guid.NewGuid(),
                 Active = false,
                 Name = "lorem",
                 Endpoints = new[]{
@@ -137,10 +155,12 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
                     return new PingResult((url == "localhost2"), 0);
                 });
 
+            var mockMediator = new Mock<IMediator>();
+
             var validator = new NullValidator<RefreshServiceStatus>();
 
             var command = new RefreshServiceStatus(service.Name, 10);
-            var sut = new RefreshServiceStatusHandler(mockDbContext.Object, mockPinger.Object, validator);
+            var sut = new RefreshServiceStatusHandler(mockDbContext.Object, mockPinger.Object, mockMediator.Object, validator);
             await sut.Handle(command);
 
             foreach (var endpoint in service.Endpoints)
@@ -156,6 +176,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
         {
             var service = new Mongo.Infrastructure.Entities.Service()
             {
+                Id = Guid.NewGuid(),
                 Active = false,
                 Name = "lorem",
                 Endpoints = new[]{
@@ -176,10 +197,12 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
             mockPinger.Setup(p => p.PingAsync(It.IsAny<string>(), It.IsAny<int>()))
                       .ReturnsAsync(new PingResult(true, 42));
 
+            var mockMediator = new Mock<IMediator>();
+
             var validator = new NullValidator<RefreshServiceStatus>();
 
             var command = new RefreshServiceStatus(service.Name, 10);
-            var sut = new RefreshServiceStatusHandler(mockDbContext.Object, mockPinger.Object, validator);
+            var sut = new RefreshServiceStatusHandler(mockDbContext.Object, mockPinger.Object, mockMediator.Object, validator);
             await sut.Handle(command);
 
             mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Mongo.Infrastructure.Entities.Service, bool>>>(),
@@ -192,6 +215,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
         {
             var service = new Mongo.Infrastructure.Entities.Service()
             {
+                Id = Guid.NewGuid(),
                 Active = true,
                 Name = "lorem",
                 Endpoints = new[]{
@@ -212,6 +236,8 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
             var mockDbContext = new Mock<IDbContext>();
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
+            var mockMediator = new Mock<IMediator>();
+
             var mockPinger = new Mock<IPinger>();
             mockPinger.Setup(p => p.PingAsync(It.IsAny<string>(), It.IsAny<int>()))
                 .ReturnsAsync((string url, int timeout) =>
@@ -224,10 +250,83 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
             var validator = new NullValidator<RefreshServiceStatus>();
 
             var command = new RefreshServiceStatus(service.Name, 10);
-            var sut = new RefreshServiceStatusHandler(mockDbContext.Object, mockPinger.Object, validator);
+            var sut = new RefreshServiceStatusHandler(mockDbContext.Object, mockPinger.Object, mockMediator.Object, validator);
             await sut.Handle(command);
 
             mockPinger.Verify(m => m.PingAsync(It.IsAny<string>(), command.Timeout), Times.Exactly(service.Endpoints.Count()));
+        }
+
+        [Fact]
+        public async Task should_emit_ServiceRefreshed_event()
+        {
+            var service = new Mongo.Infrastructure.Entities.Service()
+            {
+                Id = Guid.NewGuid(),
+                Active = true,
+                Name = "lorem",
+                Endpoints = new[]{
+                    new Mongo.Infrastructure.Entities.ServiceEndpoint()
+                    {
+                        Active = true,
+                        Url = "localhost"
+                    },
+                    new Mongo.Infrastructure.Entities.ServiceEndpoint()
+                    {
+                        Active = true,
+                        Url = "localhost1"
+                    }
+                }
+            };
+
+            var mockRepo = RepositoryUtils.MockRepository<Mongo.Infrastructure.Entities.Service>(service);
+
+            var mockDbContext = new Mock<IDbContext>();
+            mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
+
+            var mockMediator = new Mock<IMediator>();
+
+            var mockPinger = new Mock<IPinger>();
+
+            var validator = new NullValidator<RefreshServiceStatus>();
+
+            var command = new RefreshServiceStatus(service.Name, 10);
+            var sut = new RefreshServiceStatusHandler(mockDbContext.Object, mockPinger.Object, mockMediator.Object, validator);
+            await sut.Handle(command);
+
+            mockMediator.Verify(m => m.Publish(It.Is<Core.Events.ServiceRefreshed>(e => e.ServiceId == service.Id), 
+                                                It.IsAny<System.Threading.CancellationToken>()), 
+                                Times.Once);
+        }
+
+        [Fact]
+        public async Task should_emit_ServiceRefreshed_event_even_with_no_endpoints()
+        {
+            var service = new Mongo.Infrastructure.Entities.Service()
+            {
+                Id = Guid.NewGuid(),
+                Active = true,
+                Name = "lorem",
+                Endpoints = new Mongo.Infrastructure.Entities.ServiceEndpoint[]{ }
+            };
+
+            var mockRepo = RepositoryUtils.MockRepository<Mongo.Infrastructure.Entities.Service>(service);
+
+            var mockDbContext = new Mock<IDbContext>();
+            mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
+
+            var mockMediator = new Mock<IMediator>();
+
+            var mockPinger = new Mock<IPinger>();
+
+            var validator = new NullValidator<RefreshServiceStatus>();
+
+            var command = new RefreshServiceStatus(service.Name, 10);
+            var sut = new RefreshServiceStatusHandler(mockDbContext.Object, mockPinger.Object, mockMediator.Object, validator);
+            await sut.Handle(command);
+
+            mockMediator.Verify(m => m.Publish(It.Is<Core.Events.ServiceRefreshed>(e => e.ServiceId == service.Id),
+                                                It.IsAny<System.Threading.CancellationToken>()),
+                                Times.Once);
         }
     }
 }

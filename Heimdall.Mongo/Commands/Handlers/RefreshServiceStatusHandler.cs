@@ -3,6 +3,7 @@ using Heimdall.Mongo.Infrastructure;
 using LibCore.CQRS.Commands.Handlers;
 using LibCore.CQRS.Validation;
 using LibCore.Web.Services;
+using MediatR;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,11 +14,13 @@ namespace Heimdall.Mongo.Commands.Handlers
     {
         private readonly IDbContext _db;
         private readonly IPinger _pinger;
+        private readonly IMediator _mediator;
 
-        public RefreshServiceStatusHandler(IDbContext db, IPinger pinger, IValidator<RefreshServiceStatus> validator) : base(validator)
+        public RefreshServiceStatusHandler(IDbContext db, IPinger pinger, IMediator mediator, IValidator<RefreshServiceStatus> validator) : base(validator)
         {
             _db = db ?? throw new ArgumentNullException(nameof(db));
             _pinger = pinger ?? throw new ArgumentNullException(nameof(pinger));
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
         protected override async Task RunCommand(RefreshServiceStatus command)
@@ -44,9 +47,10 @@ namespace Heimdall.Mongo.Commands.Handlers
                         endpoint.RoundtripTime = long.MaxValue;
                     }
                 }
-
+            
             await _db.Services.UpsertOneAsync(s => s.Id == service.Id, service);
 
+            await _mediator.Publish(new Core.Events.ServiceRefreshed(service.Id));
         }
     }
 }

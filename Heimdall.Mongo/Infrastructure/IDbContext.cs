@@ -9,6 +9,11 @@ namespace Heimdall.Mongo.Infrastructure
         {
             get;
         }
+
+        IRepository<Entities.TraceEvent> TraceEvents
+        {
+            get;
+        }
     }
 
 }
