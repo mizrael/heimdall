@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace Heimdall.Mongo.Tests.Utils
+namespace Heimdall.Mongo.Tests.Common.Utils
 {
     public static class RepositoryUtils
     {
@@ -21,6 +21,7 @@ namespace Heimdall.Mongo.Tests.Utils
             entities = entities ?? Enumerable.Empty<TEntity>();
 
             var mockRepo = new Mock<IRepository<TEntity>>();
+
             mockRepo.Setup(r => r.FindOneAsync(It.IsAny<Expression<Func<TEntity, bool>>>()))
                .ReturnsAsync((Expression<Func<TEntity, bool>> filter) =>
                {
@@ -35,6 +36,12 @@ namespace Heimdall.Mongo.Tests.Utils
                      return s;
                  });
 
+            mockRepo.Setup(r => r.InsertOneAsync(It.IsAny<TEntity>())).Returns(
+                () =>
+                {
+                    return System.Threading.Tasks.Task.CompletedTask;
+                });
+           
             return mockRepo;
         }
     }
