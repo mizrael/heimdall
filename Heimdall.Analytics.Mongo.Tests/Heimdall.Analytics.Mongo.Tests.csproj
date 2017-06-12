@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>    
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
+    <PackageReference Include="Moq" Version="4.7.25" />
+    <PackageReference Include="xunit" Version="2.2.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Heimdall.Analytics.Mongo\Heimdall.Analytics.Mongo.csproj" />
+    <ProjectReference Include="..\Heimdall.Core\Heimdall.Core.csproj" />
+    <ProjectReference Include="..\Heimdall.Mongo.Tests.Common\Heimdall.Mongo.Tests.Common.csproj" />
+    <ProjectReference Include="..\Heimdall.Mongo\Heimdall.Mongo.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
+  </ItemGroup>
+
+</Project>
