@@ -35,7 +35,7 @@ namespace Heimdall.Mongo.Tests.Common.Utils
                      var s = entities.Where(filter.Compile());
                      return s;
                  });
-
+            
             mockRepo.Setup(r => r.InsertOneAsync(It.IsAny<TEntity>())).Returns(
                 () =>
                 {
