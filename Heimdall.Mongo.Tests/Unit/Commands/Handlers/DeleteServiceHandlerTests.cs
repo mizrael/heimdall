@@ -1,7 +1,7 @@
 ﻿using Heimdall.Core.Commands;
 using Heimdall.Mongo.Commands.Handlers;
 using Heimdall.Mongo.Infrastructure;
-using Heimdall.Mongo.Tests.Utils;
+using Heimdall.Mongo.Tests.Common.Utils;
 using LibCore.CQRS.Validation;
 using LibCore.Web.Services;
 using Moq;
@@ -31,6 +31,32 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
 
             var sut = new DeleteServiceHandler(mockDbContext.Object, mockValidator.Object);
             await Assert.ThrowsAsync<ArgumentNullException>(() => sut.Handle(null));
+        }
+
+        [Fact]
+        public async Task should_delete_servoce_when_input_valid()
+        {
+            var startTicks = DateTime.UtcNow.Ticks;
+
+            var service = new Mongo.Infrastructure.Entities.Service()
+            {
+                Id = Guid.NewGuid(),
+                Active = true,
+                Name = "lorem",
+                Endpoints = Enumerable.Empty<Mongo.Infrastructure.Entities.ServiceEndpoint>()
+            };
+            var mockServicesRepo = RepositoryUtils.MockRepository(service);
+            
+            var mockDbContext = new Mock<IDbContext>();
+            mockDbContext.Setup(db => db.Services).Returns(mockServicesRepo.Object);
+
+            var validator = new NullValidator<DeleteService>();
+
+            var sut = new DeleteServiceHandler(mockDbContext.Object, validator);
+
+            await sut.Handle(new DeleteService(service.Name));
+
+            mockServicesRepo.Verify(m => m.DeleteOneAsync(It.IsAny<Expression<Func<Mongo.Infrastructure.Entities.Service, bool>>>()), Times.Once());
         }
     }
 }

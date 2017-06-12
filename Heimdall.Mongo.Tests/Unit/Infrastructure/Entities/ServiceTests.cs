@@ -18,7 +18,7 @@ namespace Heimdall.Mongo.Tests.Unit.Infrastructure.Entities
                     new ServiceEndpoint()
                 }
             };
-            var result = sut.GetActiveEndpoints();
+            var result = sut.FindActiveEndpoints();
             result.Should().NotBeNull();
             result.Should().BeEmpty();
         }
@@ -31,7 +31,7 @@ namespace Heimdall.Mongo.Tests.Unit.Infrastructure.Entities
                 Active = false,
                 Endpoints = null
             };
-            var result = sut.GetActiveEndpoints();
+            var result = sut.FindActiveEndpoints();
             result.Should().NotBeNull();
             result.Should().BeEmpty();
         }
@@ -44,7 +44,7 @@ namespace Heimdall.Mongo.Tests.Unit.Infrastructure.Entities
                 Active = true,
                 Endpoints = null
             };
-            var result = sut.GetActiveEndpoints();
+            var result = sut.FindActiveEndpoints();
             result.Should().NotBeNull();
             result.Should().BeEmpty();
         }
@@ -57,7 +57,7 @@ namespace Heimdall.Mongo.Tests.Unit.Infrastructure.Entities
                 Active = false,
                 Endpoints = Enumerable.Empty<ServiceEndpoint>()
             };
-            var result = sut.GetActiveEndpoints();
+            var result = sut.FindActiveEndpoints();
             result.Should().NotBeNull();
             result.Should().BeEmpty();
         }
@@ -70,7 +70,7 @@ namespace Heimdall.Mongo.Tests.Unit.Infrastructure.Entities
                 Active = true,
                 Endpoints = Enumerable.Empty<ServiceEndpoint>()
             };
-            var result = sut.GetActiveEndpoints();
+            var result = sut.FindActiveEndpoints();
             result.Should().NotBeNull();
             result.Should().BeEmpty();
         }
@@ -86,7 +86,7 @@ namespace Heimdall.Mongo.Tests.Unit.Infrastructure.Entities
                     new ServiceEndpoint(){Active = false}
                 }
             };
-            var result = sut.GetActiveEndpoints();
+            var result = sut.FindActiveEndpoints();
             result.Should().NotBeNull();
             result.Should().BeEmpty();
         }
@@ -104,7 +104,7 @@ namespace Heimdall.Mongo.Tests.Unit.Infrastructure.Entities
                      new ServiceEndpoint(){Active = true},
                 }
             };
-            var result = sut.GetActiveEndpoints();
+            var result = sut.FindActiveEndpoints();
             result.Should().NotBeNullOrEmpty();
             result.Count().ShouldBeEquivalentTo(2);
         }

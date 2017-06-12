@@ -1,7 +1,7 @@
 ﻿using Heimdall.Core.Commands;
 using Heimdall.Mongo.Commands.Handlers;
 using Heimdall.Mongo.Infrastructure;
-using Heimdall.Mongo.Tests.Utils;
+using Heimdall.Mongo.Tests.Common.Utils;
 using LibCore.CQRS.Validation;
 using MediatR;
 using Moq;

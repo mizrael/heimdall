@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 using FluentAssertions;
-using Heimdall.Mongo.Tests.Utils;
+using Heimdall.Mongo.Tests.Common.Utils;
 
 namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
 {

@@ -1,15 +1,10 @@
 ﻿using Heimdall.Core.Events;
-using Heimdall.Mongo.Commands.Handlers;
 using Heimdall.Mongo.Events.Handlers;
 using Heimdall.Mongo.Infrastructure;
-using Heimdall.Mongo.Tests.Utils;
-using LibCore.CQRS.Validation;
-using LibCore.Web.Services;
-using MediatR;
+using Heimdall.Mongo.Tests.Common.Utils;
 using Moq;
 using System;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -81,7 +76,7 @@ namespace Heimdall.Mongo.Tests.Unit.Events.Handlers
                     te.Name == Core.TraceEventNames.ServiceRefreshed &&
                     te.CustomData == service
                 )
-            ));
+            ), Times.Once);
         }
     }
 }

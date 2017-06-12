@@ -2,7 +2,7 @@
 using Heimdall.Mongo.Commands.Handlers;
 using Heimdall.Mongo.Commands.Validation;
 using Heimdall.Mongo.Infrastructure;
-using Heimdall.Mongo.Tests.Utils;
+using Heimdall.Mongo.Tests.Common.Utils;
 using LibCore.CQRS.Validation;
 using Moq;
 using System;
