@@ -1,8 +1,8 @@
 ﻿using Heimdall.Core.Commands;
-using LibCore.CQRS.Commands.Handlers;
-using System;
-using LibCore.CQRS.Validation;
 using Heimdall.Mongo.Infrastructure;
+using LibCore.CQRS.Commands.Handlers;
+using LibCore.CQRS.Validation;
+using System;
 using System.Threading.Tasks;
 
 namespace Heimdall.Mongo.Commands.Handlers

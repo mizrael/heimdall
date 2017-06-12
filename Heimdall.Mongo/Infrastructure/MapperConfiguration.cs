@@ -50,16 +50,14 @@ namespace Heimdall.Mongo.Infrastructure
 
         private static Core.Queries.Models.ServiceEndpoint ExtractBestEndpoint(Entities.Service s)
         {
-            var availableEndpoints = s.GetActiveEndpoints();
-            if (null == availableEndpoints || !availableEndpoints.Any())
-                return null;
-            var bestEndpoint = availableEndpoints.OrderBy(e => e.RoundtripTime).First();
-            return AutoMapper.Mapper.Map<Core.Queries.Models.ServiceEndpoint>(bestEndpoint);
+            var bestEndpoint = s.FindBestEndpoint();
+            
+            return (null != bestEndpoint) ? AutoMapper.Mapper.Map<Core.Queries.Models.ServiceEndpoint>(bestEndpoint) : null;
         }
 
         private static Core.Queries.Models.ServiceEndpoint[] ExtractEndpoints(Entities.Service src, bool forceLoad)
         {
-            var endpoints = forceLoad ? src.Endpoints : src.GetActiveEndpoints();
+            var endpoints = forceLoad ? src.Endpoints : src.FindActiveEndpoints();
             return endpoints.Select(se => AutoMapper.Mapper.Map<Core.Queries.Models.ServiceEndpoint>(se))
                                      .ToArray();
         }
