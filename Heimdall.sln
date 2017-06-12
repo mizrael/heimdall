@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.4
+VisualStudioVersion = 15.0.26430.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Heimdall.API", "Heimdall.API\Heimdall.API.csproj", "{63464824-3ACF-47E1-8E1C-30251D769827}"
 EndProject
@@ -22,6 +22,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Heimdall.Mongo.Tests", "Heimdall.Mongo.Tests\Heimdall.Mongo.Tests.csproj", "{3E73FE15-475D-4EC2-A700-E7EF999C20E2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Heimdall.Web", "Heimdall.Web\Heimdall.Web.csproj", "{F379C223-39F2-4F48-B4B6-B0F50738E873}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Analytics", "Analytics", "{23A06878-BA1F-4DD3-88F8-F92A27C52EAB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Heimdall.Analytics.Mongo", "Heimdall.Analytics.Mongo\Heimdall.Analytics.Mongo.csproj", "{AFC35E42-9F3C-4AD2-813C-55B5470E71A4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Heimdall.Mongo.Tests.Common", "Heimdall.Mongo.Tests.Common\Heimdall.Mongo.Tests.Common.csproj", "{44756BC2-6F22-4AF4-A008-2E2EDABE2563}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Heimdall.Analytics.Mongo.Tests", "Heimdall.Analytics.Mongo.Tests\Heimdall.Analytics.Mongo.Tests.csproj", "{FAED93FB-09E3-439D-BF84-4165E90E3EB6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +69,18 @@ Global
 		{F379C223-39F2-4F48-B4B6-B0F50738E873}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F379C223-39F2-4F48-B4B6-B0F50738E873}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F379C223-39F2-4F48-B4B6-B0F50738E873}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFC35E42-9F3C-4AD2-813C-55B5470E71A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFC35E42-9F3C-4AD2-813C-55B5470E71A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFC35E42-9F3C-4AD2-813C-55B5470E71A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFC35E42-9F3C-4AD2-813C-55B5470E71A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44756BC2-6F22-4AF4-A008-2E2EDABE2563}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44756BC2-6F22-4AF4-A008-2E2EDABE2563}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44756BC2-6F22-4AF4-A008-2E2EDABE2563}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44756BC2-6F22-4AF4-A008-2E2EDABE2563}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAED93FB-09E3-439D-BF84-4165E90E3EB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAED93FB-09E3-439D-BF84-4165E90E3EB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAED93FB-09E3-439D-BF84-4165E90E3EB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAED93FB-09E3-439D-BF84-4165E90E3EB6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -70,5 +90,8 @@ Global
 		{7CEED0C6-8320-4B85-B52C-2B3163A5320F} = {30D15175-B518-48BA-AB9C-F7ACF7CDE8DC}
 		{636D160A-941D-4B11-872D-18EA5863FB36} = {30D15175-B518-48BA-AB9C-F7ACF7CDE8DC}
 		{3E73FE15-475D-4EC2-A700-E7EF999C20E2} = {17530BFF-0568-410E-8505-D8A91FCFE011}
+		{AFC35E42-9F3C-4AD2-813C-55B5470E71A4} = {23A06878-BA1F-4DD3-88F8-F92A27C52EAB}
+		{44756BC2-6F22-4AF4-A008-2E2EDABE2563} = {17530BFF-0568-410E-8505-D8A91FCFE011}
+		{FAED93FB-09E3-439D-BF84-4165E90E3EB6} = {17530BFF-0568-410E-8505-D8A91FCFE011}
 	EndGlobalSection
 EndGlobal
