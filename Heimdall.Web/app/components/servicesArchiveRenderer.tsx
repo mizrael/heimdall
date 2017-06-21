@@ -118,11 +118,10 @@ export class ServicesArchiveRenderer extends React.Component<ServicesArchiveRend
                     <th>Actions</th>
                 </tr>
             </thead>
-            <ReactCSSTransitionGroup
+            <ReactCSSTransitionGroup 
                 transitionName="example"
                 transitionEnterTimeout={500}
-                transitionLeaveTimeout={300}
-                component="tbody">
+                transitionLeaveTimeout={300} >
                 {items}
             </ReactCSSTransitionGroup>
         </table>;

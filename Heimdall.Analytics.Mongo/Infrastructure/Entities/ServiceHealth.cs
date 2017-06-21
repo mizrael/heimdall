@@ -5,6 +5,8 @@ namespace Heimdall.Analytics.Mongo.Infrastructure.Entities
 {
     public class ServiceHealth
     {
+        public MongoDB.Bson.ObjectId Id { get; set; }
+
         public Guid ServiceId { get; set; }
 
         public long TimestampMinute { get; set; }

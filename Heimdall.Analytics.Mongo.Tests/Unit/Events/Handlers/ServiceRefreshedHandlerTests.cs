@@ -17,7 +17,7 @@ namespace Heimdall.Analytics.Mongo.Tests.Unit.Events.Handlers
         [Fact]
         public void should_throw_ArgumentNullException_when_dbContext_null()
         {   
-               var mockAnalyticsDb = new Mock<IAnalyticsDbContext>();
+            var mockAnalyticsDb = new Mock<IAnalyticsDbContext>();
             Assert.Throws<ArgumentNullException>(() => new ServiceRefreshedHandler(null, mockAnalyticsDb.Object));
         }
 
