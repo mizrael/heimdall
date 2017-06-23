@@ -45,8 +45,8 @@ namespace Heimdall.Analytics.Mongo.Events.Handlers
             }
 
             var update = Builders<Infrastructure.Entities.ServiceHealth>.Update.Push(sh => sh.Details, healthDetails);
-                
-            var start = now.AddSeconds(-now.Second);
+
+            var start = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0, DateTimeKind.Utc);
             
             var serviceHealth = await _analyticsDb.ServicesHealth.FindOneAndUpdateAsync(sh => sh.ServiceId == service.Id && sh.TimestampMinute == start.Ticks, update);
             if (null != serviceHealth)

@@ -15,7 +15,8 @@ namespace Heimdall.Analytics.Mongo.Infrastructure
 
             this.ServicesHealth = repoFactory.Create<Entities.ServiceHealth>(new RepositoryOptions(connectionString, "servicesHealth"));
             var servicesIxb = new IndexKeysDefinitionBuilder<Entities.ServiceHealth>();
-            this.ServicesHealth.CreateIndex(servicesIxb.Ascending(u => u.ServiceId), new CreateIndexOptions() { Unique = true });
+            var indexKeys = servicesIxb.Ascending(u => u.ServiceId).Ascending(u => u.TimestampMinute);
+            this.ServicesHealth.CreateIndex(indexKeys, new CreateIndexOptions() { Unique = true });
         }
 
         public IRepository<Entities.ServiceHealth> ServicesHealth { get; private set; }

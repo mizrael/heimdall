@@ -15,13 +15,13 @@ using FluentAssertions;
 
 namespace Heimdall.Analytics.Mongo.Tests.Integration.Events.Handlers
 {
-    public class DatabaseFixture : IDisposable
+    public class BaseDbTests : IDisposable
     {
         private const string connStr = "mongodb://127.0.0.1:27018/heimdall_tests";
 
         private readonly DbFactory _dbFactory;
 
-        public DatabaseFixture()
+        public BaseDbTests()
         {
             _dbFactory = new DbFactory();
 
@@ -44,15 +44,8 @@ namespace Heimdall.Analytics.Mongo.Tests.Integration.Events.Handlers
         }
     }
 
-    public class ServiceRefreshedHandlerTests : IClassFixture<DatabaseFixture>
-    {
-        private readonly DatabaseFixture _fixture;
-
-        public ServiceRefreshedHandlerTests(DatabaseFixture fixture)
-        {
-            _fixture = fixture;
-        }
-
+    public class ServiceRefreshedHandlerTests : BaseDbTests
+    { 
         [Fact, Trait("Category", "Integration")]
         public async Task should_create_service_health_data_when_not_found()
         {
@@ -72,14 +65,14 @@ namespace Heimdall.Analytics.Mongo.Tests.Integration.Events.Handlers
                 Name = "lorem"
             };
 
-            await _fixture.DbContext.Services.InsertOneAsync(service);
+            await base.DbContext.Services.InsertOneAsync(service);
             
-            var sut = new ServiceRefreshedHandler(_fixture.DbContext, _fixture.AnalyticsDbContext);
+            var sut = new ServiceRefreshedHandler(base.DbContext, base.AnalyticsDbContext);
 
             var @event = new ServiceRefreshed(service.Id);
             await sut.Handle(@event);
 
-            var servicesHealth = await _fixture.AnalyticsDbContext.ServicesHealth.FindAsync(sh => sh.ServiceId == service.Id);
+            var servicesHealth = await base.AnalyticsDbContext.ServicesHealth.FindAsync(sh => sh.ServiceId == service.Id);
             servicesHealth.Should().NotBeNullOrEmpty();
             servicesHealth.Count().ShouldBeEquivalentTo(1);
 
@@ -90,6 +83,98 @@ namespace Heimdall.Analytics.Mongo.Tests.Integration.Events.Handlers
             var details = serviceHealth.Details.ElementAt(0);
             details.BestEndpoint.ShouldBeEquivalentTo(endpoint.Url);
             details.RoundtripTime.ShouldBeEquivalentTo(endpoint.RoundtripTime);
+        }
+        
+        [Fact, Trait("Category", "Integration")]
+        public async Task should_append_service_health_data_when_found()
+        {
+            var endpoint = new Heimdall.Mongo.Infrastructure.Entities.ServiceEndpoint()
+            {
+                Active = true,
+                CreationDate = DateTime.UtcNow.Ticks,
+                RoundtripTime = 1,
+                Url = "ipsum"
+            };
+            var service = new Heimdall.Mongo.Infrastructure.Entities.Service()
+            {
+                Active = true,
+                CreationDate = DateTime.UtcNow.Ticks,
+                Endpoints = new[] { endpoint },
+                Id = Guid.NewGuid(),
+                Name = "lorem"
+            };
+
+            await base.DbContext.Services.InsertOneAsync(service);
+
+            var now = DateTime.UtcNow;
+            var start = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0, DateTimeKind.Utc);
+
+            var serviceHealth = new Infrastructure.Entities.ServiceHealth()
+            {
+                ServiceId = service.Id,
+                TimestampMinute = start.Ticks,
+                Details = Enumerable.Empty<Infrastructure.Entities.ServiceHealthDetails>()
+            };
+            await base.AnalyticsDbContext.ServicesHealth.InsertOneAsync(serviceHealth);
+
+            var sut = new ServiceRefreshedHandler(base.DbContext, base.AnalyticsDbContext);
+
+            var @event = new ServiceRefreshed(service.Id);
+            await sut.Handle(@event);
+
+            var foundServicesHealth = await base.AnalyticsDbContext.ServicesHealth.FindAsync(sh => sh.ServiceId == service.Id);
+            foundServicesHealth.Should().NotBeNullOrEmpty();
+            foundServicesHealth.Count().ShouldBeEquivalentTo(1);
+
+            var foundServiceHealth = foundServicesHealth.ElementAt(0);
+            foundServiceHealth.Should().NotBeNull();
+            foundServiceHealth.Details.Should().NotBeNullOrEmpty();
+            foundServiceHealth.Details.Count().ShouldBeEquivalentTo(1);
+            var foundDetails = foundServiceHealth.Details.ElementAt(0);
+            foundDetails.BestEndpoint.ShouldBeEquivalentTo(endpoint.Url);
+            foundDetails.RoundtripTime.ShouldBeEquivalentTo(endpoint.RoundtripTime);
+        }
+
+        [Fact, Trait("Category", "Integration")]
+        public async Task should_create_service_health_data_when_found_with_older_timestamp()
+        {
+            var endpoint = new Heimdall.Mongo.Infrastructure.Entities.ServiceEndpoint()
+            {
+                Active = true,
+                CreationDate = DateTime.UtcNow.Ticks,
+                RoundtripTime = 1,
+                Url = "ipsum"
+            };
+            var service = new Heimdall.Mongo.Infrastructure.Entities.Service()
+            {
+                Active = true,
+                CreationDate = DateTime.UtcNow.Ticks,
+                Endpoints = new[] { endpoint },
+                Id = Guid.NewGuid(),
+                Name = "lorem"
+            };
+
+            await base.DbContext.Services.InsertOneAsync(service);
+
+            var now = DateTime.UtcNow;
+            var start = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute - 1, 0, DateTimeKind.Utc);
+
+            var serviceHealth = new Infrastructure.Entities.ServiceHealth()
+            {
+                ServiceId = service.Id,
+                TimestampMinute = start.Ticks,
+                Details = Enumerable.Empty<Infrastructure.Entities.ServiceHealthDetails>()
+            };
+            await base.AnalyticsDbContext.ServicesHealth.InsertOneAsync(serviceHealth);
+
+            var sut = new ServiceRefreshedHandler(base.DbContext, base.AnalyticsDbContext);
+
+            var @event = new ServiceRefreshed(service.Id);
+            await sut.Handle(@event);
+
+            var foundServicesHealth = await base.AnalyticsDbContext.ServicesHealth.FindAsync(sh => sh.ServiceId == service.Id);
+            foundServicesHealth.Should().NotBeNullOrEmpty();
+            foundServicesHealth.Count().ShouldBeEquivalentTo(2);
         }
     }
 }
