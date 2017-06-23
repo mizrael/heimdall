@@ -131,6 +131,14 @@ namespace Heimdall.API
 
                 return new Mongo.Infrastructure.DbContext(factory, connStr);
             });
+
+            var analyticsConnStr = Configuration["ConnectionStrings:heimdall_analytics"];
+            _container.Register<Analytics.Mongo.Infrastructure.IAnalyticsDbContext>(() =>
+            {
+                var factory = _container.GetInstance<LibCore.Mongo.IRepositoryFactory>();
+
+                return new Analytics.Mongo.Infrastructure.AnalyticsDbContext(factory, analyticsConnStr);
+            });
         }
 
         private static IEnumerable<Assembly> GetAssemblies()
@@ -138,6 +146,7 @@ namespace Heimdall.API
             yield return typeof(IMediator).GetTypeInfo().Assembly;
             yield return typeof(ValidationApiErrorInfoBuilder).GetTypeInfo().Assembly;
             yield return typeof(Mongo.Queries.Handlers.FindServiceHandler).GetTypeInfo().Assembly;
+            yield return typeof(Analytics.Mongo.Events.Handlers.ServiceRefreshedHandler).GetTypeInfo().Assembly;
         }
 
         private void RegisterMapping()

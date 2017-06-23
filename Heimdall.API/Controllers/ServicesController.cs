@@ -77,13 +77,13 @@ namespace Heimdall.API.Controllers
         /// </summary>
         [HttpPost, Route("endpoint")]
         [ProducesResponseType(typeof(LibCore.Web.ErrorHandling.ApiErrorInfo), 400)]
-        public async Task<IActionResult> PostEndpoint([FromBody]Models.AddEndpoint model)
+        public async Task<IActionResult> PostEndpoint([FromBody]Models.AddEndpoint request)
         {
-            if (null == model)
-                throw new ArgumentNullException(nameof(model));
-            var command = new Core.Commands.AddEndpoint(model.ServiceName, model.Endpoint);
+            if (null == request)
+                throw new ArgumentNullException(nameof(request));
+            var command = new Core.Commands.AddEndpoint(request.ServiceName, request.Endpoint);
             await _mediator.Publish(command);
-            return CreatedAtAction("GetByName", new { name = model.ServiceName }, null);
+            return CreatedAtAction("GetByName", new { name = request.ServiceName }, null);
         }
 
         /// <summary>
@@ -91,13 +91,16 @@ namespace Heimdall.API.Controllers
         /// </summary>
         [HttpPost, Route("refresh")]
         [ProducesResponseType(typeof(LibCore.Web.ErrorHandling.ApiErrorInfo), 400)]
-        public async Task<IActionResult> PostRefresh([FromBody]string name)
+        public async Task<IActionResult> PostRefresh([FromBody]Models.RefreshService request)
         {
-            var command = new Core.Commands.RefreshServiceStatus(name, 10);
+            if (null == request)
+                throw new ArgumentNullException(nameof(request));
+
+            var command = new Core.Commands.RefreshServiceStatus(request.Name, 10);
 
             await _mediator.Publish(command);
 
-            var query = new FindService(name, false);
+            var query = new FindService(request.Name, false);
             var result = await _mediator.Send(query);
             
             return this.Ok(result);
@@ -108,9 +111,12 @@ namespace Heimdall.API.Controllers
         /// </summary>
         [HttpDelete]
         [ProducesResponseType(typeof(LibCore.Web.ErrorHandling.ApiErrorInfo), 400)]
-        public async Task<IActionResult> Delete([FromBody]string name)
+        public async Task<IActionResult> Delete([FromBody]Models.DeleteService request)
         {
-            var command = new Core.Commands.DeleteService(name);
+            if (null == request)
+                throw new ArgumentNullException(nameof(request));
+
+            var command = new Core.Commands.DeleteService(request.Name);
 
             await _mediator.Publish(command);
 

@@ -19,7 +19,7 @@ namespace Heimdall.Mongo.Infrastructure
 
             this.TraceEvents = repoFactory.Create<Entities.TraceEvent>(new RepositoryOptions(connectionString, "events"));
             var eventsIxb = new IndexKeysDefinitionBuilder<Entities.TraceEvent>();
-            this.TraceEvents.CreateIndex(eventsIxb.Ascending(u => u.Name), new CreateIndexOptions() { Unique = true });
+            this.TraceEvents.CreateIndex(eventsIxb.Ascending(u => u.Name), new CreateIndexOptions() { Unique = false });
         }
 
         public IRepository<Entities.TraceEvent> TraceEvents { get; private set; }

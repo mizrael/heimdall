@@ -32,6 +32,7 @@
     <ProjectReference Include="..\..\LibCore\LibCore.CQRS\LibCore.CQRS.csproj" />
     <ProjectReference Include="..\..\LibCore\LibCore.Mongo\LibCore.Mongo.csproj" />
     <ProjectReference Include="..\..\LibCore\LibCore.Web\LibCore.Web.csproj" />
+    <ProjectReference Include="..\Heimdall.Analytics.Mongo\Heimdall.Analytics.Mongo.csproj" />
     <ProjectReference Include="..\Heimdall.Mongo\Heimdall.Mongo.csproj" />
   </ItemGroup>
 
