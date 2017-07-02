@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Heimdall.Mongo.Tests.Common
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Heimdall.Analytics.Mongo.Tests", "Heimdall.Analytics.Mongo.Tests\Heimdall.Analytics.Mongo.Tests.csproj", "{FAED93FB-09E3-439D-BF84-4165E90E3EB6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Heimdall.Analytics", "Heimdall.Analytics\Heimdall.Analytics.csproj", "{3DD4AA48-099E-469E-A582-81B9CEF1EEBC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +83,10 @@ Global
 		{FAED93FB-09E3-439D-BF84-4165E90E3EB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FAED93FB-09E3-439D-BF84-4165E90E3EB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FAED93FB-09E3-439D-BF84-4165E90E3EB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DD4AA48-099E-469E-A582-81B9CEF1EEBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DD4AA48-099E-469E-A582-81B9CEF1EEBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DD4AA48-099E-469E-A582-81B9CEF1EEBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DD4AA48-099E-469E-A582-81B9CEF1EEBC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -93,5 +99,6 @@ Global
 		{AFC35E42-9F3C-4AD2-813C-55B5470E71A4} = {23A06878-BA1F-4DD3-88F8-F92A27C52EAB}
 		{44756BC2-6F22-4AF4-A008-2E2EDABE2563} = {17530BFF-0568-410E-8505-D8A91FCFE011}
 		{FAED93FB-09E3-439D-BF84-4165E90E3EB6} = {17530BFF-0568-410E-8505-D8A91FCFE011}
+		{3DD4AA48-099E-469E-A582-81B9CEF1EEBC} = {23A06878-BA1F-4DD3-88F8-F92A27C52EAB}
 	EndGlobalSection
 EndGlobal

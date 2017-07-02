@@ -55,14 +55,17 @@ namespace Heimdall.API
                     .AllowCredentials());
             });
 
-            services.AddApiVersioning(o =>
-            {
-                o.AssumeDefaultVersionWhenUnspecified = true;
-                o.DefaultApiVersion = new ApiVersion(1, 0);
-                o.ApiVersionReader = new HeaderApiVersionReader("api-version");
-            });
+            // after an update, this causes all the routes to give 404 error.
+            //services.AddApiVersioning(o =>
+            //{
+            //    o.AssumeDefaultVersionWhenUnspecified = true;
+            //    o.DefaultApiVersion = new ApiVersion(1, 0);
+            //    o.ApiVersionReader = new HeaderApiVersionReader("api-version");
+            //});
 
-            services.AddMvcCore();
+            services.AddMvcCore()
+                .AddJsonFormatters()
+                .AddApiExplorer();
 
             services.AddSwaggerGen(c =>
             {
@@ -105,7 +108,7 @@ namespace Heimdall.API
             _container.Options.DefaultScopedLifestyle = new SimpleInjector.Lifestyles.AsyncScopedLifestyle();
 
             _container.RegisterMvcControllers(app);
-            _container.RegisterMvcViewComponents(app);
+            //_container.RegisterMvcViewComponents(app);
 
             _container.RegisterErrorFilter();
 

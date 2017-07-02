@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp1.1</TargetFramework>
+    <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -13,16 +14,16 @@
     <Folder Include="wwwroot\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="6.0.2" />
+    <PackageReference Include="AutoMapper" Version="6.1.1" />
     <PackageReference Include="MediatR" Version="3.0.1" />
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore" Version="1.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="1.1.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="1.0.3" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="1.1.1" />
-    <PackageReference Include="SimpleInjector" Version="4.0.3" />
-    <PackageReference Include="SimpleInjector.Integration.AspNetCore" Version="4.0.4" />
-    <PackageReference Include="SimpleInjector.Integration.AspNetCore.Mvc" Version="4.0.4" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore" Version="1.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="1.1.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="1.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="1.1.2" />
+    <PackageReference Include="SimpleInjector" Version="4.0.8" />
+    <PackageReference Include="SimpleInjector.Integration.AspNetCore" Version="4.0.8" />
+    <PackageReference Include="SimpleInjector.Integration.AspNetCore.Mvc" Version="4.0.8" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup>
@@ -33,6 +34,7 @@
     <ProjectReference Include="..\..\LibCore\LibCore.Mongo\LibCore.Mongo.csproj" />
     <ProjectReference Include="..\..\LibCore\LibCore.Web\LibCore.Web.csproj" />
     <ProjectReference Include="..\Heimdall.Analytics.Mongo\Heimdall.Analytics.Mongo.csproj" />
+    <ProjectReference Include="..\Heimdall.Analytics\Heimdall.Analytics.csproj" />
     <ProjectReference Include="..\Heimdall.Mongo\Heimdall.Mongo.csproj" />
   </ItemGroup>
 

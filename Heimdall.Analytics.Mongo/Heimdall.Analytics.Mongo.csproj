@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\LibCore\LibCore.Mongo\LibCore.Mongo.csproj" />
+    <ProjectReference Include="..\Heimdall.Analytics\Heimdall.Analytics.csproj" />
     <ProjectReference Include="..\Heimdall.Core\Heimdall.Core.csproj" />
     <ProjectReference Include="..\Heimdall.Mongo\Heimdall.Mongo.csproj" />
   </ItemGroup>
