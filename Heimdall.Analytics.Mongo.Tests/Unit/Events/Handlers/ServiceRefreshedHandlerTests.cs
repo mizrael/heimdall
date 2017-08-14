@@ -61,8 +61,8 @@ namespace Heimdall.Analytics.Mongo.Tests.Unit.Events.Handlers
         [Fact]
         public async Task should_create_service_health_data_when_not_found()
         {
-            var start = DateTime.UtcNow;
-            start = start.AddSeconds(-start.Second);
+            var now = DateTime.UtcNow;
+            var start = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0, DateTimeKind.Utc);
 
             var service = new Heimdall.Mongo.Infrastructure.Entities.Service()
             {
@@ -100,8 +100,8 @@ namespace Heimdall.Analytics.Mongo.Tests.Unit.Events.Handlers
         [Fact]
         public async Task should_not_create_service_health_data_when_found()
         {
-            var start = DateTime.UtcNow;
-            start = start.AddSeconds(-start.Second);
+            var now = DateTime.UtcNow;
+            var start = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0, DateTimeKind.Utc);
 
             var service = new Heimdall.Mongo.Infrastructure.Entities.Service()
             {
