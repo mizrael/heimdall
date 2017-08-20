@@ -1,21 +1,17 @@
 {
   "compilerOptions": {
-    "skipLibCheck": true,
+    "module": "es2015",
     "moduleResolution": "node",
+    "target": "es5",
     "sourceMap": true,
-    "noImplicitAny": false,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "module": "commonjs",
-    "target": "es6",
-    "jsx": "react",
-    "outDir": "./app/bin/",
-    "typeRoots": [
-      "../node_modules/@types"
-    ]
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true, // Workaround for https://github.com/angular/angular/issues/17863. Remove this if you upgrade to a fixed version of Angular.
+    "strict": true,
+    "lib": [ "es6", "dom" ],
+    "types": [ "webpack-env" ]
   },
-  "exclude": [
-    "node_modules",
-    "wwwroot"
-  ]
+  "exclude": [ "bin", "node_modules" ],
+  "atom": { "rewriteTsconfig": false }
 }

@@ -1,0 +1,32 @@
+<div class="row">
+    <div class="col-xs-12">
+        <h3>Services archive</h3>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Active</th>
+                    <th># endpoints</th>
+                    <th>Roundtrip time</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of items">
+                    <td>{{item.name}}</td>
+                    <td>{{item.active}}</td>
+                    <td>{{item.endpointsCount}}</td>
+                    <td>{{item.roundtripTime}}</td>
+                    <td>
+                        <a [routerLink]="['/services/details', item.name]">Details</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

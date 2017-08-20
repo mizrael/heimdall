@@ -1,0 +1,33 @@
+<div class="row">
+    <div class="col-xs-12">
+        <h3>{{item.name}}</h3>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Url</th>
+                    <th>Active</th>
+                    <th>Roundtrip time</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of item.endpoints">
+                    <td>{{item.url}}</td>
+                    <td>{{item.active}}</td>
+                    <td>{{item.roundtripTime}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-xs-12">
+        <a [routerLink]="['/services']">Back to archive</a>
+    </div>
+</div>
