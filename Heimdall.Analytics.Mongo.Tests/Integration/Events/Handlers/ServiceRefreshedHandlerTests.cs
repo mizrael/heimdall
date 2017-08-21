@@ -54,7 +54,7 @@ namespace Heimdall.Analytics.Mongo.Tests.Integration.Events.Handlers
                 Active = true,
                 CreationDate = DateTime.UtcNow.Ticks,
                 RoundtripTime = 1,
-                Url = "ipsum"
+                Address = "ipsum"
             };
             var service = new Heimdall.Mongo.Infrastructure.Entities.Service()
             {
@@ -81,7 +81,7 @@ namespace Heimdall.Analytics.Mongo.Tests.Integration.Events.Handlers
             serviceHealth.Details.Should().NotBeNullOrEmpty();
             serviceHealth.Details.Count().ShouldBeEquivalentTo(1);
             var details = serviceHealth.Details.ElementAt(0);
-            details.BestEndpoint.ShouldBeEquivalentTo(endpoint.Url);
+            details.BestEndpoint.ShouldBeEquivalentTo(endpoint.Address);
             details.RoundtripTime.ShouldBeEquivalentTo(endpoint.RoundtripTime);
         }
         
@@ -93,7 +93,7 @@ namespace Heimdall.Analytics.Mongo.Tests.Integration.Events.Handlers
                 Active = true,
                 CreationDate = DateTime.UtcNow.Ticks,
                 RoundtripTime = 1,
-                Url = "ipsum"
+                Address = "ipsum"
             };
             var service = new Heimdall.Mongo.Infrastructure.Entities.Service()
             {
@@ -131,7 +131,7 @@ namespace Heimdall.Analytics.Mongo.Tests.Integration.Events.Handlers
             foundServiceHealth.Details.Should().NotBeNullOrEmpty();
             foundServiceHealth.Details.Count().ShouldBeEquivalentTo(1);
             var foundDetails = foundServiceHealth.Details.ElementAt(0);
-            foundDetails.BestEndpoint.ShouldBeEquivalentTo(endpoint.Url);
+            foundDetails.BestEndpoint.ShouldBeEquivalentTo(endpoint.Address);
             foundDetails.RoundtripTime.ShouldBeEquivalentTo(endpoint.RoundtripTime);
         }
 
@@ -143,7 +143,7 @@ namespace Heimdall.Analytics.Mongo.Tests.Integration.Events.Handlers
                 Active = true,
                 CreationDate = DateTime.UtcNow.Ticks,
                 RoundtripTime = 1,
-                Url = "ipsum"
+                Address = "ipsum"
             };
             var service = new Heimdall.Mongo.Infrastructure.Entities.Service()
             {

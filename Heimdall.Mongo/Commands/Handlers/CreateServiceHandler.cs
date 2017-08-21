@@ -24,14 +24,7 @@ namespace Heimdall.Mongo.Commands.Handlers
                 Id = Guid.NewGuid(),
                 Name = command.Name,
                 Active = false,
-                Endpoints = new[]
-                {
-                    new Infrastructure.Entities.ServiceEndpoint()
-                    {
-                        Active = false,
-                        Url = command.Endpoint
-                    }
-                }
+                Endpoints = Enumerable.Empty<Infrastructure.Entities.ServiceEndpoint>()
             };
             
             await _db.Services.InsertOneAsync(service);

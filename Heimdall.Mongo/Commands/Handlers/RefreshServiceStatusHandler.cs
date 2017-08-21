@@ -36,7 +36,7 @@ namespace Heimdall.Mongo.Commands.Handlers
                 {
                     try
                     {
-                        var pingResult = await _pinger.PingAsync(endpoint.Url, command.Timeout);
+                        var pingResult = await _pinger.PingAsync(endpoint.Address, command.Timeout);
                         service.Active |= pingResult.Success;
                         endpoint.Active = pingResult.Success;
                         endpoint.RoundtripTime = pingResult.RoundtripTime;

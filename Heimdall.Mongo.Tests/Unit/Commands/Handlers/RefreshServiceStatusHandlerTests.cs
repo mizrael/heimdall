@@ -85,17 +85,20 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
         [Fact]
         public async Task should_deactivate_service_when_no_endpoints_responds_to_ping()
         {
+            var endpoint = new Mongo.Infrastructure.Entities.ServiceEndpoint()
+            {
+                Address = "localhost",
+                Protocol = "dolor",
+                Active = true
+            };
+
             var service = new Mongo.Infrastructure.Entities.Service()
             {
                 Id = Guid.NewGuid(),
                 Active = true,
                 Name = "lorem",
                 Endpoints = new[]{
-                    new Mongo.Infrastructure.Entities.ServiceEndpoint()
-                    {
-                        Active = true,
-                        Url = "localhost"
-                    }
+                   endpoint
                 }
             };
             var mockRepo = RepositoryUtils.MockRepository<Mongo.Infrastructure.Entities.Service>(service);
@@ -115,7 +118,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
             var sut = new RefreshServiceStatusHandler(mockDbContext.Object, mockPinger.Object, mockMediator.Object, validator);
             await sut.Handle(command);
 
-            mockPinger.Verify(m => m.PingAsync(service.Endpoints.ElementAt(0).Url, command.Timeout), Times.Once());
+            mockPinger.Verify(m => m.PingAsync(service.Endpoints.ElementAt(0).Address, command.Timeout), Times.Once());
 
             mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Mongo.Infrastructure.Entities.Service, bool>>>(),
                                                   It.Is<Mongo.Infrastructure.Entities.Service>(r => r.Active == false && !r.Endpoints.Any(es => es.Active))),
@@ -125,22 +128,26 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
         [Fact]
         public async Task should_activate_service_when_at_least_one_endpoint_responds_to_ping()
         {
+            var endpoint1 = new Mongo.Infrastructure.Entities.ServiceEndpoint()
+            {
+                Address = "localhost1",
+                Protocol = "dolor",
+                Active = true
+            };
+            var endpoint2 = new Mongo.Infrastructure.Entities.ServiceEndpoint()
+            {
+                Address = "localhost2",
+                Protocol = "dolor",
+                Active = true
+            };
+
             var service = new Mongo.Infrastructure.Entities.Service()
             {
                 Id = Guid.NewGuid(),
                 Active = false,
                 Name = "lorem",
                 Endpoints = new[]{
-                    new Mongo.Infrastructure.Entities.ServiceEndpoint()
-                    {
-                        Active = false,
-                        Url = "localhost1"
-                    },
-                    new Mongo.Infrastructure.Entities.ServiceEndpoint()
-                    {
-                        Active = false,
-                        Url = "localhost2"
-                    }
+                   endpoint1, endpoint2
                 }
             };
             var mockRepo = RepositoryUtils.MockRepository<Mongo.Infrastructure.Entities.Service>(service);
@@ -150,9 +157,9 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
 
             var mockPinger = new Mock<IPinger>();
             mockPinger.Setup(p => p.PingAsync(It.IsAny<string>(), It.IsAny<int>()))
-                .ReturnsAsync((string url, int timeout) =>
+                .ReturnsAsync((string Address, int timeout) =>
                 {
-                    return new PingResult((url == "localhost2"), 0);
+                    return new PingResult((Address == endpoint2.Address), 0);
                 });
 
             var mockMediator = new Mock<IMediator>();
@@ -164,28 +171,31 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
             await sut.Handle(command);
 
             foreach (var endpoint in service.Endpoints)
-                mockPinger.Verify(m => m.PingAsync(endpoint.Url, command.Timeout), Times.Once());
+                mockPinger.Verify(m => m.PingAsync(endpoint.Address, command.Timeout), Times.Once());
 
             mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Mongo.Infrastructure.Entities.Service, bool>>>(),
-                                                  It.Is<Mongo.Infrastructure.Entities.Service>(r => r.Active == true && 1 == r.Endpoints.Count(es => es.Active && es.Url == "localhost2"))),
+                                                  It.Is<Mongo.Infrastructure.Entities.Service>(r => r.Active == true && 1 == r.Endpoints.Count(es => es.Active && es.Address == endpoint2.Address))),
                             Times.Once());
         }
 
         [Fact]
         public async Task should_update_endpoint_roundtrip_time()
         {
+            var endpoint = new Mongo.Infrastructure.Entities.ServiceEndpoint()
+            {
+                Address = "localhost1",
+                Protocol = "dolor",
+                Active = false,
+                RoundtripTime = long.MaxValue
+            };
+
             var service = new Mongo.Infrastructure.Entities.Service()
             {
                 Id = Guid.NewGuid(),
                 Active = false,
                 Name = "lorem",
                 Endpoints = new[]{
-                    new Mongo.Infrastructure.Entities.ServiceEndpoint()
-                    {
-                        Active = false,
-                        Url = "localhost",
-                        RoundtripTime = long.MaxValue
-                    }
+                    endpoint
                 }
             };
             var mockRepo = RepositoryUtils.MockRepository<Mongo.Infrastructure.Entities.Service>(service);
@@ -222,12 +232,12 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
                     new Mongo.Infrastructure.Entities.ServiceEndpoint()
                     {
                         Active = true,
-                        Url = "localhost"
+                        Address = "localhost"
                     },
                     new Mongo.Infrastructure.Entities.ServiceEndpoint()
                     {
                         Active = true,
-                        Url = "localhost1"
+                        Address = "localhost1"
                     }
                 }
             };
@@ -240,10 +250,10 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
 
             var mockPinger = new Mock<IPinger>();
             mockPinger.Setup(p => p.PingAsync(It.IsAny<string>(), It.IsAny<int>()))
-                .ReturnsAsync((string url, int timeout) =>
+                .ReturnsAsync((string Address, int timeout) =>
                 {
-                    if(url == service.Endpoints.ElementAt(0).Url)
-                        throw new Exception(url);
+                    if(Address == service.Endpoints.ElementAt(0).Address)
+                        throw new Exception(Address);
                     return new PingResult(true, 0);
                 });
 
@@ -268,12 +278,12 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
                     new Mongo.Infrastructure.Entities.ServiceEndpoint()
                     {
                         Active = true,
-                        Url = "localhost"
+                        Address = "localhost"
                     },
                     new Mongo.Infrastructure.Entities.ServiceEndpoint()
                     {
                         Active = true,
-                        Url = "localhost1"
+                        Address = "localhost1"
                     }
                 }
             };

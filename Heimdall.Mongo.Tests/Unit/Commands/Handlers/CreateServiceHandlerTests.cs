@@ -34,7 +34,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
         [Fact]
         public async Task should_insert_service()
         {
-            var command = new CreateService("lorem", "ipsum");
+            var command = new CreateService("lorem");
 
             var mockRepo = RepositoryUtils.MockRepository<Mongo.Infrastructure.Entities.Service>();
 
@@ -50,8 +50,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
                     r.Name == command.Name &&
                     r.Active == false &&
                     r.Id != Guid.Empty &&
-                    null != r.Endpoints && 1 == r.Endpoints.Count() && 
-                    r.Endpoints.Any(es => es.Active == false && es.Url == command.Endpoint)) 
+                    null != r.Endpoints && 0 == r.Endpoints.Count()) 
                 ), Times.Once());
         }
     }

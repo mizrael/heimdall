@@ -31,8 +31,8 @@ namespace Heimdall.Mongo.Commands.Validation
                 return;
             }
 
-            if (!service.Endpoints.Any(e => e.Url == command.Endpoint))
-                base.AddError(new ValidationError("endpoint", $"endpoint '{command.Endpoint}' doesn't exist on service '{command.ServiceName}'"));
+            if (!service.Endpoints.Any(e => e.Address == command.Address && e.Protocol == command.Protocol))
+                base.AddError(new ValidationError("endpoint", $"endpoint '{command.Address}' with protocol '{command.Protocol}' doesn't exist on service '{command.ServiceName}'"));
 
         }
     }

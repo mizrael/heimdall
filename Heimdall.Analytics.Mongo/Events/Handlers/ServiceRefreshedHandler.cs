@@ -41,7 +41,7 @@ namespace Heimdall.Analytics.Mongo.Events.Handlers
             if (null != bestEndpoint)
             {
                 healthDetails.RoundtripTime = bestEndpoint.RoundtripTime;
-                healthDetails.BestEndpoint = bestEndpoint.Url;
+                healthDetails.BestEndpoint = bestEndpoint.Address;
             }
 
             var update = Builders<Infrastructure.Entities.ServiceHealth>.Update.Push(sh => sh.Details, healthDetails);

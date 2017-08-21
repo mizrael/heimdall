@@ -60,16 +60,16 @@ namespace Heimdall.API.Controllers
         /// <summary>
         /// creates service
         /// </summary>
-        /// <param name="service"></param>
+        /// <param name="request"></param>
         [HttpPost]
         [ProducesResponseType(typeof(LibCore.Web.ErrorHandling.ApiErrorInfo), 400)]
-        public async Task<IActionResult> Post([FromBody]Models.CreateService service)
+        public async Task<IActionResult> Post([FromBody]Models.CreateService request)
         {
-            if (null == service)
-                throw new ArgumentNullException(nameof(service));
-            var command = new Core.Commands.CreateService(service.Name, service.Endpoint);
+            if (null == request)
+                throw new ArgumentNullException(nameof(request));
+            var command = new Core.Commands.CreateService(request.Name);
             await _mediator.Publish(command);
-            return CreatedAtAction("GetByName", new { name = service.Name }, null);
+            return CreatedAtAction("GetByName", new { name = request.Name }, null);
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace Heimdall.API.Controllers
         {
             if (null == request)
                 throw new ArgumentNullException(nameof(request));
-            var command = new Core.Commands.AddEndpoint(request.ServiceName, request.Endpoint);
+            var command = new Core.Commands.AddEndpoint(request.ServiceName, request.Protocol, request.Address);
             await _mediator.Publish(command);
             return CreatedAtAction("GetByName", new { name = request.ServiceName }, null);
         }
@@ -128,11 +128,11 @@ namespace Heimdall.API.Controllers
         /// </summary>
         [HttpDelete, Route("endpoint")]
         [ProducesResponseType(typeof(LibCore.Web.ErrorHandling.ApiErrorInfo), 400)]
-        public async Task<IActionResult> DeleteEndpoint([FromBody]Models.RemoveEndpoint model)
+        public async Task<IActionResult> DeleteEndpoint([FromBody]Models.RemoveEndpoint request)
         {
-            if (null == model)
-                throw new ArgumentNullException(nameof(model));
-            var command = new Core.Commands.RemoveEndpoint(model.ServiceName, model.Endpoint);
+            if (null == request)
+                throw new ArgumentNullException(nameof(request));
+            var command = new Core.Commands.RemoveEndpoint(request.ServiceName, request.Protocol, request.Address);
             await _mediator.Publish(command);
             return this.Ok();
         }

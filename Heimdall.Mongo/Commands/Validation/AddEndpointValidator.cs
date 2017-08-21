@@ -28,8 +28,8 @@ namespace Heimdall.Mongo.Commands.Validation
             if (null == service.Endpoints || !service.Endpoints.Any())
                 return;
 
-            if (service.Endpoints.Any(e => e.Url == command.Endpoint))
-                base.AddError(new ValidationError("endpoint", $"endpoint '{command.Endpoint}' already exists on '{command.ServiceName}'"));
+            if (service.Endpoints.Any(e => e.Address == command.Address && e.Protocol == command.Protocol))
+                base.AddError(new ValidationError("endpoint", $"endpoint '{command.Address}' already exists on '{command.ServiceName}'"));
         }
     }
 }

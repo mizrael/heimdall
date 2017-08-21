@@ -21,7 +21,7 @@ namespace Heimdall.Mongo.Commands.Handlers
         {
             var service = await _db.Services.FindOneAsync(s => s.Name == command.ServiceName);
 
-            service.Endpoints = service.Endpoints.Where(e => e.Url != command.Endpoint).ToArray();
+            service.Endpoints = service.Endpoints.Where(e => e.Address != command.Address || e.Protocol != command.Protocol).ToArray();
 
             await _db.Services.UpsertOneAsync(s => s.Name == command.ServiceName, service);
         }

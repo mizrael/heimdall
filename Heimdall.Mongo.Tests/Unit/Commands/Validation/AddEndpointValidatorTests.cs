@@ -31,31 +31,33 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Validation
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
             var sut = new AddEndpointValidator(mockDbContext.Object);
-            var result = await sut.ValidateAsync(new AddEndpoint(service.Name, "ipsum"));
+            var result = await sut.ValidateAsync(new AddEndpoint(service.Name, "ipsum", "dolor"));
             result.Success.Should().BeTrue();
         }
 
         [Fact]
         public async Task should_succeed_when_endpoint_not_found()
         {
+            var endpoint = new Mongo.Infrastructure.Entities.ServiceEndpoint()
+            {
+                Address = "ipsum",
+                Protocol = "dolor",
+                Active = false
+            };
+
             var service = new Mongo.Infrastructure.Entities.Service()
             {
                 Active = false,
                 Name = "lorem",
-                Endpoints = new[] { new Mongo.Infrastructure.Entities.ServiceEndpoint()
-                    {
-                        Url = "ipsum",
-                        Active = false
-                    }
-                }
+                Endpoints = new[] { endpoint }
             };
-            var mockRepo = RepositoryUtils.MockRepository<Mongo.Infrastructure.Entities.Service>(service);
+            var mockRepo = RepositoryUtils.MockRepository(service);
 
             var mockDbContext = new Mock<IDbContext>();
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
             var sut = new AddEndpointValidator(mockDbContext.Object);
-            var result = await sut.ValidateAsync(new AddEndpoint(service.Name, "dolor"));
+            var result = await sut.ValidateAsync(new AddEndpoint(service.Name, endpoint.Protocol, Guid.NewGuid().ToString() ));
             result.Success.Should().BeTrue();
         }
 
@@ -68,7 +70,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Validation
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
             var sut = new AddEndpointValidator(mockDbContext.Object);
-            var result = await sut.ValidateAsync(new AddEndpoint("lorem", "ipsum"));
+            var result = await sut.ValidateAsync(new AddEndpoint("lorem", "ipsum", "dolor"));
             result.Success.Should().BeFalse();
             result.Errors.Any(e => e.Context == "service" && e.Message.Contains("Unable to load service")).Should().BeTrue();
         }
@@ -76,16 +78,17 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Validation
         [Fact]
         public async Task should_fail_when_endpoint_already_exists()
         {
+            var endpoint = new Mongo.Infrastructure.Entities.ServiceEndpoint()
+            {
+                Address = "ipsum",
+                Protocol = "dolor",
+                Active = false
+            };
             var service = new Mongo.Infrastructure.Entities.Service()
             {
                 Active = false,
                 Name = "lorem",
-                Endpoints =new[] { new Mongo.Infrastructure.Entities.ServiceEndpoint()
-                    {
-                        Url = "ipsum",
-                        Active = false
-                    }
-                }
+                Endpoints = new[] { endpoint }
             };
             var mockRepo = RepositoryUtils.MockRepository<Mongo.Infrastructure.Entities.Service>(service);
 
@@ -93,7 +96,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Validation
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
             var sut = new AddEndpointValidator(mockDbContext.Object);
-            var result = await sut.ValidateAsync(new AddEndpoint(service.Name, service.Endpoints.ElementAt(0).Url));
+            var result = await sut.ValidateAsync(new AddEndpoint(service.Name, endpoint.Protocol, endpoint.Address));
             result.Success.Should().BeFalse();
             result.Errors.Any(e => e.Context == "endpoint" && e.Message.Contains("already exists")).Should().BeTrue();
         }

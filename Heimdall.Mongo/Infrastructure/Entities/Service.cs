@@ -34,7 +34,8 @@ namespace Heimdall.Mongo.Infrastructure.Entities
     public class ServiceEndpoint
     {
         public long CreationDate { get; set; } = DateTime.UtcNow.Ticks;
-        public string Url { get; set; } = string.Empty;
+        public string Address { get; set; } = string.Empty;
+        public string Protocol { get; set; } = "http";
         public bool Active { get; set; } = false;
         public long RoundtripTime { get; set; } = long.MaxValue;
     }

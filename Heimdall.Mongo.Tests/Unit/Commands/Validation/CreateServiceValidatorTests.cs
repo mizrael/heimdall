@@ -25,7 +25,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Validation
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
             var sut = new CreateServiceValidator(mockDbContext.Object);
-            var result = await sut.ValidateAsync(new CreateService("lorem", "ipsum"));
+            var result = await sut.ValidateAsync(new CreateService("lorem"));
             result.Success.Should().BeTrue();
         }
 
@@ -44,7 +44,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Validation
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
             var sut = new CreateServiceValidator(mockDbContext.Object);
-            var result = await sut.ValidateAsync(new CreateService(service.Name, "ipsum"));
+            var result = await sut.ValidateAsync(new CreateService(service.Name));
             result.Success.Should().BeFalse();
             result.Errors.Any(e => e.Context == "service" && e.Message.Contains("already exists")).Should().BeTrue();
         }

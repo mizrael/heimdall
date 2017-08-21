@@ -12,7 +12,8 @@ namespace Heimdall.Core.Queries.Models
 
     public class ServiceEndpoint
     {
-        public string Url { get; set; }
+        public string Address { get; set; }
+        public string Protocol { get; set; }
         public bool Active { get; set; }
         public long RoundtripTime { get; set; }
     }

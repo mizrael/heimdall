@@ -60,7 +60,7 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
                 Active = false,
                 Endpoints = new[]
                 {
-                    new Mongo.Infrastructure.Entities.ServiceEndpoint(){Active = true, Url ="localhost"}
+                    new Mongo.Infrastructure.Entities.ServiceEndpoint(){Active = true, Address ="localhost"}
                 }
             };
             var mockRepo = RepositoryUtils.MockRepository(service);
@@ -132,7 +132,7 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
                     new Mongo.Infrastructure.Entities.ServiceEndpoint()
                     {
                         Active = false,
-                        Url = "localhost"
+                        Address = "localhost"
                     }
                 }
             };
@@ -162,12 +162,12 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
                     new Mongo.Infrastructure.Entities.ServiceEndpoint()
                     {
                         Active = false,
-                        Url = "localhost1"
+                        Address = "localhost1"
                     },
                     new Mongo.Infrastructure.Entities.ServiceEndpoint()
                     {
                         Active = true,
-                        Url = "localhost2"
+                        Address = "localhost2"
                     }
                 }
             };
@@ -182,7 +182,7 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
             var result = await sut.Handle(query);
             result.Should().NotBeNull();
             result.Endpoints.Should().NotBeNullOrEmpty();
-            result.Endpoints.ElementAt(0).Url.ShouldBeEquivalentTo("localhost2");
+            result.Endpoints.ElementAt(0).Address.ShouldBeEquivalentTo("localhost2");
         }
 
 
@@ -198,12 +198,12 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
                     new Mongo.Infrastructure.Entities.ServiceEndpoint()
                     {
                         Active = false,
-                        Url = "localhost1"
+                        Address = "localhost1"
                     },
                     new Mongo.Infrastructure.Entities.ServiceEndpoint()
                     {
                         Active = true,
-                        Url = "localhost2"
+                        Address = "localhost2"
                     }
                 }
             };

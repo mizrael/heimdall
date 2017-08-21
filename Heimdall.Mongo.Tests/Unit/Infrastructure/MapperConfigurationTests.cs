@@ -26,7 +26,7 @@ namespace Heimdall.Mongo.Tests.Unit.Infrastructure
                 Active = false,
                 Endpoints = new[]
                 {
-                    new ServiceEndpoint(){Active = true, RoundtripTime = 200, Url = "lorem"},
+                    new ServiceEndpoint(){Active = true, RoundtripTime = 200, Address = "lorem"},
                 }
             };
 
@@ -37,22 +37,22 @@ namespace Heimdall.Mongo.Tests.Unit.Infrastructure
         [Fact]
         public void ServiceDetails_mapping_should_return_best_active_endpoint_when_service_active()
         {
-            var bestEndpointUrl = "ipsum";
+            var bestEndpointAddress = "ipsum";
 
             var sut = new Service()
             {
                 Active = true,
                 Endpoints = new[]
                 {
-                    new ServiceEndpoint(){Active = true, RoundtripTime = 200, Url = "lorem"},
-                    new ServiceEndpoint(){Active = true, RoundtripTime = 10, Url = bestEndpointUrl},
-                    new ServiceEndpoint(){Active = true, RoundtripTime = 400, Url = "dolor"},
+                    new ServiceEndpoint(){Active = true, RoundtripTime = 200, Address = "lorem"},
+                    new ServiceEndpoint(){Active = true, RoundtripTime = 10, Address = bestEndpointAddress},
+                    new ServiceEndpoint(){Active = true, RoundtripTime = 400, Address = "dolor"},
                 }
             };
 
             var result = AutoMapper.Mapper.Map<Core.Queries.Models.ServiceDetails>(sut);
             result.BestEndpoint.Should().NotBeNull();
-            result.BestEndpoint.Url.ShouldBeEquivalentTo(bestEndpointUrl);
+            result.BestEndpoint.Address.ShouldBeEquivalentTo(bestEndpointAddress);
         }
 
         [Fact]
@@ -63,8 +63,8 @@ namespace Heimdall.Mongo.Tests.Unit.Infrastructure
                 Active = true,
                 Endpoints = new[]
                 {
-                    new ServiceEndpoint(){Active = false, RoundtripTime = 200, Url = "lorem"},
-                    new ServiceEndpoint(){Active = true, RoundtripTime = 400, Url = "dolor"},
+                    new ServiceEndpoint(){Active = false, RoundtripTime = 200, Address = "lorem"},
+                    new ServiceEndpoint(){Active = true, RoundtripTime = 400, Address = "dolor"},
                 }
             };
 
@@ -72,7 +72,7 @@ namespace Heimdall.Mongo.Tests.Unit.Infrastructure
             result.Endpoints.Should().NotBeNullOrEmpty();
             result.Endpoints.Count().ShouldBeEquivalentTo(1);
             result.Endpoints.ElementAt(0).Active.Should().BeTrue();
-            result.Endpoints.ElementAt(0).Url.ShouldBeEquivalentTo("dolor");
+            result.Endpoints.ElementAt(0).Address.ShouldBeEquivalentTo("dolor");
         }
 
         [Fact]
@@ -83,8 +83,8 @@ namespace Heimdall.Mongo.Tests.Unit.Infrastructure
                 Active = true,
                 Endpoints = new[]
                 {
-                    new ServiceEndpoint(){Active = false, RoundtripTime = 200, Url = "lorem"},
-                    new ServiceEndpoint(){Active = true, RoundtripTime = 400, Url = "dolor"},
+                    new ServiceEndpoint(){Active = false, RoundtripTime = 200, Address = "lorem"},
+                    new ServiceEndpoint(){Active = true, RoundtripTime = 400, Address = "dolor"},
                 }
             };
 
@@ -101,8 +101,8 @@ namespace Heimdall.Mongo.Tests.Unit.Infrastructure
                 Active = true,
                 Endpoints = new[]
                 {
-                    new ServiceEndpoint(){Active = false, RoundtripTime = 200, Url = "lorem"},
-                    new ServiceEndpoint(){Active = true, RoundtripTime = 400, Url = "dolor"},
+                    new ServiceEndpoint(){Active = false, RoundtripTime = 200, Address = "lorem"},
+                    new ServiceEndpoint(){Active = true, RoundtripTime = 400, Address = "dolor"},
                 }
             };
 
@@ -119,8 +119,8 @@ namespace Heimdall.Mongo.Tests.Unit.Infrastructure
                 Active = true,
                 Endpoints = new[]
                 {
-                    new ServiceEndpoint(){Active = false, RoundtripTime = 200, Url = "lorem"},
-                    new ServiceEndpoint(){Active = true, RoundtripTime = 400, Url = "dolor"},
+                    new ServiceEndpoint(){Active = false, RoundtripTime = 200, Address = "lorem"},
+                    new ServiceEndpoint(){Active = true, RoundtripTime = 400, Address = "dolor"},
                 }
             };
 

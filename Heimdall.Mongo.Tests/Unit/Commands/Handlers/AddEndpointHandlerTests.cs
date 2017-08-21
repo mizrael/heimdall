@@ -34,7 +34,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
         [Fact]
         public async Task should_throw_when_service_not_found()
         {
-            var command = new AddEndpoint("lorem", "ipsum");
+            var command = new AddEndpoint("lorem", "ipsum", "dolor");
 
             var mockRepo = RepositoryUtils.MockRepository<Mongo.Infrastructure.Entities.Service>();
 
@@ -50,7 +50,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
         [Fact]
         public async Task should_update_service_when_found_with_no_endpoints()
         {
-            var command = new AddEndpoint("lorem", "ipsum");
+            var command = new AddEndpoint("lorem", "ipsum", "dolor");
 
             var service = new Mongo.Infrastructure.Entities.Service()
             {
@@ -74,14 +74,14 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
                     r.Name == command.ServiceName &&
                     r.Active == false && 
                     null != r.Endpoints && 1 == r.Endpoints.Count() &&
-                    r.Endpoints.Any(es => es.Active == false && es.Url == command.Endpoint))
+                    r.Endpoints.Any(es => es.Active == false && es.Address == command.Address && es.Protocol == command.Protocol))
                 ), Times.Once());
         }
 
         [Fact]
-        public async Task should_update_service_when_found_with_other_endpoints()
+        public async Task should_update_service_when_found_with_other_protocol()
         {
-            var command = new AddEndpoint("lorem", "ipsum");
+            var command = new AddEndpoint("lorem", "ipsum", "dolor");
 
             var service = new Mongo.Infrastructure.Entities.Service()
             {
@@ -92,7 +92,8 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
                     new Mongo.Infrastructure.Entities.ServiceEndpoint()
                     {
                         Active = false,
-                        Url = "localhost"
+                        Address = command.Address,
+                        Protocol = "amet"
                     }
                 }
             };
@@ -112,7 +113,45 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
                     r.Name == command.ServiceName &&
                     r.Active == false &&
                     null != r.Endpoints && 2 == r.Endpoints.Count() &&
-                    r.Endpoints.Any(es => es.Active == false && es.Url == command.Endpoint))
+                    r.Endpoints.Any(es => es.Active == false && es.Address == command.Address && es.Protocol == command.Protocol))
+                ), Times.Once());
+        }
+
+        [Fact]
+        public async Task should_update_service_when_found_with_other_endpoints()
+        {
+            var command = new AddEndpoint("lorem", "ipsum", "dolor");
+
+            var service = new Mongo.Infrastructure.Entities.Service()
+            {
+                Name = command.ServiceName,
+                Active = false,
+                Endpoints = new[]
+                {
+                    new Mongo.Infrastructure.Entities.ServiceEndpoint()
+                    {
+                        Active = false,
+                        Address = "localhost"
+                    }
+                }
+            };
+
+            var mockRepo = RepositoryUtils.MockRepository(service);
+
+            var mockDbContext = new Mock<IDbContext>();
+            mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
+
+            var validator = new NullValidator<AddEndpoint>();
+
+            var sut = new AddEndpointHandler(mockDbContext.Object, validator);
+            await sut.Handle(command);
+
+            mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Mongo.Infrastructure.Entities.Service, bool>>>(),
+                It.Is<Mongo.Infrastructure.Entities.Service>(r =>
+                    r.Name == command.ServiceName &&
+                    r.Active == false &&
+                    null != r.Endpoints && 2 == r.Endpoints.Count() &&
+                    r.Endpoints.Any(es => es.Active == false && es.Address == command.Address && es.Protocol == command.Protocol))
                 ), Times.Once());
         }
     }

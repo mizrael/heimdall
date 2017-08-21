@@ -5,18 +5,22 @@ namespace Heimdall.Core.Commands
 {
     public class AddEndpoint : INotification
     {
-        public AddEndpoint(string serviceName, string endpoint)
+        public AddEndpoint(string serviceName, string protocol, string address)
         {
             if (string.IsNullOrWhiteSpace(serviceName))
                 throw new ArgumentNullException(nameof(serviceName));
-            if (string.IsNullOrWhiteSpace(endpoint))
-                throw new ArgumentNullException(nameof(endpoint));
-            
+            if (string.IsNullOrWhiteSpace(protocol))
+                throw new ArgumentNullException(nameof(protocol));
+            if (string.IsNullOrWhiteSpace(address))
+                throw new ArgumentNullException(nameof(address));
+
             this.ServiceName = serviceName;
-            this.Endpoint = endpoint;
+            this.Address = address;
+            this.Protocol = protocol;
         }
         
         public string ServiceName { get; private set; }
-        public string Endpoint { get; private set; }
+        public string Address { get; private set; }
+        public string Protocol { get; private set; }
     }
 }
