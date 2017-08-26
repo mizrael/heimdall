@@ -20,7 +20,8 @@ namespace Heimdall.Web.DTO
 
     public class ServiceEndpoint
     {
-        public string Url { get; set; }
+        public string Address { get; set; }
+        public string Protocol { get; set; }
         public bool Active { get; set; }
         public long RoundtripTime { get; set; }
     }
@@ -28,18 +29,19 @@ namespace Heimdall.Web.DTO
     public class CreateService
     {
         public string Name { get; set; }
-        public string Endpoint { get; set; }
     }
 
     public class AddEndpoint
     {
         public string ServiceName { get; set; }
-        public string Endpoint { get; set; }
+        public string Address { get; set; }
+        public string Protocol { get; set; }
     }
 
     public class RemoveEndpoint
     {
         public string ServiceName { get; set; }
-        public string Endpoint { get; set; }
+        public string Address { get; set; }
+        public string Protocol { get; set; }
     }
 }

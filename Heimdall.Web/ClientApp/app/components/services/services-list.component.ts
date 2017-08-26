@@ -8,13 +8,13 @@ import { IServiceArchiveItem } from '../../models/service';
     templateUrl: './services-list.component.html'
 })
 export class ServicesListComponent {
-    private items: IServiceArchiveItem[];
+    private models: IServiceArchiveItem[];
 
     constructor(private servicesService: ServicesService, private router:Router) {
         this.readItems();
     }
 
     private async readItems() {
-        this.items = await this.servicesService.getAll();
+        this.models = await this.servicesService.getAll();
     }
 }

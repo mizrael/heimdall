@@ -1,30 +1,43 @@
-<div class="row">
-    <div class="col-xs-12">
-        <h3>{{item.name}}</h3>
+<div *ngIf="model; else loading">
+    <div class="row">
+        <div class="col-xs-12">
+            <h3>{{model.name}}</h3>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Protocol</th>
+                        <th>Address</th>
+                        <th>Active</th>
+                        <th>Roundtrip time</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of model.endpoints">
+                        <td>{{item.protocol}}</td>
+                        <td>{{item.address}}</td>
+                        <td>{{item.active}}</td>
+                        <td>{{item.roundtripTime}}</td>
+                        <td>
+                            <ul>
+                                <li>
+                                    <button (click)="onDelete(item)">Delete</button>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-xs-12">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>Url</th>
-                    <th>Active</th>
-                    <th>Roundtrip time</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let item of item.endpoints">
-                    <td>{{item.url}}</td>
-                    <td>{{item.active}}</td>
-                    <td>{{item.roundtripTime}}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-
+<ng-template #loading>loading...</ng-template>
 
 <div class="row">
     <div class="col-xs-12">

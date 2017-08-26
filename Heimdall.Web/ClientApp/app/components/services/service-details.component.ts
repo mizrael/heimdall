@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
 import { ServicesService } from '../../services/services.service';
-import { IServiceDetails } from '../../models/service';
+import { IServiceDetails, IServiceEndpoint } from '../../models/service';
 import { Subscription } from "rxjs/Subscription";
 
 @Component({
@@ -9,7 +9,7 @@ import { Subscription } from "rxjs/Subscription";
     templateUrl: './service-details.component.html'
 })
 export class ServiceDetailsComponent implements OnInit, OnDestroy {
-    private item: IServiceDetails;
+    private model: IServiceDetails;
 
     private sub: Subscription;
 
@@ -27,6 +27,10 @@ export class ServiceDetailsComponent implements OnInit, OnDestroy {
     }
 
     private async readItem(name:string) {
-        this.item = await this.servicesService.get(name);
+        this.model = await this.servicesService.get(name);
+    }
+
+    public onDelete(endpoint: IServiceEndpoint) {
+        console.log(endpoint);
     }
 }

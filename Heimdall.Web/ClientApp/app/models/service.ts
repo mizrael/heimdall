@@ -6,7 +6,8 @@
 }
 
 export interface IServiceEndpoint {
-    url: string;
+    address: string;
+    protocol: string;
     active: boolean;
     roundtripTime: number;
 }
