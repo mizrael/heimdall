@@ -1,15 +1,11 @@
 ﻿using Heimdall.Core.Events;
 using Heimdall.Analytics.Mongo.Events.Handlers;
 using Heimdall.Mongo.Infrastructure;
-using Heimdall.Mongo.Tests.Common.Utils;
-using Moq;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 using Heimdall.Analytics.Mongo.Infrastructure;
-using System.Linq.Expressions;
-using System.ComponentModel;
 using LibCore.Mongo;
 using FluentAssertions;
 

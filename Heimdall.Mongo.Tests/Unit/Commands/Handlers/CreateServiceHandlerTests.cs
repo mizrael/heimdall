@@ -6,7 +6,6 @@ using LibCore.CQRS.Validation;
 using Moq;
 using System;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Xunit;
 

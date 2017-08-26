@@ -3,8 +3,6 @@ using Heimdall.Analytics.Queries;
 using Heimdall.Mongo.Infrastructure;
 using MediatR;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Heimdall.Analytics.Queries.Models;
 using System.Linq;

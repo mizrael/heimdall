@@ -1,5 +1,4 @@
 ﻿using LibCore.CQRS.Extensions;
-using LibCore.Web.ErrorHandling;
 using LibCore.Web.ErrorHandling.Builders;
 using LibCore.Web.Extensions;
 using MediatR;
@@ -7,7 +6,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
-using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.AspNetCore.Mvc.ViewComponents;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

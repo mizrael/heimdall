@@ -2,9 +2,6 @@
 using MediatR;
 using System;
 using System.Threading.Tasks;
-using LibCore.Web.Extensions;
-using Heimdall.Core.Queries;
-using System.Collections.Generic;
 using Heimdall.Analytics.Queries;
 
 namespace Heimdall.API.Controllers
