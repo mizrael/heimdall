@@ -6,6 +6,7 @@ import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './components/app/app.component';
 import { NavMenuComponent } from './components/navmenu/navmenu.component';
+import { LoadingComponent } from './components/shared/loading.component';
 import { HomeComponent } from './components/home/home.component';
 
 import { ServicesListComponent } from './components/services/services-list.component';
@@ -17,6 +18,7 @@ import { ServicesService } from './services/services.service';
     declarations: [
         AppComponent,
         NavMenuComponent,
+        LoadingComponent,
         HomeComponent,
         ServicesListComponent,
         ServiceDetailsComponent

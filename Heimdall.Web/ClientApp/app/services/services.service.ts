@@ -1,6 +1,6 @@
 ﻿import { Inject, Injectable } from "@angular/core";
-import { Http } from "@angular/http";
-import { IServiceArchiveItem, IServiceDetails } from "../models/service";
+import { Http, RequestOptionsArgs } from "@angular/http";
+import { IServiceArchiveItem, IServiceDetails, IAddEndpoint, IDeleteEndpoint } from "../models/service";
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 
@@ -24,5 +24,28 @@ export class ServicesService {
         return this.http.get(url)
             .map(response => response.json() as IServiceDetails)
             .toPromise();
+    }
+
+    public addEndpoint(dto: IAddEndpoint): Promise<boolean> {
+        let data: RequestOptionsArgs = {
+            body: dto
+        };
+        return this.http.post(this.serviceUrl, dto)
+            .map(response => response.ok)
+            .toPromise();
+    }
+
+    public deleteEndpoint(dto: IDeleteEndpoint): Promise<boolean> {
+        let url = this.serviceUrl + 'endpoint',
+            data: RequestOptionsArgs = {
+            body: dto
+        };
+        return this.http.delete(url, data)
+            .map(response => response.ok)
+            .toPromise()
+            .catch(err => {
+                let jsonErr = err.json();
+                throw jsonErr;
+            });
     }
 }

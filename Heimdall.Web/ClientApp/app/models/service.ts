@@ -18,3 +18,15 @@ export interface IServiceDetails {
     endpoints: IServiceEndpoint[];
     bestEndpoint: IServiceEndpoint;
 }
+
+export interface IAddEndpoint {
+    serviceName: string;
+    address: string;
+    protocol: string;
+}
+
+export interface IDeleteEndpoint {
+    serviceName: string;
+    address: string;
+    protocol: string;
+}

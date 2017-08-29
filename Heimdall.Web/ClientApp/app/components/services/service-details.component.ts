@@ -30,7 +30,19 @@ export class ServiceDetailsComponent implements OnInit, OnDestroy {
         this.model = await this.servicesService.get(name);
     }
 
-    public onDelete(endpoint: IServiceEndpoint) {
-        console.log(endpoint);
+    public async onDelete(endpoint: IServiceEndpoint) {
+        if (!confirm('Are you sure you want to remove the endpoint "' + endpoint.address + '" ?'))
+            return;
+
+        let dto = {
+            address: endpoint.address,
+            protocol: endpoint.protocol,
+            serviceName: this.model.name
+        };
+        this.servicesService.deleteEndpoint(dto).then(() => {
+            alert('endpoint deleted!');
+        }).catch((err) => {
+            alert('an error has occurred:\n' + err.message);
+        });
     }
 }
