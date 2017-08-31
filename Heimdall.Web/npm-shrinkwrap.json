@@ -2080,6 +2080,11 @@
       "resolved": "https://registry.npmjs.org/negotiator/-/negotiator-0.6.1.tgz",
       "dev": true
     },
+    "ngx-modialog": {
+      "version": "3.0.4",
+      "from": "ngx-modialog@latest",
+      "resolved": "https://registry.npmjs.org/ngx-modialog/-/ngx-modialog-3.0.4.tgz"
+    },
     "no-case": {
       "version": "2.3.1",
       "from": "no-case@>=2.2.0 <3.0.0",

@@ -42,10 +42,6 @@ export class ServicesService {
         };
         return this.http.delete(url, data)
             .map(response => response.ok)
-            .toPromise()
-            .catch(err => {
-                let jsonErr = err.json();
-                throw jsonErr;
-            });
+            .toPromise();
     }
 }

@@ -24,17 +24,31 @@
                         <td>{{item.active}}</td>
                         <td>{{item.roundtripTime}}</td>
                         <td>
-                            <ul>
-                                <li>
-                                    <button (click)="onDelete(item)">Delete</button>
-                                </li>
-                            </ul>
+                            <div class="btn-group" role="group" aria-label="Endpoint actions">
+                                <button class="btn btn-danger" (click)="onDeleteEndpoint(item)">
+                                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete
+                                </button>
+                            </div>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="pull-right">
+                <button class="btn btn-primary" (click)="addEndpoint()">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add Endpoint
+                </button>
+                <button class="btn btn-danger" (click)="onDeleteService()">
+                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete Service
+                </button>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <ng-template #loading><loading></loading></ng-template>
