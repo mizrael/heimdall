@@ -27,12 +27,16 @@ export class ServicesService {
     }
 
     public addEndpoint(dto: IAddEndpoint): Promise<boolean> {
-        let data: RequestOptionsArgs = {
+        let url = this.serviceUrl + "endpoint",
+            data: RequestOptionsArgs = {
             body: dto
-        };
-        return this.http.post(this.serviceUrl, dto)
+        }; 
+        return this.http.post(url, dto)
             .map(response => response.ok)
-            .toPromise();
+            .toPromise()
+            .catch(err => {
+                throw err.json();
+            });
     }
 
     public deleteEndpoint(dto: IDeleteEndpoint): Promise<boolean> {
@@ -42,6 +46,9 @@ export class ServicesService {
         };
         return this.http.delete(url, data)
             .map(response => response.ok)
-            .toPromise();
+            .toPromise()
+            .catch(err => {
+                throw err.json();
+            });
     }
 }

@@ -1,0 +1,34 @@
+﻿<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="close()"><span aria-hidden="true">&times;</span></button>
+    <h1>Add endpoint</h1>
+</div>
+<div class="modal-body">
+    <form #endpointForm="ngForm">
+        <div class="form-group">
+            <label for="endpointAddress">Address</label>
+            <input type="text" required [(ngModel)]="model.address" #address="ngModel"
+                   class="form-control" name="endpointAddress" placeholder="Enter endpoint address">
+            <div *ngIf="address.invalid && (address.dirty || address.touched)" class="alert alert-danger">
+                <div *ngIf="address.errors.required">
+                    Name is required.
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="endpointProtocol">Protocol</label>
+            <select class="form-control" required name="endpointProtocol" [(ngModel)]="model.protocol">
+                <option value="http">HTTP</option>
+            </select>
+        </div>
+
+        <div *ngIf="!isSaving; else saving">
+            <button type="submit" [disabled]="!this.endpointForm.form.valid" (click)="onSave()" class="btn btn-primary">Submit</button>
+        </div>
+
+        <ng-template #saving><loading></loading></ng-template>
+
+        <errors [model]="errors"></errors>
+    </form>
+</div>
+
+

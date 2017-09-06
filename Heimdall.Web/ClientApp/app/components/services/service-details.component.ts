@@ -3,8 +3,9 @@ import { ActivatedRoute } from "@angular/router";
 import { ServicesService } from '../../services/services.service';
 import { IServiceDetails, IServiceEndpoint } from '../../models/service';
 import { Subscription } from "rxjs/Subscription";
-import { Overlay } from 'ngx-modialog';
-import { Modal } from 'ngx-modialog/plugins/bootstrap';
+import { overlayConfigFactory, ModalComponent, DialogRef, CloseGuard } from 'ngx-modialog';
+import { Modal, BSModalContext } from 'ngx-modialog/plugins/bootstrap';
+import { AddEndpointComponent } from './add-endpoint.component';
 
 @Component({
     selector: 'service-details',
@@ -32,8 +33,9 @@ export class ServiceDetailsComponent implements OnInit, OnDestroy {
         this.model = await this.servicesService.get(name);
     }
 
-    public addEndpoint() {
-        
+    public onAddEndpoint() {
+        this.modal
+            .open(AddEndpointComponent, overlayConfigFactory({ service: this.model, showClose: true, keyboard: 27 }, BSModalContext));
     }
 
     public onDeleteEndpoint(endpoint: IServiceEndpoint) {
@@ -60,8 +62,7 @@ export class ServiceDetailsComponent implements OnInit, OnDestroy {
                 .title('Success')
                 .body('endpoint deleted!');
         }).catch((err) => {
-            let jsonErr = err.json(),
-                message = 'an error has occurred:\n' + jsonErr.message;
+            let message = 'an error has occurred:\n' + err.message;
             this.modal.alert()
                 .title('Error')
                 .body(message);

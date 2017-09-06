@@ -32,6 +32,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\app\components\shared\errors.component.html" />
+    <TypeScriptCompile Include="ClientApp\app\components\shared\errors.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\shared\loading.component.html" />
     <TypeScriptCompile Include="ClientApp\app\components\shared\loading.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\services.service.ts" />

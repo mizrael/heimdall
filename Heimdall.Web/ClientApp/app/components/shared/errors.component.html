@@ -1,0 +1,6 @@
+﻿<div *ngIf="model" class="alert alert-danger">
+    <p *ngIf="model.message">{{model.message}}</p>
+    <ul *ngIf="model.details">
+        <li *ngFor="let errorItem of model.details">{{errorItem.message}}</li>
+    </ul>
+</div>
