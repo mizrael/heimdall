@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
 import { ServicesService } from '../../services/services.service';
-import { IServiceDetails, IServiceEndpoint } from '../../models/service';
+import { IServiceDetails, IServiceEndpoint, IAddEndpoint } from '../../models/service';
 import { Subscription } from "rxjs/Subscription";
 import { overlayConfigFactory, ModalComponent, DialogRef, CloseGuard } from 'ngx-modialog';
 import { Modal, BSModalContext } from 'ngx-modialog/plugins/bootstrap';
@@ -34,8 +34,16 @@ export class ServiceDetailsComponent implements OnInit, OnDestroy {
     }
 
     public onAddEndpoint() {
+        let context = {
+            service: this.model,
+            showClose: true,
+            keyboard: 27,
+            onSaved: (endpoint: IAddEndpoint) => {
+                this.readItem(this.model.name);
+            }
+        };
         this.modal
-            .open(AddEndpointComponent, overlayConfigFactory({ service: this.model, showClose: true, keyboard: 27 }, BSModalContext));
+            .open(AddEndpointComponent, overlayConfigFactory(context, BSModalContext));
     }
 
     public onDeleteEndpoint(endpoint: IServiceEndpoint) {
@@ -61,6 +69,13 @@ export class ServiceDetailsComponent implements OnInit, OnDestroy {
             this.modal.alert()
                 .title('Success')
                 .body('endpoint deleted!');
+
+            let index = this.model.endpoints.length - 1;
+            while (index--) {
+                if (this.model.endpoints[index].id === endpoint.id) {
+                    this.model.endpoints.splice(index, 1);
+                }
+            }
         }).catch((err) => {
             let message = 'an error has occurred:\n' + err.message;
             this.modal.alert()

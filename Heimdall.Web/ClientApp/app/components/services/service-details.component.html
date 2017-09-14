@@ -18,7 +18,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let item of model.endpoints">
+                    <tr *ngFor="let item of model.endpoints" data-id="{{item.id}}">
                         <td>{{item.protocol}}</td>
                         <td>{{item.address}}</td>
                         <td>{{item.active}}</td>
