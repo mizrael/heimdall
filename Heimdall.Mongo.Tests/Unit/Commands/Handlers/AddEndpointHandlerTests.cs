@@ -34,7 +34,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
         [Fact]
         public async Task should_throw_when_service_not_found()
         {
-            var command = new AddEndpoint("lorem", "ipsum", "dolor");
+            var command = new AddEndpoint(Guid.NewGuid(), "lorem", "ipsum", "dolor");
 
             var mockRepo = RepositoryUtils.MockRepository<Mongo.Infrastructure.Entities.Service>();
 
@@ -50,7 +50,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
         [Fact]
         public async Task should_update_service_when_found_with_no_endpoints()
         {
-            var command = new AddEndpoint("lorem", "ipsum", "dolor");
+            var command = new AddEndpoint(Guid.NewGuid(), "lorem", "ipsum", "dolor");
 
             var service = new Mongo.Infrastructure.Entities.Service()
             {
@@ -74,14 +74,17 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
                     r.Name == command.ServiceName &&
                     r.Active == false && 
                     null != r.Endpoints && 1 == r.Endpoints.Count() &&
-                    r.Endpoints.Any(es => es.Active == false && es.Address == command.Address && es.Protocol == command.Protocol))
+                    r.Endpoints.Any(es => es.Active == false && 
+                                            es.Id == command.EndpointId && 
+                                            es.Address == command.Address && 
+                                            es.Protocol == command.Protocol))
                 ), Times.Once());
         }
 
         [Fact]
         public async Task should_update_service_when_found_with_other_protocol()
         {
-            var command = new AddEndpoint("lorem", "ipsum", "dolor");
+            var command = new AddEndpoint(Guid.NewGuid(), "lorem", "ipsum", "dolor");
 
             var service = new Mongo.Infrastructure.Entities.Service()
             {
@@ -91,6 +94,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
                 {
                     new Mongo.Infrastructure.Entities.ServiceEndpoint()
                     {
+                        Id = Guid.NewGuid(),
                         Active = false,
                         Address = command.Address,
                         Protocol = "amet"
@@ -113,14 +117,17 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
                     r.Name == command.ServiceName &&
                     r.Active == false &&
                     null != r.Endpoints && 2 == r.Endpoints.Count() &&
-                    r.Endpoints.Any(es => es.Active == false && es.Address == command.Address && es.Protocol == command.Protocol))
+                    r.Endpoints.Any(es => es.Active == false &&
+                                            es.Id == command.EndpointId &&
+                                            es.Address == command.Address && 
+                                            es.Protocol == command.Protocol))
                 ), Times.Once());
         }
 
         [Fact]
         public async Task should_update_service_when_found_with_other_endpoints()
         {
-            var command = new AddEndpoint("lorem", "ipsum", "dolor");
+            var command = new AddEndpoint(Guid.NewGuid(), "lorem", "ipsum", "dolor");
 
             var service = new Mongo.Infrastructure.Entities.Service()
             {
@@ -130,8 +137,10 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
                 {
                     new Mongo.Infrastructure.Entities.ServiceEndpoint()
                     {
+                        Id = Guid.NewGuid(),
                         Active = false,
-                        Address = "localhost"
+                        Address = "localhost",
+                        Protocol = "ipsum"
                     }
                 }
             };
@@ -151,8 +160,48 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
                     r.Name == command.ServiceName &&
                     r.Active == false &&
                     null != r.Endpoints && 2 == r.Endpoints.Count() &&
-                    r.Endpoints.Any(es => es.Active == false && es.Address == command.Address && es.Protocol == command.Protocol))
+                    r.Endpoints.Any(es => es.Active == false &&
+                                            es.Id == command.EndpointId &&
+                                            es.Address == command.Address && 
+                                            es.Protocol == command.Protocol))
                 ), Times.Once());
+        }
+
+        [Fact]
+        public async Task should_not_replace_endpoint_when_found_by_id()
+        {
+            var endpoint = new Mongo.Infrastructure.Entities.ServiceEndpoint()
+            {
+                Id = Guid.NewGuid(),
+                Active = false,
+                Address = "localhost",
+                Protocol = "http"
+            };
+
+            var service = new Mongo.Infrastructure.Entities.Service()
+            {
+                Name = "lorem",
+                Active = false,
+                Endpoints = new[]
+                {
+                   endpoint
+                }
+            };
+
+            var command = new AddEndpoint(endpoint.Id, service.Name, "ipsum", "dolor");
+
+            var mockRepo = RepositoryUtils.MockRepository(service);
+
+            var mockDbContext = new Mock<IDbContext>();
+            mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
+
+            var validator = new NullValidator<AddEndpoint>();
+
+            var sut = new AddEndpointHandler(mockDbContext.Object, validator);
+            await sut.Handle(command);
+
+            mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Mongo.Infrastructure.Entities.Service, bool>>>(),
+                It.IsAny<Mongo.Infrastructure.Entities.Service>()), Times.Never());
         }
     }
 }

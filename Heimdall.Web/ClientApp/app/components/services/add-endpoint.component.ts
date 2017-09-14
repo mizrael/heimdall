@@ -7,6 +7,7 @@ import { ServicesService } from '../../services/services.service';
 
 export class AddEndpointContext extends BSModalContext {
     public service: IServiceDetails;
+    public onSaved: (endpoint: IAddEndpoint) => void;
 }
 
 @Component({
@@ -33,6 +34,8 @@ export class AddEndpointComponent implements CloseGuard, ModalComponent<AddEndpo
         this.servicesService.addEndpoint(this.model)
             .then( (successful) => {
                 this.isSaving = false;
+                if (this.context.onSaved)
+                    this.context.onSaved(this.model);
             }).catch(error => {
                 this.errors = error as IApiErrorResult;
                 this.isSaving = false;

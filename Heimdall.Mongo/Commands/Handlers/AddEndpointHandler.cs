@@ -23,8 +23,12 @@ namespace Heimdall.Mongo.Commands.Handlers
             
             service.Endpoints = service.Endpoints ?? Enumerable.Empty<Infrastructure.Entities.ServiceEndpoint>();
 
+            if (service.Endpoints.Any(e => e.Id == command.EndpointId))
+                return;
+
             service.Endpoints = service.Endpoints.Append(new Infrastructure.Entities.ServiceEndpoint()
             {
+                Id = command.EndpointId,
                 Active = false,
                 Address = command.Address,
                 Protocol = command.Protocol

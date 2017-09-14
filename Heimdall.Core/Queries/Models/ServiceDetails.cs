@@ -12,6 +12,7 @@ namespace Heimdall.Core.Queries.Models
 
     public class ServiceEndpoint
     {
+        public System.Guid Id { get; set; }
         public string Address { get; set; }
         public string Protocol { get; set; }
         public bool Active { get; set; }

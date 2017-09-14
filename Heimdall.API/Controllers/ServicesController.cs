@@ -81,9 +81,23 @@ namespace Heimdall.API.Controllers
         {
             if (null == request)
                 throw new ArgumentNullException(nameof(request));
-            var command = new Core.Commands.AddEndpoint(request.ServiceName, request.Protocol, request.Address);
+            var command = new Core.Commands.AddEndpoint(Guid.NewGuid(), request.ServiceName, request.Protocol, request.Address);
             await _mediator.Publish(command);
             return CreatedAtAction("GetByName", new { name = request.ServiceName }, null);
+        }
+
+        /// <summary>
+        /// updates an endpoint on a service
+        /// </summary>
+        [HttpPut, Route("endpoint")]
+        [ProducesResponseType(typeof(LibCore.Web.ErrorHandling.ApiErrorInfo), 400)]
+        public async Task<IActionResult> PutEndpoint([FromBody]Models.UpdateEndpoint request)
+        {
+            if (null == request)
+                throw new ArgumentNullException(nameof(request));
+            var command = new Core.Commands.UpdateEndpoint(request.EndpointId, request.ServiceName, request.Protocol, request.Address);
+            await _mediator.Publish(command);
+            return Ok();
         }
 
         /// <summary>

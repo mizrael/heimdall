@@ -6,6 +6,7 @@
 }
 
 export interface IServiceEndpoint {
+    id: string;
     address: string;
     protocol: string;
     active: boolean;
@@ -20,6 +21,13 @@ export interface IServiceDetails {
 }
 
 export interface IAddEndpoint {
+    serviceName: string;
+    address: string;
+    protocol: string;
+}
+
+export interface IUpdateEndpoint {
+    endpointId: string;
     serviceName: string;
     address: string;
     protocol: string;

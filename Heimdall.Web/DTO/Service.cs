@@ -20,6 +20,7 @@ namespace Heimdall.Web.DTO
 
     public class ServiceEndpoint
     {
+        public System.Guid Id { get; set; }
         public string Address { get; set; }
         public string Protocol { get; set; }
         public bool Active { get; set; }
@@ -33,6 +34,14 @@ namespace Heimdall.Web.DTO
 
     public class AddEndpoint
     {
+        public string ServiceName { get; set; }
+        public string Address { get; set; }
+        public string Protocol { get; set; }
+    }
+
+    public class UpdateEndpoint
+    {
+        public System.Guid EndpointId { get; set; }
         public string ServiceName { get; set; }
         public string Address { get; set; }
         public string Protocol { get; set; }

@@ -7,6 +7,8 @@ import { RouterModule } from '@angular/router';
 import { ModalModule } from 'ngx-modialog';
 import { BootstrapModalModule } from 'ngx-modialog/plugins/bootstrap';
 
+import { ServicesService } from './services/services.service';
+
 import { AppComponent } from './components/app/app.component';
 import { NavMenuComponent } from './components/navmenu/navmenu.component';
 import { LoadingComponent } from './components/shared/loading.component';
@@ -16,8 +18,6 @@ import { HomeComponent } from './components/home/home.component';
 import { ServicesListComponent } from './components/services/services-list.component';
 import { ServiceDetailsComponent } from './components/services/service-details.component';
 import { AddEndpointComponent } from './components/services/add-endpoint.component';
-
-import { ServicesService } from './services/services.service';
 
 @NgModule({
     declarations: [

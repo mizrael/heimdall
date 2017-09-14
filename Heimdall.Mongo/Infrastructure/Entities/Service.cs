@@ -33,6 +33,7 @@ namespace Heimdall.Mongo.Infrastructure.Entities
 
     public class ServiceEndpoint
     {
+        public Guid Id { get; set; }
         public long CreationDate { get; set; } = DateTime.UtcNow.Ticks;
         public string Address { get; set; } = string.Empty;
         public string Protocol { get; set; } = "http";

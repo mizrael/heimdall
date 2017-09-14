@@ -28,7 +28,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Validation
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
             var sut = new AddEndpointValidator(mockDbContext.Object);
-            var result = await sut.ValidateAsync(new AddEndpoint(service.Name, "ipsum", "dolor"));
+            var result = await sut.ValidateAsync(new AddEndpoint(Guid.NewGuid(), service.Name, "ipsum", "dolor"));
             result.Success.Should().BeTrue();
         }
 
@@ -54,7 +54,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Validation
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
             var sut = new AddEndpointValidator(mockDbContext.Object);
-            var result = await sut.ValidateAsync(new AddEndpoint(service.Name, endpoint.Protocol, Guid.NewGuid().ToString() ));
+            var result = await sut.ValidateAsync(new AddEndpoint(Guid.NewGuid(), service.Name, endpoint.Protocol, Guid.NewGuid().ToString() ));
             result.Success.Should().BeTrue();
         }
 
@@ -67,16 +67,17 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Validation
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
             var sut = new AddEndpointValidator(mockDbContext.Object);
-            var result = await sut.ValidateAsync(new AddEndpoint("lorem", "ipsum", "dolor"));
+            var result = await sut.ValidateAsync(new AddEndpoint(Guid.NewGuid(), "lorem", "ipsum", "dolor"));
             result.Success.Should().BeFalse();
             result.Errors.Any(e => e.Context == "service" && e.Message.Contains("Unable to load service")).Should().BeTrue();
         }
 
         [Fact]
-        public async Task should_fail_when_endpoint_already_exists()
+        public async Task should_fail_when_endpoint_already_exists_by_address_and_protocol()
         {
             var endpoint = new Mongo.Infrastructure.Entities.ServiceEndpoint()
             {
+                Id = Guid.NewGuid(),
                 Address = "ipsum",
                 Protocol = "dolor",
                 Active = false
@@ -93,9 +94,36 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Validation
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
             var sut = new AddEndpointValidator(mockDbContext.Object);
-            var result = await sut.ValidateAsync(new AddEndpoint(service.Name, endpoint.Protocol, endpoint.Address));
+            var result = await sut.ValidateAsync(new AddEndpoint(Guid.NewGuid(), service.Name, endpoint.Protocol, endpoint.Address));
             result.Success.Should().BeFalse();
-            result.Errors.Any(e => e.Context == "endpoint" && e.Message.Contains("already exists")).Should().BeTrue();
+            result.Errors.Any(e => e.Context == "endpoint" && e.Message.Contains(endpoint.Address)).Should().BeTrue();
+        }
+    
+        [Fact]
+        public async Task should_fail_when_endpoint_already_exists_by_id()
+        {
+            var endpoint = new Mongo.Infrastructure.Entities.ServiceEndpoint()
+            {
+                Id = Guid.NewGuid(),
+                Address = "ipsum",
+                Protocol = "dolor",
+                Active = false
+            };
+            var service = new Mongo.Infrastructure.Entities.Service()
+            {
+                Active = false,
+                Name = "lorem",
+                Endpoints = new[] { endpoint }
+            };
+            var mockRepo = RepositoryUtils.MockRepository<Mongo.Infrastructure.Entities.Service>(service);
+
+            var mockDbContext = new Mock<IDbContext>();
+            mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
+
+            var sut = new AddEndpointValidator(mockDbContext.Object);
+            var result = await sut.ValidateAsync(new AddEndpoint(endpoint.Id, service.Name, endpoint.Protocol, endpoint.Address));
+            result.Success.Should().BeFalse();
+            result.Errors.Any(e => e.Context == "endpoint" && e.Message.Contains(endpoint.Id.ToString())).Should().BeTrue();
         }
     }
 }
