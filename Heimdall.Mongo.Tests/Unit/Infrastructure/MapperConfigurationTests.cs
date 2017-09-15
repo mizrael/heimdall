@@ -20,6 +20,7 @@ namespace Heimdall.Mongo.Tests.Unit.Infrastructure
         {
             var sut = new Service()
             {
+                Id = System.Guid.NewGuid(),
                 Active = false,
                 Endpoints = new[]
                 {
@@ -38,6 +39,7 @@ namespace Heimdall.Mongo.Tests.Unit.Infrastructure
 
             var sut = new Service()
             {
+                Id = System.Guid.NewGuid(),
                 Active = true,
                 Endpoints = new[]
                 {
@@ -53,10 +55,11 @@ namespace Heimdall.Mongo.Tests.Unit.Infrastructure
         }
 
         [Fact]
-        public void ServiceDetails_mapping_should_return_only_active_endpoints()
+        public void ServiceDetails_mapping_should_return_all_endpoints()
         {
             var sut = new Service()
             {
+                Id = System.Guid.NewGuid(),
                 Active = true,
                 Endpoints = new[]
                 {
@@ -67,16 +70,15 @@ namespace Heimdall.Mongo.Tests.Unit.Infrastructure
 
             var result = AutoMapper.Mapper.Map<Core.Queries.Models.ServiceDetails>(sut);
             result.Endpoints.Should().NotBeNullOrEmpty();
-            result.Endpoints.Count().ShouldBeEquivalentTo(1);
-            result.Endpoints.ElementAt(0).Active.Should().BeTrue();
-            result.Endpoints.ElementAt(0).Address.ShouldBeEquivalentTo("dolor");
+            result.Endpoints.Count().ShouldBeEquivalentTo(2);
         }
 
         [Fact]
-        public void ServiceDetails_mapping_should_return_all_endpoints_when_forceLoad_true()
+        public void ServiceDetails_mapping_should_return_only_active_endpoints_when_activeEndpointsOnly_true()
         {
             var sut = new Service()
             {
+                Id = System.Guid.NewGuid(),
                 Active = true,
                 Endpoints = new[]
                 {
@@ -85,16 +87,36 @@ namespace Heimdall.Mongo.Tests.Unit.Infrastructure
                 }
             };
 
-            var result = AutoMapper.Mapper.Map<Core.Queries.Models.ServiceDetails>(sut, opts => opts.Items["forceLoad"] = true);
+            var result = AutoMapper.Mapper.Map<Core.Queries.Models.ServiceDetails>(sut, opts => opts.Items["activeEndpointsOnly"] = true);
+            result.Endpoints.Should().NotBeNullOrEmpty();
+            result.Endpoints.Count().ShouldBeEquivalentTo(1);
+        }
+
+        [Fact]
+        public void ServiceDetails_mapping_should_return_all_endpoints_when_activeEndpointsOnly_invalid()
+        {
+            var sut = new Service()
+            {
+                Id = System.Guid.NewGuid(),
+                Active = true,
+                Endpoints = new[]
+                {
+                    new ServiceEndpoint(){Active = false, RoundtripTime = 200, Address = "lorem"},
+                    new ServiceEndpoint(){Active = true, RoundtripTime = 400, Address = "dolor"},
+                }
+            };
+
+            var result = AutoMapper.Mapper.Map<Core.Queries.Models.ServiceDetails>(sut, opts => opts.Items["forceLoad"] = "activeEndpointsOnly");
             result.Endpoints.Should().NotBeNullOrEmpty();
             result.Endpoints.Count().ShouldBeEquivalentTo(2);
         }
 
         [Fact]
-        public void ServiceDetails_mapping_should_not_return_all_endpoints_when_forceLoad_invalid()
+        public void ServiceDetails_mapping_should_return_all_endpoints_when_activeEndpointsOnly_false()
         {
             var sut = new Service()
             {
+                Id = System.Guid.NewGuid(),
                 Active = true,
                 Endpoints = new[]
                 {
@@ -103,27 +125,9 @@ namespace Heimdall.Mongo.Tests.Unit.Infrastructure
                 }
             };
 
-            var result = AutoMapper.Mapper.Map<Core.Queries.Models.ServiceDetails>(sut, opts => opts.Items["forceLoad"] = "asdasdasd");
+            var result = AutoMapper.Mapper.Map<Core.Queries.Models.ServiceDetails>(sut, opts => opts.Items["activeEndpointsOnly"] = false);
             result.Endpoints.Should().NotBeNullOrEmpty();
-            result.Endpoints.Count().ShouldBeEquivalentTo(1);
-        }
-
-        [Fact]
-        public void ServiceDetails_mapping_should_not_return_all_endpoints_when_forceLoad_false()
-        {
-            var sut = new Service()
-            {
-                Active = true,
-                Endpoints = new[]
-                {
-                    new ServiceEndpoint(){Active = false, RoundtripTime = 200, Address = "lorem"},
-                    new ServiceEndpoint(){Active = true, RoundtripTime = 400, Address = "dolor"},
-                }
-            };
-
-            var result = AutoMapper.Mapper.Map<Core.Queries.Models.ServiceDetails>(sut, opts => opts.Items["forceLoad"] = false);
-            result.Endpoints.Should().NotBeNullOrEmpty();
-            result.Endpoints.Count().ShouldBeEquivalentTo(1);
+            result.Endpoints.Count().ShouldBeEquivalentTo(2);
         }
     }
 }

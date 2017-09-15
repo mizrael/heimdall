@@ -18,6 +18,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Validation
         {
             var endpoint = new Mongo.Infrastructure.Entities.ServiceEndpoint()
             {
+                Id = Guid.NewGuid(),
                 Address = "ipsum",
                 Protocol = "dolor",
                 Active = false
@@ -25,6 +26,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Validation
 
             var service = new Mongo.Infrastructure.Entities.Service()
             {
+                Id = Guid.NewGuid(),
                 Active = false,
                 Name = "lorem",
                 Endpoints = new[] { endpoint }
@@ -35,21 +37,23 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Validation
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
             var sut = new RemoveEndpointValidator(mockDbContext.Object);
-            var result = await sut.ValidateAsync(new RemoveEndpoint(service.Name, endpoint.Protocol, endpoint.Address));
+            var result = await sut.ValidateAsync(new RemoveEndpoint(service.Id, endpoint.Id));
             result.Success.Should().BeTrue();
         }
 
         [Fact]
-        public async Task should_fail_when_endpoint_not_found_by_address()
+        public async Task should_fail_when_endpoint_not_found()
         {
             var endpoint = new Mongo.Infrastructure.Entities.ServiceEndpoint()
             {
+                Id = Guid.NewGuid(),
                 Address = "ipsum",
                 Protocol = "dolor",
                 Active = false
             };
             var service = new Mongo.Infrastructure.Entities.Service()
             {
+                Id = Guid.NewGuid(),
                 Active = false,
                 Name = "lorem",
                 Endpoints = new[] { endpoint }
@@ -60,35 +64,10 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Validation
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
             var sut = new RemoveEndpointValidator(mockDbContext.Object);
-            var result = await sut.ValidateAsync(new RemoveEndpoint(service.Name, endpoint.Protocol, Guid.NewGuid().ToString() ));
+            var command = new RemoveEndpoint(service.Id, Guid.NewGuid());
+            var result = await sut.ValidateAsync(command);
             result.Success.Should().BeFalse();
-            result.Errors.Any(e => e.Context == "endpoint" && e.Message.Contains(endpoint.Protocol)).Should().BeTrue();
-        }
-
-        [Fact]
-        public async Task should_fail_when_endpoint_not_found_by_protocol()
-        {
-            var endpoint = new Mongo.Infrastructure.Entities.ServiceEndpoint()
-            {
-                Address = "ipsum",
-                Protocol = "dolor",
-                Active = false
-            };
-            var service = new Mongo.Infrastructure.Entities.Service()
-            {
-                Active = false,
-                Name = "lorem",
-                Endpoints = new[] { endpoint }
-            };
-            var mockRepo = RepositoryUtils.MockRepository<Mongo.Infrastructure.Entities.Service>(service);
-
-            var mockDbContext = new Mock<IDbContext>();
-            mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
-
-            var sut = new RemoveEndpointValidator(mockDbContext.Object);
-            var result = await sut.ValidateAsync(new RemoveEndpoint(service.Name, Guid.NewGuid().ToString(), endpoint.Address));
-            result.Success.Should().BeFalse();
-            result.Errors.Any(e => e.Context == "endpoint" && e.Message.Contains(endpoint.Address)).Should().BeTrue();
+            result.Errors.Any(e => e.Context == "endpoint" && e.Message.Contains(command.EndpointId.ToString())).Should().BeTrue();
         }
 
         [Fact]
@@ -100,7 +79,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Validation
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
             var sut = new RemoveEndpointValidator(mockDbContext.Object);
-            var result = await sut.ValidateAsync(new RemoveEndpoint("lorem", "ipsum", "dolor"));
+            var result = await sut.ValidateAsync(new RemoveEndpoint(Guid.NewGuid(), Guid.NewGuid()));
             result.Success.Should().BeFalse();
             result.Errors.Any(e => e.Context == "service" && e.Message.Contains("Unable to load service")).Should().BeTrue();
         }
@@ -110,6 +89,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Validation
         {
             var service = new Mongo.Infrastructure.Entities.Service()
             {
+                Id = Guid.NewGuid(),
                 Active = false,
                 Name = "lorem",
                 Endpoints = null
@@ -120,7 +100,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Validation
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
             var sut = new RemoveEndpointValidator(mockDbContext.Object);
-            var result = await sut.ValidateAsync(new RemoveEndpoint(service.Name, "ipsum", "dolor"));
+            var result = await sut.ValidateAsync(new RemoveEndpoint(service.Id, Guid.NewGuid()));
             result.Success.Should().BeFalse();
             result.Errors.Any(e => e.Context == "service" && e.Message.Contains("no endpoints")).Should().BeTrue();
         }

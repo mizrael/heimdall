@@ -33,7 +33,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
         }
 
         [Fact]
-        public async Task should_delete_servoce_when_input_valid()
+        public async Task should_delete_service_when_input_valid()
         {
             var startTicks = DateTime.UtcNow.Ticks;
 
@@ -53,7 +53,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
 
             var sut = new DeleteServiceHandler(mockDbContext.Object, validator);
 
-            await sut.Handle(new DeleteService(service.Name));
+            await sut.Handle(new DeleteService(service.Id));
 
             mockServicesRepo.Verify(m => m.DeleteOneAsync(It.IsAny<Expression<Func<Mongo.Infrastructure.Entities.Service, bool>>>()), Times.Once());
         }

@@ -44,44 +44,19 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
             var mockDbContext = new Mock<IDbContext>();
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
-            var query = new FindService("lorem", false);
+            var query = new FindService(Guid.NewGuid());
             
             var sut = new FindServiceHandler(mockDbContext.Object);
             var result = await sut.Handle(query);
             result.Should().BeNull();
         }
-
-        [Fact]
-        public async Task should_return_no_endpoints_when_service_is_inactive()
-        {
-            var service = new Mongo.Infrastructure.Entities.Service()
-            {
-                Name = "lorem",
-                Active = false,
-                Endpoints = new[]
-                {
-                    new Mongo.Infrastructure.Entities.ServiceEndpoint(){Active = true, Address ="localhost"}
-                }
-            };
-            var mockRepo = RepositoryUtils.MockRepository(service);
-
-            var mockDbContext = new Mock<IDbContext>();
-            mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
-
-            var query = new FindService("lorem", false);
-
-            var sut = new FindServiceHandler(mockDbContext.Object);
-            var result = await sut.Handle(query);
-            result.Should().NotBeNull();
-            result.Name.ShouldBeEquivalentTo(service.Name);
-            result.Endpoints.Should().BeNullOrEmpty();
-        }
-
+        
         [Fact]
         public async Task should_not_return_null_when_service_has_no_endpoints()
         {
             var service = new Mongo.Infrastructure.Entities.Service()
             {
+                Id = Guid.NewGuid(),
                 Name = "lorem",
                 Endpoints = null
             };
@@ -90,7 +65,7 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
             var mockDbContext = new Mock<IDbContext>();
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
-            var query = new FindService("lorem", false);
+            var query = new FindService(service.Id);
 
             var sut = new FindServiceHandler(mockDbContext.Object);
             var result = await sut.Handle(query);
@@ -104,15 +79,16 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
         {
             var service = new Mongo.Infrastructure.Entities.Service()
             {
+                Id = Guid.NewGuid(),
                 Name = "lorem",
-                Endpoints = Enumerable.Empty<Mongo.Infrastructure.Entities.ServiceEndpoint>()
+                Endpoints = null
             };
             var mockRepo = RepositoryUtils.MockRepository(service);
 
             var mockDbContext = new Mock<IDbContext>();
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
-            var query = new FindService("lorem", false);
+            var query = new FindService(service.Id);
 
             var sut = new FindServiceHandler(mockDbContext.Object);
             var result = await sut.Handle(query);
@@ -126,11 +102,13 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
         {
             var service = new Mongo.Infrastructure.Entities.Service()
             {
+                Id = Guid.NewGuid(),
                 Name = "lorem",
                 Endpoints = new[]
                 {
                     new Mongo.Infrastructure.Entities.ServiceEndpoint()
                     {
+                        Id = Guid.NewGuid(),
                         Active = false,
                         Address = "localhost"
                     }
@@ -141,67 +119,34 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
             var mockDbContext = new Mock<IDbContext>();
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
-            var query = new FindService("lorem", false);
+            var query = new FindService(service.Id);
 
             var sut = new FindServiceHandler(mockDbContext.Object);
             var result = await sut.Handle(query);
             result.Should().NotBeNull();
             result.Name.ShouldBeEquivalentTo(service.Name);
-            result.Endpoints.Should().BeNullOrEmpty();
-        }
-
-        [Fact]
-        public async Task should_return_service_with_active_endpoints_only()
-        {
-            var service = new Mongo.Infrastructure.Entities.Service()
-            {
-                Name = "lorem",
-                Active = true,
-                Endpoints = new[]
-                {
-                    new Mongo.Infrastructure.Entities.ServiceEndpoint()
-                    {
-                        Active = false,
-                        Address = "localhost1"
-                    },
-                    new Mongo.Infrastructure.Entities.ServiceEndpoint()
-                    {
-                        Active = true,
-                        Address = "localhost2"
-                    }
-                }
-            };
-            var mockRepo = RepositoryUtils.MockRepository(service);
-
-            var mockDbContext = new Mock<IDbContext>();
-            mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
-
-            var query = new FindService("lorem", false);
-
-            var sut = new FindServiceHandler(mockDbContext.Object);
-            var result = await sut.Handle(query);
-            result.Should().NotBeNull();
             result.Endpoints.Should().NotBeNullOrEmpty();
-            result.Endpoints.ElementAt(0).Address.ShouldBeEquivalentTo("localhost2");
         }
 
-
         [Fact]
-        public async Task should_return_service_with_all_endpoints_only_when_forceLoad_true()
+        public async Task should_return_service_with_all_endpoints()
         {
             var service = new Mongo.Infrastructure.Entities.Service()
             {
+                Id = Guid.NewGuid(),
                 Name = "lorem",
                 Active = true,
                 Endpoints = new[]
                 {
                     new Mongo.Infrastructure.Entities.ServiceEndpoint()
                     {
+                        Id = Guid.NewGuid(),
                         Active = false,
                         Address = "localhost1"
                     },
                     new Mongo.Infrastructure.Entities.ServiceEndpoint()
                     {
+                        Id = Guid.NewGuid(),
                         Active = true,
                         Address = "localhost2"
                     }
@@ -212,7 +157,7 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
             var mockDbContext = new Mock<IDbContext>();
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
-            var query = new FindService("lorem", true);
+            var query = new FindService(service.Id);
 
             var sut = new FindServiceHandler(mockDbContext.Object);
             var result = await sut.Handle(query);
@@ -221,6 +166,42 @@ namespace Heimdall.Mongo.Tests.Unit.Queries.Handlers
             result.Endpoints.Count().ShouldBeEquivalentTo(service.Endpoints.Count());
         }
 
+        [Fact]
+        public async Task should_return_service_with_all_endpoints_even_when_service_inactive()
+        {
+            var service = new Mongo.Infrastructure.Entities.Service()
+            {
+                Id = Guid.NewGuid(),
+                Name = "lorem",
+                Active = false,
+                Endpoints = new[]
+                {
+                    new Mongo.Infrastructure.Entities.ServiceEndpoint()
+                    {
+                        Id = Guid.NewGuid(),
+                        Active = false,
+                        Address = "localhost1"
+                    },
+                    new Mongo.Infrastructure.Entities.ServiceEndpoint()
+                    {
+                        Id = Guid.NewGuid(),
+                        Active = true,
+                        Address = "localhost2"
+                    }
+                }
+            };
+            var mockRepo = RepositoryUtils.MockRepository(service);
 
+            var mockDbContext = new Mock<IDbContext>();
+            mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
+
+            var query = new FindService(service.Id);
+
+            var sut = new FindServiceHandler(mockDbContext.Object);
+            var result = await sut.Handle(query);
+            result.Should().NotBeNull();
+            result.Endpoints.Should().NotBeNullOrEmpty();
+            result.Endpoints.Count().ShouldBeEquivalentTo(service.Endpoints.Count());
+        }
     }
 }

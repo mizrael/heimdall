@@ -17,11 +17,13 @@ namespace Heimdall.Mongo.Commands.Validation
 
         protected override async Task RunAsync(CreateService command)
         {
-            var service = await _db.Services.FindOneAsync(s => s.Name == command.Name);
+            var service = await _db.Services.FindOneAsync(s => s.Id == command.ServiceId);
+            if (null != service)
+                base.AddError(new ValidationError("service", $"service with id '{command.ServiceId}' already exists"));
+
+            service = await _db.Services.FindOneAsync(s => s.Name == command.ServiceName);
             if(null != service)
-            {
-                base.AddError(new ValidationError("service", $"service '{command.Name}' already exists"));
-            }
+                base.AddError(new ValidationError("service", $"service with name '{command.ServiceName}' already exists"));
         }
     }
 }

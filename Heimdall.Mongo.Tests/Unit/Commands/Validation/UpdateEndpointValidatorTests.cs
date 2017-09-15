@@ -22,7 +22,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Validation
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
             var sut = new UpdateEndpointValidator(mockDbContext.Object);
-            var result = await sut.ValidateAsync(new UpdateEndpoint(Guid.NewGuid(), "lorem", "ipsum", "dolor"));
+            var result = await sut.ValidateAsync(new UpdateEndpoint(Guid.NewGuid(), Guid.NewGuid(), "ipsum", "dolor"));
             result.Success.Should().BeFalse();
             result.Errors.Any(e => e.Context == "service" && e.Message.Contains("Unable to load service")).Should().BeTrue();
         }
@@ -39,6 +39,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Validation
             };
             var service = new Mongo.Infrastructure.Entities.Service()
             {
+                Id = Guid.NewGuid(),
                 Active = false,
                 Name = "lorem",
                 Endpoints = new[] { endpoint }
@@ -48,7 +49,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Validation
             var mockDbContext = new Mock<IDbContext>();
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
-            var command = new UpdateEndpoint(Guid.NewGuid(), service.Name, endpoint.Protocol, endpoint.Address);
+            var command = new UpdateEndpoint(service.Id, Guid.NewGuid(), endpoint.Protocol, endpoint.Address);
             var sut = new UpdateEndpointValidator(mockDbContext.Object);
             var result = await sut.ValidateAsync(command);
             result.Success.Should().BeFalse();
@@ -60,6 +61,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Validation
         {
             var service = new Mongo.Infrastructure.Entities.Service()
             {
+                Id = Guid.NewGuid(),
                 Active = false,
                 Name = "lorem",
                 Endpoints = Enumerable.Empty<Mongo.Infrastructure.Entities.ServiceEndpoint>()
@@ -69,11 +71,11 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Validation
             var mockDbContext = new Mock<IDbContext>();
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
-            var command = new UpdateEndpoint(Guid.NewGuid(), service.Name, "lorem", "ipsum");
+            var command = new UpdateEndpoint(service.Id, Guid.NewGuid(), "lorem", "ipsum");
             var sut = new UpdateEndpointValidator(mockDbContext.Object);
             var result = await sut.ValidateAsync(command);
             result.Success.Should().BeFalse();
-            result.Errors.Any(e => e.Context == "service" && e.Message.Contains(service.Name)).Should().BeTrue();
+            result.Errors.Any(e => e.Context == "service" && e.Message.Contains(service.Id.ToString())).Should().BeTrue();
         }
 
         [Fact]
@@ -88,6 +90,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Validation
             };
             var service = new Mongo.Infrastructure.Entities.Service()
             {
+                Id = Guid.NewGuid(),
                 Active = false,
                 Name = "lorem",
                 Endpoints = new[] { endpoint }
@@ -98,7 +101,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Validation
             mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
 
             var sut = new UpdateEndpointValidator(mockDbContext.Object);
-            var result = await sut.ValidateAsync(new UpdateEndpoint(endpoint.Id, service.Name, "http", "localhost"));
+            var result = await sut.ValidateAsync(new UpdateEndpoint(service.Id, endpoint.Id, "http", "localhost"));
             result.Success.Should().BeTrue();
         }
     }

@@ -18,7 +18,7 @@ namespace Heimdall.Mongo.Commands.Handlers
 
         protected override async Task RunCommand(DeleteService command)
         {
-            await _db.Services.DeleteOneAsync(s => s.Name == command.Name);
+            await _db.Services.DeleteOneAsync(s => s.Id == command.ServiceId);
         }
     }
 }

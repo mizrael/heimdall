@@ -5,13 +5,14 @@ namespace Heimdall.Core.Commands
 {
     public class DeleteService : INotification
     {
-        public DeleteService(string name)
+        public DeleteService(Guid serviceId)
         {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentNullException(nameof(name));
-            this.Name = name;
+            if (Guid.Empty == serviceId)
+                throw new ArgumentOutOfRangeException(nameof(serviceId));
+
+            this.ServiceId = serviceId;
         }
 
-        public string Name { get; private set; }
+        public Guid ServiceId { get; private set; }
     }
 }

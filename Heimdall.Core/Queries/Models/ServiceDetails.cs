@@ -4,6 +4,7 @@ namespace Heimdall.Core.Queries.Models
 {
     public class ServiceDetails
     {
+        public System.Guid Id { get; set; } = System.Guid.Empty;
         public string Name { get; set; }
         public bool Active { get; set; } = false;
         public ServiceEndpoint BestEndpoint { get; set; }
@@ -12,7 +13,7 @@ namespace Heimdall.Core.Queries.Models
 
     public class ServiceEndpoint
     {
-        public System.Guid Id { get; set; }
+        public System.Guid Id { get; set; } = System.Guid.Empty;
         public string Address { get; set; }
         public string Protocol { get; set; }
         public bool Active { get; set; }

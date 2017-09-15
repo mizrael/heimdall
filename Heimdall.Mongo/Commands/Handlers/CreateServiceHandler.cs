@@ -21,8 +21,8 @@ namespace Heimdall.Mongo.Commands.Handlers
         {
             var service = new Infrastructure.Entities.Service()
             {
-                Id = Guid.NewGuid(),
-                Name = command.Name,
+                Id = command.ServiceId,
+                Name = command.ServiceName,
                 Active = false,
                 Endpoints = Enumerable.Empty<Infrastructure.Entities.ServiceEndpoint>()
             };

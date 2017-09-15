@@ -33,7 +33,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
         [Fact]
         public async Task should_insert_service()
         {
-            var command = new CreateService("lorem");
+            var command = new CreateService(Guid.NewGuid(), "lorem");
 
             var mockRepo = RepositoryUtils.MockRepository<Mongo.Infrastructure.Entities.Service>();
 
@@ -46,9 +46,9 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
             await sut.Handle(command);
 
             mockRepo.Verify(m => m.InsertOneAsync(It.Is<Mongo.Infrastructure.Entities.Service>(r =>
-                    r.Name == command.Name &&
+                    r.Id == command.ServiceId &&
+                    r.Name == command.ServiceName &&
                     r.Active == false &&
-                    r.Id != Guid.Empty &&
                     null != r.Endpoints && 0 == r.Endpoints.Count()) 
                 ), Times.Once());
         }

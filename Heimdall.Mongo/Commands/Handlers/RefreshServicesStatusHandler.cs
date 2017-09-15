@@ -28,7 +28,7 @@ namespace Heimdall.Mongo.Commands.Handlers
 
             foreach (var service in services)
             {
-                await _mediator.Publish(new RefreshServiceStatus(service.Name, command.Timeout));
+                await _mediator.Publish(new RefreshServiceStatus(service.Id, command.Timeout));
             }
             
         }

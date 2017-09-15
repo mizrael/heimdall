@@ -6,14 +6,10 @@ namespace Heimdall.Core.Queries
 {
     public class FindService : IRequest<ServiceDetails>
     {
-        public FindService(string serviceName, bool forceLoad)
+        public FindService(Guid serviceId)
         {
-            if (string.IsNullOrWhiteSpace(serviceName))
-                throw new ArgumentNullException(nameof(serviceName));
-            this.ServiceName = serviceName;
-            this.ForceLoad = forceLoad;
+            this.ServiceId = serviceId;
         }
-        public string ServiceName { get; private set; }
-        public bool ForceLoad { get; private set; }
+        public Guid ServiceId { get; private set; }
     }
 }

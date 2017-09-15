@@ -18,21 +18,21 @@ namespace Heimdall.Mongo.Commands.Validation
 
         protected override async Task RunAsync(UpdateEndpoint command)
         {
-            var service = await _db.Services.FindOneAsync(s => s.Name == command.ServiceName);
-            if(null == service)
+            var service = await _db.Services.FindOneAsync(s => s.Id == command.ServiceId);
+            if (null == service)
             {
-                base.AddError(new ValidationError("service", $"Unable to load service by name: '{command.ServiceName}'"));
+                base.AddError(new ValidationError("service", $"Unable to load service by id: '{command.ServiceId}'"));
                 return;
             }
 
             if (null == service.Endpoints || !service.Endpoints.Any())
             {
-                base.AddError(new ValidationError("service", $"Service '{command.ServiceName}' has no endpoints"));
+                base.AddError(new ValidationError("service", $"Service '{command.ServiceId}' has no endpoints"));
                 return;
             }
 
             if (service.Endpoints.Any(e => e.Id != command.EndpointId))
-                base.AddError(new ValidationError("endpoint", $"endpoint  with Id'{command.EndpointId}' not found on '{command.ServiceName}'"));
+                base.AddError(new ValidationError("endpoint", $"endpoint  with Id '{command.EndpointId}' not found on '{command.ServiceId}'"));
             
         }
     }

@@ -13,15 +13,15 @@ namespace Heimdall.Mongo.Infrastructure
                 {
                     mo.ResolveUsing((src, dest, destMember, resContext) =>
                     {
-                        var forceLoad = false;
-                        if (resContext.Items.ContainsKey("forceLoad"))
+                        var activeEndpointsOnly = false;
+                        if (resContext.Items.ContainsKey("activeEndpointsOnly"))
                         {
                             object value = null;
-                            resContext.Items.TryGetValue("forceLoad", out value);
-                            forceLoad = (value is bool && ((bool)value));
+                            resContext.Items.TryGetValue("activeEndpointsOnly", out value);
+                            activeEndpointsOnly = (value is bool && ((bool)value));
                         }
 
-                        return ExtractEndpoints(src, forceLoad);
+                        return ExtractEndpoints(src, activeEndpointsOnly);
                     });
                 }).ForMember(e => e.BestEndpoint, mo =>
                 {
@@ -55,9 +55,10 @@ namespace Heimdall.Mongo.Infrastructure
             return (null != bestEndpoint) ? AutoMapper.Mapper.Map<Core.Queries.Models.ServiceEndpoint>(bestEndpoint) : null;
         }
 
-        private static Core.Queries.Models.ServiceEndpoint[] ExtractEndpoints(Entities.Service src, bool forceLoad)
+        private static Core.Queries.Models.ServiceEndpoint[] ExtractEndpoints(Entities.Service src, bool activeEndpointsOnly)
         {
-            var endpoints = forceLoad ? src.Endpoints : src.FindActiveEndpoints();
+            var endpoints = activeEndpointsOnly ? src.FindActiveEndpoints() : src.Endpoints;
+            endpoints = endpoints ?? Enumerable.Empty<Entities.ServiceEndpoint>();
             return endpoints.Select(se => AutoMapper.Mapper.Map<Core.Queries.Models.ServiceEndpoint>(se))
                                      .ToArray();
         }

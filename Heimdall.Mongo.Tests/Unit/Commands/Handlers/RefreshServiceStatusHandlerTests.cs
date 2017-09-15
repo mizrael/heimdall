@@ -75,7 +75,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
             var validator = new NullValidator<RefreshServiceStatus>();
 
             var sut = new RefreshServiceStatusHandler(mockDbContext.Object, mockPinger.Object, mockMediator.Object, validator);
-            await sut.Handle(new RefreshServiceStatus(service.Name, 10));
+            await sut.Handle(new RefreshServiceStatus(service.Id, 10));
 
             mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Mongo.Infrastructure.Entities.Service, bool>>>(),
                                                   It.Is<Mongo.Infrastructure.Entities.Service>(r => r.Active == false)),
@@ -114,7 +114,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
 
             var validator = new NullValidator<RefreshServiceStatus>();
 
-            var command = new RefreshServiceStatus(service.Name, 10);
+            var command = new RefreshServiceStatus(service.Id, 10);
             var sut = new RefreshServiceStatusHandler(mockDbContext.Object, mockPinger.Object, mockMediator.Object, validator);
             await sut.Handle(command);
 
@@ -166,7 +166,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
 
             var validator = new NullValidator<RefreshServiceStatus>();
 
-            var command = new RefreshServiceStatus(service.Name, 10);
+            var command = new RefreshServiceStatus(service.Id, 10);
             var sut = new RefreshServiceStatusHandler(mockDbContext.Object, mockPinger.Object, mockMediator.Object, validator);
             await sut.Handle(command);
 
@@ -211,7 +211,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
 
             var validator = new NullValidator<RefreshServiceStatus>();
 
-            var command = new RefreshServiceStatus(service.Name, 10);
+            var command = new RefreshServiceStatus(service.Id, 10);
             var sut = new RefreshServiceStatusHandler(mockDbContext.Object, mockPinger.Object, mockMediator.Object, validator);
             await sut.Handle(command);
 
@@ -259,7 +259,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
 
             var validator = new NullValidator<RefreshServiceStatus>();
 
-            var command = new RefreshServiceStatus(service.Name, 10);
+            var command = new RefreshServiceStatus(service.Id, 10);
             var sut = new RefreshServiceStatusHandler(mockDbContext.Object, mockPinger.Object, mockMediator.Object, validator);
             await sut.Handle(command);
 
@@ -299,7 +299,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
 
             var validator = new NullValidator<RefreshServiceStatus>();
 
-            var command = new RefreshServiceStatus(service.Name, 10);
+            var command = new RefreshServiceStatus(service.Id, 10);
             var sut = new RefreshServiceStatusHandler(mockDbContext.Object, mockPinger.Object, mockMediator.Object, validator);
             await sut.Handle(command);
 
@@ -330,7 +330,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
 
             var validator = new NullValidator<RefreshServiceStatus>();
 
-            var command = new RefreshServiceStatus(service.Name, 10);
+            var command = new RefreshServiceStatus(service.Id, 10);
             var sut = new RefreshServiceStatusHandler(mockDbContext.Object, mockPinger.Object, mockMediator.Object, validator);
             await sut.Handle(command);
 

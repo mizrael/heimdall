@@ -5,16 +5,16 @@ namespace Heimdall.Core.Commands
 {
     public class RefreshServiceStatus : INotification
     {
-        public RefreshServiceStatus(string name, int timeout)
+        public RefreshServiceStatus(Guid serviceId, int timeout)
         {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentNullException(nameof(name));
-            this.Name = name;
+            if (Guid.Empty == serviceId)
+                throw new ArgumentOutOfRangeException(nameof(serviceId));
+            this.ServiceId = serviceId;
 
             this.Timeout = timeout;
         }
 
-        public string Name { get; private set; }
+        public Guid ServiceId { get; private set; }
         public int Timeout { get; private set; }
     }
 }

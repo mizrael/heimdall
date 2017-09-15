@@ -2,6 +2,6 @@
 {
     public class DeleteService
     {
-        public string Name { get; set; }
+        public System.Guid Id { get; set; }
     }
 }

@@ -32,27 +32,14 @@ namespace Heimdall.API.Controllers
         }
 
         /// <summary>
-        /// finds the service by name and returns its details along with the list of available endpoints.
-        /// If no endpoint is active, returns null.
-        /// </summary>
-        [HttpGet("{name}", Name = "GetByName")]
-        [ProducesResponseType(typeof(Core.Queries.Models.ServiceDetails), 200)]
-        public async Task<IActionResult> GetByName(string name)
-        {
-            var query = new FindService(name, false);
-            var result = await _mediator.Send(query);
-            return this.OkOrNotFound(result);
-        }
-
-        /// <summary>
-        /// finds the service by name and returns its details along with the list of available endpoints.
+        /// finds the service by id and returns its details along with the list of endpoints.
         /// It will return all the endpoints regardless their status
         /// </summary>
-        [HttpGet("{name}/force", Name = "GetByNameFull")]
+        [HttpGet("{id}", Name = "GetById")]
         [ProducesResponseType(typeof(Core.Queries.Models.ServiceDetails), 200)]
-        public async Task<IActionResult> GetByNameFull(string name)
+        public async Task<IActionResult> GetById(Guid id)
         {
-            var query = new FindService(name, true);
+            var query = new FindService(id);
             var result = await _mediator.Send(query);
             return this.OkOrNotFound(result);
         }
@@ -67,9 +54,9 @@ namespace Heimdall.API.Controllers
         {
             if (null == request)
                 throw new ArgumentNullException(nameof(request));
-            var command = new Core.Commands.CreateService(request.Name);
+            var command = new Core.Commands.CreateService(Guid.NewGuid(), request.Name);
             await _mediator.Publish(command);
-            return CreatedAtAction("GetByName", new { name = request.Name }, null);
+            return CreatedAtAction("GetById", new { name = request.Name }, null);
         }
 
         /// <summary>
@@ -81,9 +68,9 @@ namespace Heimdall.API.Controllers
         {
             if (null == request)
                 throw new ArgumentNullException(nameof(request));
-            var command = new Core.Commands.AddEndpoint(Guid.NewGuid(), request.ServiceName, request.Protocol, request.Address);
+            var command = new Core.Commands.AddEndpoint(request.ServiceId, Guid.NewGuid(), request.Protocol, request.Address);
             await _mediator.Publish(command);
-            return CreatedAtAction("GetByName", new { name = request.ServiceName }, null);
+            return CreatedAtAction("GetById", new { name = request.ServiceId }, null);
         }
 
         /// <summary>
@@ -95,7 +82,7 @@ namespace Heimdall.API.Controllers
         {
             if (null == request)
                 throw new ArgumentNullException(nameof(request));
-            var command = new Core.Commands.UpdateEndpoint(request.EndpointId, request.ServiceName, request.Protocol, request.Address);
+            var command = new Core.Commands.UpdateEndpoint(request.ServiceId, request.EndpointId, request.Protocol, request.Address);
             await _mediator.Publish(command);
             return Ok();
         }
@@ -110,11 +97,11 @@ namespace Heimdall.API.Controllers
             if (null == request)
                 throw new ArgumentNullException(nameof(request));
 
-            var command = new Core.Commands.RefreshServiceStatus(request.Name, 10);
+            var command = new Core.Commands.RefreshServiceStatus(request.Id, 10);
 
             await _mediator.Publish(command);
 
-            var query = new FindService(request.Name, false);
+            var query = new FindService(request.Id);
             var result = await _mediator.Send(query);
             
             return this.Ok(result);
@@ -130,7 +117,7 @@ namespace Heimdall.API.Controllers
             if (null == request)
                 throw new ArgumentNullException(nameof(request));
 
-            var command = new Core.Commands.DeleteService(request.Name);
+            var command = new Core.Commands.DeleteService(request.Id);
 
             await _mediator.Publish(command);
 
@@ -146,7 +133,7 @@ namespace Heimdall.API.Controllers
         {
             if (null == request)
                 throw new ArgumentNullException(nameof(request));
-            var command = new Core.Commands.RemoveEndpoint(request.ServiceName, request.Protocol, request.Address);
+            var command = new Core.Commands.RemoveEndpoint(request.ServiceId, request.EndpointId);
             await _mediator.Publish(command);
             return this.Ok();
         }

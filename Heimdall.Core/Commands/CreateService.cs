@@ -5,14 +5,19 @@ namespace Heimdall.Core.Commands
 {
     public class CreateService : INotification
     {
-        public CreateService(string name)
+        public CreateService(Guid serviceId, string serviceName)
         {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentNullException(nameof(name));
+            if (Guid.Empty == serviceId)
+                throw new ArgumentOutOfRangeException(nameof(serviceId));
+
+            if (string.IsNullOrWhiteSpace(serviceName))
+                throw new ArgumentNullException(nameof(serviceName));
             
-            this.Name = name;
+            this.ServiceName = serviceName;
+            this.ServiceId = serviceId;
         }
         
-        public string Name { get; private set; }
+        public string ServiceName { get; private set; }
+        public Guid ServiceId { get; private set; }
     }
 }

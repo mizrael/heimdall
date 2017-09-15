@@ -25,7 +25,7 @@ namespace Heimdall.Mongo.Commands.Handlers
 
         protected override async Task RunCommand(RefreshServiceStatus command)
         {
-            var service = await _db.Services.FindOneAsync(s => s.Name == command.Name);
+            var service = await _db.Services.FindOneAsync(s => s.Id == command.ServiceId);
             if (null == service)
                 return;
 

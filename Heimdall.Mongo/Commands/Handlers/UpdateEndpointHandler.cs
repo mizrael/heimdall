@@ -20,7 +20,7 @@ namespace Heimdall.Mongo.Commands.Handlers
 
         protected override async Task RunCommand(UpdateEndpoint command)
         {
-            var service = await _db.Services.FindOneAsync(s => s.Name == command.ServiceName);
+            var service = await _db.Services.FindOneAsync(s => s.Id == command.ServiceId);
 
             var endpoint = service.Endpoints.First(se => se.Id == command.EndpointId);
 
@@ -28,7 +28,7 @@ namespace Heimdall.Mongo.Commands.Handlers
             endpoint.Address = command.Address;
             endpoint.Protocol = command.Protocol;
 
-            await _db.Services.UpsertOneAsync(s => s.Name == command.ServiceName, service);
+            await _db.Services.UpsertOneAsync(s => s.Id == command.ServiceId, service);
         }
     }
 }

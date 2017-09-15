@@ -35,7 +35,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
         [Fact]
         public async Task should_throw_when_service_not_found()
         {
-            var command = new UpdateEndpoint(Guid.NewGuid(), "lorem", "ipsum", "dolor");
+            var command = new UpdateEndpoint(Guid.NewGuid(), Guid.NewGuid(), "lorem", "ipsum");
 
             var mockRepo = RepositoryUtils.MockRepository<Mongo.Infrastructure.Entities.Service>();
 
@@ -51,11 +51,11 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
         [Fact]
         public async Task should_throw_when_endpoint_not_found()
         {
-            var command = new UpdateEndpoint(Guid.NewGuid(), "lorem", "ipsum", "dolor");
+            var command = new UpdateEndpoint(Guid.NewGuid(), Guid.NewGuid(), "lorem", "ipsum");
 
             var service = new Mongo.Infrastructure.Entities.Service()
             {
-                Name = command.ServiceName,
+                Id = command.ServiceId,
                 Active = false,
                 Endpoints = Enumerable.Empty<Mongo.Infrastructure.Entities.ServiceEndpoint>()
             };
@@ -74,11 +74,11 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
         [Fact]
         public async Task should_update_endpoint_when_command_valid_and_deactivate_it()
         {
-            var command = new UpdateEndpoint(Guid.NewGuid(), "lorem", "ipsum", "dolor");
+            var command = new UpdateEndpoint(Guid.NewGuid(), Guid.NewGuid(), "lorem", "ipsum");
 
             var service = new Mongo.Infrastructure.Entities.Service()
             {
-                Name = command.ServiceName,
+                Id = command.ServiceId,
                 Active = false,
                 Endpoints = new[]
                 {
@@ -104,7 +104,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
 
             mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Mongo.Infrastructure.Entities.Service, bool>>>(),
                 It.Is<Mongo.Infrastructure.Entities.Service>(r =>
-                    r.Name == command.ServiceName &&
+                    r.Id == command.ServiceId &&
                     r.Active == false &&
                     null != r.Endpoints && 1 == r.Endpoints.Count() &&
                     r.Endpoints.Any(es => es.Active == false &&

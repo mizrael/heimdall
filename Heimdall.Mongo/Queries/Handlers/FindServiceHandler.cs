@@ -19,11 +19,11 @@ namespace Heimdall.Mongo.Queries.Handlers
             if (null == query)
                 throw new ArgumentNullException(nameof(query));
 
-            var service = await _db.Services.FindOneAsync(s => s.Name == query.ServiceName);
+            var service = await _db.Services.FindOneAsync(s => s.Id == query.ServiceId);
             if (null == service)
                 return null;
 
-            return AutoMapper.Mapper.Map<Core.Queries.Models.ServiceDetails>(service, opts => opts.Items["forceLoad"] = query.ForceLoad);
+            return AutoMapper.Mapper.Map<Core.Queries.Models.ServiceDetails>(service);
         }
     }
 }

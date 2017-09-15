@@ -34,7 +34,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
         [Fact]
         public async Task should_throw_when_service_not_found()
         {
-            var command = new AddEndpoint(Guid.NewGuid(), "lorem", "ipsum", "dolor");
+            var command = new AddEndpoint(Guid.NewGuid(), Guid.NewGuid(), "ipsum", "dolor");
 
             var mockRepo = RepositoryUtils.MockRepository<Mongo.Infrastructure.Entities.Service>();
 
@@ -50,11 +50,12 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
         [Fact]
         public async Task should_update_service_when_found_with_no_endpoints()
         {
-            var command = new AddEndpoint(Guid.NewGuid(), "lorem", "ipsum", "dolor");
+            var command = new AddEndpoint(Guid.NewGuid(), Guid.NewGuid(), "ipsum", "dolor");
 
             var service = new Mongo.Infrastructure.Entities.Service()
             {
-                Name = command.ServiceName,
+                Id = command.ServiceId,
+                Name = "lorem",
                 Active = false,
                 Endpoints = null
             };
@@ -71,7 +72,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
             
             mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Mongo.Infrastructure.Entities.Service, bool>>>(),
                 It.Is<Mongo.Infrastructure.Entities.Service>(r =>
-                    r.Name == command.ServiceName &&
+                    r.Id == command.ServiceId &&
                     r.Active == false && 
                     null != r.Endpoints && 1 == r.Endpoints.Count() &&
                     r.Endpoints.Any(es => es.Active == false && 
@@ -84,11 +85,12 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
         [Fact]
         public async Task should_update_service_when_found_with_other_protocol()
         {
-            var command = new AddEndpoint(Guid.NewGuid(), "lorem", "ipsum", "dolor");
+            var command = new AddEndpoint(Guid.NewGuid(), Guid.NewGuid(), "ipsum", "dolor");
 
             var service = new Mongo.Infrastructure.Entities.Service()
             {
-                Name = command.ServiceName,
+                Id = command.ServiceId,
+                Name = "lorem",
                 Active = false,
                 Endpoints = new[]
                 {
@@ -114,7 +116,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
 
             mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Mongo.Infrastructure.Entities.Service, bool>>>(), 
                 It.Is<Mongo.Infrastructure.Entities.Service>(r =>
-                    r.Name == command.ServiceName &&
+                    r.Id == command.ServiceId &&
                     r.Active == false &&
                     null != r.Endpoints && 2 == r.Endpoints.Count() &&
                     r.Endpoints.Any(es => es.Active == false &&
@@ -127,11 +129,12 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
         [Fact]
         public async Task should_update_service_when_found_with_other_endpoints()
         {
-            var command = new AddEndpoint(Guid.NewGuid(), "lorem", "ipsum", "dolor");
+            var command = new AddEndpoint(Guid.NewGuid(), Guid.NewGuid(), "ipsum", "dolor");
 
             var service = new Mongo.Infrastructure.Entities.Service()
             {
-                Name = command.ServiceName,
+                Id = command.ServiceId,
+                Name = "lorem",
                 Active = false,
                 Endpoints = new[]
                 {
@@ -157,7 +160,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
 
             mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Mongo.Infrastructure.Entities.Service, bool>>>(),
                 It.Is<Mongo.Infrastructure.Entities.Service>(r =>
-                    r.Name == command.ServiceName &&
+                    r.Id == command.ServiceId &&
                     r.Active == false &&
                     null != r.Endpoints && 2 == r.Endpoints.Count() &&
                     r.Endpoints.Any(es => es.Active == false &&
@@ -180,6 +183,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
 
             var service = new Mongo.Infrastructure.Entities.Service()
             {
+                Id = Guid.NewGuid(),
                 Name = "lorem",
                 Active = false,
                 Endpoints = new[]
@@ -188,7 +192,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
                 }
             };
 
-            var command = new AddEndpoint(endpoint.Id, service.Name, "ipsum", "dolor");
+            var command = new AddEndpoint(service.Id, endpoint.Id, "ipsum", "dolor");
 
             var mockRepo = RepositoryUtils.MockRepository(service);
 

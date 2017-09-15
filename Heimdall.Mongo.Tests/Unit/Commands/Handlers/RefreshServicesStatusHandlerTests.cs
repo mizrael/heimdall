@@ -47,12 +47,14 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
             var services = new[]{
                 new Mongo.Infrastructure.Entities.Service()
                 {
+                    Id = System.Guid.NewGuid(),
                     Active = true,
                     Name = "lorem",
                     Endpoints = Enumerable.Empty<Mongo.Infrastructure.Entities.ServiceEndpoint>()
                 },
                 new Mongo.Infrastructure.Entities.Service()
                 {
+                    Id = System.Guid.NewGuid(),
                     Active = true,
                     Name = "ipsum",
                     Endpoints = Enumerable.Empty<Mongo.Infrastructure.Entities.ServiceEndpoint>()
@@ -71,7 +73,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
             await sut.Handle(new RefreshServicesStatus(10));
 
             foreach(var service in services)
-                mockMediator.Verify(m => m.Publish(It.Is<RefreshServiceStatus>(r => r.Name == service.Name), It.IsAny<System.Threading.CancellationToken>()), Times.Once());
+                mockMediator.Verify(m => m.Publish(It.Is<RefreshServiceStatus>(r => r.ServiceId == service.Id), It.IsAny<System.Threading.CancellationToken>()), Times.Once());
         }
     }
 }

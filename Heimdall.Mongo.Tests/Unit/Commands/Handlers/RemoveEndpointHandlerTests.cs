@@ -34,7 +34,7 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
         [Fact]
         public async Task should_throw_when_service_not_found()
         {
-            var command = new RemoveEndpoint("lorem", "ipsum", "dolor");
+            var command = new RemoveEndpoint(Guid.NewGuid(), Guid.NewGuid());
 
             var mockRepo = RepositoryUtils.MockRepository<Mongo.Infrastructure.Entities.Service>();
 
@@ -50,11 +50,11 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
         [Fact]
         public async Task should_throw_when_service_has_null_endpoints()
         {
-            var command = new RemoveEndpoint("lorem", "ipsum", "dolor");
+            var command = new RemoveEndpoint(Guid.NewGuid(), Guid.NewGuid());
 
             var service = new Mongo.Infrastructure.Entities.Service()
             {
-                Name = command.ServiceName,
+                Id = command.ServiceId,
                 Active = false,
                 Endpoints = null
             };
@@ -73,19 +73,18 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
         [Fact]
         public async Task should_remove_endpoint()
         {
-            var command = new RemoveEndpoint("lorem", "ipsum", "dolor");
+            var command = new RemoveEndpoint(Guid.NewGuid(), Guid.NewGuid());
 
             var service = new Mongo.Infrastructure.Entities.Service()
             {
-                Name = command.ServiceName,
+                Id = command.ServiceId,
                 Active = false,
                 Endpoints = new[]
                 {
                     new Mongo.Infrastructure.Entities.ServiceEndpoint()
                     {
+                        Id = command.EndpointId,
                         Active = false,
-                        Address = command.Address,
-                        Protocol = command.Protocol
                     }
                 }
             };
@@ -102,29 +101,32 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
 
             mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Mongo.Infrastructure.Entities.Service, bool>>>(), 
                 It.Is<Mongo.Infrastructure.Entities.Service>(r =>
-                    r.Name == command.ServiceName &&
+                    r.Id == command.ServiceId &&
                     r.Active == false &&
-                    null != r.Endpoints && 0 == r.Endpoints.Count() )
+                    null != r.Endpoints && !r.Endpoints.Any(e => e.Id == command.EndpointId) )
                 ), Times.Once());
         }
 
         [Fact]
-        public async Task should_not_remove_endpoints_if_none_found_by_address()
+        public async Task should_not_remove_endpoints_if_none_found()
         {
             var endpoint1 = new Mongo.Infrastructure.Entities.ServiceEndpoint()
             {
+                Id = Guid.NewGuid(),
                 Active = false,
                 Address = "dolor",
                 Protocol = "ipsum"
             };
             var endpoint2 = new Mongo.Infrastructure.Entities.ServiceEndpoint()
             {
+                Id = Guid.NewGuid(),
                 Active = false,
                 Address = "dolor",
                 Protocol = "amet"
             };
             var service = new Mongo.Infrastructure.Entities.Service()
             {
+                Id = Guid.NewGuid(),
                 Name = "lorem",
                 Active = false,
                 Endpoints = new[]
@@ -142,58 +144,15 @@ namespace Heimdall.Mongo.Tests.Unit.Commands.Handlers
 
             var sut = new RemoveEndpointHandler(mockDbContext.Object, validator);
 
-            var command = new RemoveEndpoint(service.Name, endpoint1.Protocol, Guid.NewGuid().ToString() );
+            var command = new RemoveEndpoint(service.Id, Guid.NewGuid());
             await sut.Handle(command);
 
             mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Mongo.Infrastructure.Entities.Service, bool>>>(),
                 It.Is<Mongo.Infrastructure.Entities.Service>(r =>
-                    r.Name == service.Name &&
+                    r.Id == service.Id &&
                     null != r.Endpoints && 2 == r.Endpoints.Count())
                 ), Times.Once());
         }
 
-        [Fact]
-        public async Task should_not_remove_endpoints_if_none_found_by_protocol()
-        {
-            var endpoint1 = new Mongo.Infrastructure.Entities.ServiceEndpoint()
-            {
-                Active = false,
-                Address = "dolor",
-                Protocol = "ipsum"
-            };
-            var endpoint2 = new Mongo.Infrastructure.Entities.ServiceEndpoint()
-            {
-                Active = false,
-                Address = "amet",
-                Protocol = "ipsum"
-            };
-            var service = new Mongo.Infrastructure.Entities.Service()
-            {
-                Name = "lorem",
-                Active = false,
-                Endpoints = new[]
-                {
-                    endpoint1, endpoint2
-                }
-            };
-
-            var mockRepo = RepositoryUtils.MockRepository(service);
-
-            var mockDbContext = new Mock<IDbContext>();
-            mockDbContext.Setup(db => db.Services).Returns(mockRepo.Object);
-
-            var validator = new NullValidator<RemoveEndpoint>();
-
-            var sut = new RemoveEndpointHandler(mockDbContext.Object, validator);
-
-            var command = new RemoveEndpoint(service.Name, Guid.NewGuid().ToString(), endpoint1.Address);
-            await sut.Handle(command);
-
-            mockRepo.Verify(m => m.UpsertOneAsync(It.IsAny<Expression<Func<Mongo.Infrastructure.Entities.Service, bool>>>(),
-                It.Is<Mongo.Infrastructure.Entities.Service>(r =>
-                    r.Name == service.Name &&
-                    null != r.Endpoints && 2 == r.Endpoints.Count())
-                ), Times.Once());
-        }
     }
 }
